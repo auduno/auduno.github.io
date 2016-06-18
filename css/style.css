@@ -20,6 +20,8 @@ body {
 
 h2 {
 	font-size: 1em;
+	font-weight: normal;
+	color : #ADADAD;
 }
 
 h5 {
@@ -230,7 +232,7 @@ article p.footnote {
 
 @media (max-height: 400px) {
 	#content {
-		margin-top : 60px;
+		margin-top : 80px;
 	}
 }
 

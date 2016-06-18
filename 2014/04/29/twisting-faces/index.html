@@ -85,7 +85,7 @@ ga('send', 'pageview');
 
 <p class="date"><time datetime="2014-04-29">29. April 2014</time></p>
 
-<p>In the <a href="/post/61888277175/fitting-faces">previous post</a>, I explained how <a href="https://github.com/auduno/clmtrackr" target="_blank" rel="external">CLMtrackr</a> was put together. Since then, my examples of <a href="https://auduno.github.io/clmtrackr/examples/facesubstitution.html" target="_blank" rel="external">face substitution</a> and <a href="https://auduno.github.io/clmtrackr/examples/clm_emotiondetection.html" target="_blank" rel="external">emotion detection</a> has received a fair amount of attention, so in this post I&rsquo;m going to explain a bit about how these are put together as well, plus comment on some fixes that I&rsquo;ve done to CLMtrackr recently.</p>
+<p>In the <a href="/post/61888277175/fitting-faces">previous post</a>, I explained how <a href="https://github.com/auduno/clmtrackr" target="_blank" rel="external">CLMtrackr</a> was put together. Since then, my examples of <a href="https://auduno.github.io/clmtrackr/examples/facesubstitution.html">face substitution</a> and <a href="https://auduno.github.io/clmtrackr/examples/clm_emotiondetection.html">emotion detection</a> has received a fair amount of attention, so in this post I&rsquo;m going to explain a bit about how these are put together as well, plus comment on some fixes that I&rsquo;ve done to CLMtrackr recently.</p>
 
 <h4>Face substitution</h4>
 
@@ -131,9 +131,9 @@ ga('send', 'pageview');
 	<figcaption>From top left, the opposites of: Anger, Disgust, Fear, Happiness, Surprise, Sadness</figcaption>
 </figure>
 
-<p>Play with the visualizations of the learned emotion model <a href="http://auduno.github.io/clmtrackr/examples/classviewer.html" target="_blank" rel="external">here</a></p>
+<p>Play with the visualizations of the learned emotion model <a href="http://auduno.github.io/clmtrackr/examples/classviewer.html">here</a></p>
 
-<p>The classification method is not only restricted to emotions, so we could also try to classify whether a person is male or female. Try out a demo of this <a href="https://auduno.github.io/clmtrackr/examples/clm_genderdetection.html" target="_blank" rel="external">here</a>, though note that it&rsquo;s not really that accurate. Below are the resulting faces from the learned gender classifier:</p>
+<p>The classification method is not only restricted to emotions, so we could also try to classify whether a person is male or female. Try out a demo of this <a href="https://auduno.github.io/clmtrackr/examples/clm_genderdetection.html">here</a>, though note that it&rsquo;s not really that accurate. Below are the resulting faces from the learned gender classifier:</p>
 
 <figure>
 	<img src="/images/post_gender2.jpg" alt="the face model">
@@ -142,7 +142,7 @@ ga('send', 'pageview');
 
 <h4>Deforming the face</h4>
 
-<p>Some other toy examples I&rsquo;ve added is <a href="https://auduno.github.io/clmtrackr/examples/facedeform.html" target="_blank" rel="external">live face deformation</a> and <a href="https://auduno.github.io/clmtrackr/examples/caricature.html" target="_blank" rel="external">live &ldquo;caricatures&rdquo;</a>.</p>
+<p>Some other toy examples I&rsquo;ve added is <a href="https://auduno.github.io/clmtrackr/examples/facedeform.html">live face deformation</a> and <a href="https://auduno.github.io/clmtrackr/examples/caricature.html">live &ldquo;caricatures&rdquo;</a>.</p>
 
 <figure>
 	<img src="/images/post_facedeformation2.jpg" alt="Deformed face">
@@ -153,7 +153,7 @@ ga('send', 'pageview');
 
 <h4>Improvements</h4>
 
-<p>As I discussed doing in my previous blog post, I&rsquo;ve also added <a href="https://en.wikipedia.org/wiki/Local_binary_patterns" target="_blank" rel="external">local binary patterns</a> and <a href="https://en.wikipedia.org/wiki/Sobel_operator" target="_blank" rel="external">sobel gradients</a> as preprocessing for responses. Especially local binary patterns seem to be more precise than raw responses, at the cost of some slowdown (due to need to preprocess patches). Since they&rsquo;re slower, they&rsquo;re not used by default, so you&rsquo;ll have to enable them on initialization if you want to use them. Check out the reference for documentation on how to enable the different types of responses. There&rsquo;s also the possibility to <em>blend</em> or <em>cycle</em> through different types of responses, which in theory might improve precision, a la <a href="https://en.wikipedia.org/wiki/Ensemble_learning" target="_blank" rel="external">ensemble models</a>. Try out the different responses and combinations <a href="https://auduno.github.io/clmtrackr/clm_video_responses.html" target="_blank" rel="external">here</a>.</p>
+<p>As I discussed doing in my previous blog post, I&rsquo;ve also added <a href="https://en.wikipedia.org/wiki/Local_binary_patterns" target="_blank" rel="external">local binary patterns</a> and <a href="https://en.wikipedia.org/wiki/Sobel_operator" target="_blank" rel="external">sobel gradients</a> as preprocessing for responses. Especially local binary patterns seem to be more precise than raw responses, at the cost of some slowdown (due to need to preprocess patches). Since they&rsquo;re slower, they&rsquo;re not used by default, so you&rsquo;ll have to enable them on initialization if you want to use them. Check out the reference for documentation on how to enable the different types of responses. There&rsquo;s also the possibility to <em>blend</em> or <em>cycle</em> through different types of responses, which in theory might improve precision, a la <a href="https://en.wikipedia.org/wiki/Ensemble_learning" target="_blank" rel="external">ensemble models</a>. Try out the different responses and combinations <a href="https://auduno.github.io/clmtrackr/clm_video_responses.html">here</a>.</p>
 
 <br><p>In other news, CLMtrackr was used in this years april fools on reddit : <a href="http://www.redditblog.com/2014/03/headdit-revolutionary-new-way-to-browse.html" target="_blank" rel="external">&ldquo;headdit&rdquo;</a>. For an april fools, the gesture recognition worked surprisingly well, though I&rsquo;ll admit to not throwing away my mouse and keyboard just yet.</p>
 

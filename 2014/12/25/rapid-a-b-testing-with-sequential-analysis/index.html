@@ -131,7 +131,7 @@ var glr = require('seglir')
 var test = glr.test("bernoulli","two-sided",0.01,0.05,0.10)
 </pre>
 
-<p>When setting up any statistical hypothesis test, you need to calculate the test statistic thresholds at which the null-hypothesis or the alternative hypothesis is rejected for a given &alpha;- and &beta;-level. Unfortunately, unlike the fixed samplesize tests, there is no analytical way to calculate these thresholds for the sequential GLR test, so SeGLiR will use simulation to find them. This simulation can take some time and doesn&rsquo;t always converge, so I&rsquo;ve added some precalculated thresholds for the most common levels. It probably saves a bit of time to check these precalculated thresholds in the <a href="http://auduno.github.io/SeGLiR/documentation/reference.html" target="_blank" rel="external">reference</a> before setting up a test.</p>
+<p>When setting up any statistical hypothesis test, you need to calculate the test statistic thresholds at which the null-hypothesis or the alternative hypothesis is rejected for a given &alpha;- and &beta;-level. Unfortunately, unlike the fixed samplesize tests, there is no analytical way to calculate these thresholds for the sequential GLR test, so SeGLiR will use simulation to find them. This simulation can take some time and doesn&rsquo;t always converge, so I&rsquo;ve added some precalculated thresholds for the most common levels. It probably saves a bit of time to check these precalculated thresholds in the <a href="http://auduno.github.io/SeGLiR/documentation/reference.html">reference</a> before setting up a test.</p>
 
 <p>Add data as it comes in, until the instance returns either &ldquo;true&rdquo; (the null hypothesis was accepted, i.e. there is no difference between the proportions) or &ldquo;false&rdquo; (the alternative hypothesis was accepted, i.e. there is a difference between the proportions).</p>
 
@@ -149,11 +149,11 @@ test.addData({x:1,y:0})
 test.estimate()
 </pre>
 
-<p>To get more details about functions, check out the <a href="http://auduno.github.io/SeGLiR/documentation/reference.html" target="_blank" rel="external">SeGLiR reference</a>. Try out comparing the fixed samplesize test and the sequential GLR yourself (using SeGLiR) in <a href="http://auduno.github.io/SeGLiR/demo/demo.html" target="_blank" rel="external">this demo</a>.</p>
+<p>To get more details about functions, check out the <a href="http://auduno.github.io/SeGLiR/documentation/reference.html">SeGLiR reference</a>. Try out comparing the fixed samplesize test and the sequential GLR yourself (using SeGLiR) in <a href="http://auduno.github.io/SeGLiR/demo/demo.html">this demo</a>.</p>
 
 <br><p>To sum up, the sequential GLR test is an alternative to fixed samplesize tests that usually are much faster, at the cost of a large, but rare, worst-case samplesize. Another slight drawback with sequential tests is that post-analysis estimation can be a bit more tricky. I&rsquo;ll elaborate on this in my next post, as well as talk a bit about the solutions I&rsquo;ve implemented in SeGLiR. <a href="https://twitter.com/matsiyatzy" target="_blank" rel="external">Follow me on twitter</a> if you want to get updates!</p>
 
-<br><p>If you&rsquo;re interested in a very brief introduction to the mathematical details of the sequential GLR test, take a look at the <a href="http://auduno.github.io/SeGLiR/documentation/reference.html" target="_blank" rel="external">SeGLiR reference</a>. For a more rigorous mathematical introduction, see these excellent references:</p>
+<br><p>If you&rsquo;re interested in a very brief introduction to the mathematical details of the sequential GLR test, take a look at the <a href="http://auduno.github.io/SeGLiR/documentation/reference.html">SeGLiR reference</a>. For a more rigorous mathematical introduction, see these excellent references:</p>
 <ul><li>Tartakovsky, Nikiforov &amp; Basseville : <a href="http://www.amazon.com/Sequential-Analysis-Hypothesis-Changepoint-Probability/dp/1439838208" target="_blank" rel="external">Sequential Analysis</a>, CRC Press 2014</li>
 	<li>Bartroff, Lai &amp; Shih : <a href="http://www.amazon.com/Sequential-Experimentation-Clinical-Trials-Statistics/dp/1461461138/ref=sr_1_1?s=books&ie=UTF8&qid=1416693815&sr=1-1&keywords=sequential%20experimentation%20in%20clinical%20trialsD" target="_blank" rel="external">Sequential Experimentation in Clinical Trials</a>, Springer 2012</li>
 </ul>
