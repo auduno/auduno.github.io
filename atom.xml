@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://auduno.github.io/"/>
-  <updated>2016-06-18T19:36:36.000Z</updated>
+  <updated>2016-06-18T20:30:53.000Z</updated>
   <id>http://auduno.github.io/</id>
   
   <author>
@@ -17,10 +17,10 @@
   
   <entry>
     <title>Peeking inside Convnets</title>
-    <link href="http://auduno.github.io/2016/05/01/peeking-inside-convnets/"/>
-    <id>http://auduno.github.io/2016/05/01/peeking-inside-convnets/</id>
-    <published>2016-04-30T22:00:00.000Z</published>
-    <updated>2016-06-18T19:36:36.000Z</updated>
+    <link href="http://auduno.github.io/2016/06/18/peeking-inside-convnets/"/>
+    <id>http://auduno.github.io/2016/06/18/peeking-inside-convnets/</id>
+    <published>2016-06-17T22:00:00.000Z</published>
+    <updated>2016-06-18T20:30:53.000Z</updated>
     
     <content type="html">&lt;p&gt;Convolutional neural networks are used extensively for a number of image related tasks these days. Despite being very successful, they&#39;re mostly seen as &quot;black box&quot; models, since it&#39;s hard to understand what happens inside the network. There are however methods to &quot;peek inside&quot; the convnets, and thus understand a bit more about how they work.&lt;/p&gt;
 
@@ -166,7 +166,7 @@
 
 &lt;p&gt;Another trick I also used, was to modify the network to use leaky ReLUs instead of regular ReLUs, since otherwise the gradient will usually be zero when we start from a blank image, thus hindering initial gradient ascent. Since this modification doesn&#39;t seem to have significant effect on the predictions of the network, we can assume it doesn&#39;t have a major impact on the feature visualizations.&lt;/p&gt;
 
-&lt;p&gt;I&#39;ve released the code I used to make these visualizations, so &lt;a href=&quot;&quot;&gt;take a look&lt;/a&gt; if you want to know more details.&lt;/p&gt;
+&lt;p&gt;I&#39;ve &lt;a href=&quot;https://github.com/auduno/deepdraw/tree/master/filter_visualizations&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;released the code&lt;/a&gt; I used to make these visualizations, so take a look if you want to know more details.&lt;/p&gt;
 
 &lt;h4&gt;Similar work&lt;/h4&gt;
 

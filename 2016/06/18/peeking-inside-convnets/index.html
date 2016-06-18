@@ -8,7 +8,7 @@
   <meta name="description" content="Convolutional neural networks are used extensively for a number of image related tasks these days. Despite being very successful, they&apos;re mostly seen as &quot;black box&quot; models, since it&apos;s hard to understa">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Peeking inside Convnets">
-<meta property="og:url" content="http://auduno.github.io/2016/05/01/peeking-inside-convnets/index.html">
+<meta property="og:url" content="http://auduno.github.io/2016/06/18/peeking-inside-convnets/index.html">
 <meta property="og:site_name" content="Audun M Øygard">
 <meta property="og:description" content="Convolutional neural networks are used extensively for a number of image related tasks these days. Despite being very successful, they&apos;re mostly seen as &quot;black box&quot; models, since it&apos;s hard to understa">
 <meta property="og:image" content="http://auduno.github.io/images/vgg_filter_10_crop.jpg">
@@ -58,7 +58,7 @@
 <meta property="og:image" content="http://auduno.github.io/images/vgg16_filter_4.jpg">
 <meta property="og:image" content="http://auduno.github.io/images/vgg16_filter_17.jpg">
 <meta property="og:image" content="http://auduno.github.io/images/vgg16_filter_2.jpg">
-<meta property="og:updated_time" content="2016-06-18T19:36:36.000Z">
+<meta property="og:updated_time" content="2016-06-18T20:30:53.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Peeking inside Convnets">
 <meta name="twitter:description" content="Convolutional neural networks are used extensively for a number of image related tasks these days. Despite being very successful, they&apos;re mostly seen as &quot;black box&quot; models, since it&apos;s hard to understa">
@@ -121,7 +121,7 @@ ga('send', 'pageview');
 <h3>Peeking inside Convnets</h3>
 
 
-<p class="date"><time datetime="2016-05-01">01. May 2016</time></p>
+<p class="date"><time datetime="2016-06-18">18. June 2016</time></p>
 
 <p>Convolutional neural networks are used extensively for a number of image related tasks these days. Despite being very successful, they're mostly seen as "black box" models, since it's hard to understand what happens inside the network. There are however methods to "peek inside" the convnets, and thus understand a bit more about how they work.</p>
 
@@ -267,7 +267,7 @@ ga('send', 'pageview');
 
 <p>Another trick I also used, was to modify the network to use leaky ReLUs instead of regular ReLUs, since otherwise the gradient will usually be zero when we start from a blank image, thus hindering initial gradient ascent. Since this modification doesn't seem to have significant effect on the predictions of the network, we can assume it doesn't have a major impact on the feature visualizations.</p>
 
-<p>I've released the code I used to make these visualizations, so <a href="">take a look</a> if you want to know more details.</p>
+<p>I've <a href="https://github.com/auduno/deepdraw/tree/master/filter_visualizations" target="_blank" rel="external">released the code</a> I used to make these visualizations, so take a look if you want to know more details.</p>
 
 <h4>Similar work</h4>
 
@@ -301,7 +301,7 @@ ga('send', 'pageview');
 <script>
   var disqus_shortname = 'audunotumblr';
   
-  var disqus_url = 'http://auduno.github.io/2016/05/01/peeking-inside-convnets/';
+  var disqus_url = 'http://auduno.github.io/2016/06/18/peeking-inside-convnets/';
   
   (function(){
     var dsq = document.createElement('script');
