@@ -334,7 +334,7 @@
     <link href="http://auduno.github.io/2015/07/29/visualizing-googlenet-classes/"/>
     <id>http://auduno.github.io/2015/07/29/visualizing-googlenet-classes/</id>
     <published>2015-07-28T22:00:00.000Z</published>
-    <updated>2016-05-03T20:37:27.000Z</updated>
+    <updated>2016-06-18T20:19:17.000Z</updated>
     
     <content type="html">&lt;p&gt;Ever wondered what a deep neural network thinks a Dalmatian should look like? Well, wonder no more.&lt;/p&gt;
 
@@ -344,16 +344,16 @@
 
 &lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
 	&lt;img src=&quot;/images/deepdraw_example_33.jpg&quot; alt=&quot;Loggerhead turtle&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
-	&lt;img src=&quot;/images/deepdraw_example_0783.png&quot; alt=&quot;Screws&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_0783.jpg&quot; alt=&quot;Screws&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
 	&lt;figcaption&gt;Generated images from class &amp;ldquo;Loggerhead turtle&amp;rdquo; (left), &amp;ldquo;Screws&amp;rdquo; (right)&lt;/figcaption&gt;
 &lt;/figure&gt;
 &lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
 	&lt;img src=&quot;/images/deepdraw_example_260.jpg&quot; alt=&quot;Chow chow&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
-	&lt;img src=&quot;/images/deepdraw_example_0281.png&quot; alt=&quot;Tabby cat&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_0281.jpg&quot; alt=&quot;Tabby cat&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
 	&lt;figcaption&gt;Generated images from class &amp;ldquo;Chow chow&amp;rdquo; (left), &amp;ldquo;Tabby cat&amp;rdquo; (right)&lt;/figcaption&gt;
 &lt;/figure&gt;
 &lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
-	&lt;img src=&quot;/images/deepdraw_example_0294.png&quot; alt=&quot;Brown bear&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_0294.jpg&quot; alt=&quot;Brown bear&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
 	&lt;img src=&quot;/images/deepdraw_example_254.jpg&quot; alt=&quot;Pug&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
 	&lt;figcaption&gt;Generated images from class &amp;ldquo;Brown bear&amp;rdquo; (left), &amp;ldquo;Pug&amp;rdquo; (right)&lt;/figcaption&gt;
 &lt;/figure&gt;
@@ -363,8 +363,8 @@
 	&lt;figcaption&gt;Generated images from class &amp;ldquo;Bee&amp;rdquo; (left), &amp;ldquo;Tarantula&amp;rdquo; (right)&lt;/figcaption&gt;
 &lt;/figure&gt;
 &lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center;margin-bottom:15px&quot;&gt;
-	&lt;img src=&quot;/images/deepdraw_examples_0850.png&quot; alt=&quot;Teddybear&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
-	&lt;img src=&quot;/images/deepdraw_example_0251.png&quot; alt=&quot;Dalmatians&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_examples_0850.jpg&quot; alt=&quot;Teddybear&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_0251.jpg&quot; alt=&quot;Dalmatians&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
 	&lt;figcaption&gt;Generated images from class &amp;ldquo;Teddybear&amp;rdquo; (left), &amp;ldquo;Dalmatian&amp;rdquo; (right)&lt;/figcaption&gt;
 &lt;/figure&gt;
 
