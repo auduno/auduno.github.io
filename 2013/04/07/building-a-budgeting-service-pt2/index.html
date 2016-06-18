@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  
+  <title>Building a budgeting service | Audun M Øygard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="As I wrote in my last blog post, around 3 years ago I decided to try to build a budgeting service like mint.com for the norwegian market. After around a year, having reached the prototype stage, I dec">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Building a budgeting service">
+<meta property="og:url" content="http://auduno.github.io/2013/04/07/building-a-budgeting-service-pt2/index.html">
+<meta property="og:site_name" content="Audun M Øygard">
+<meta property="og:description" content="As I wrote in my last blog post, around 3 years ago I decided to try to build a budgeting service like mint.com for the norwegian market. After around a year, having reached the prototype stage, I dec">
+<meta property="og:image" content="http://auduno.github.io/images/penger.no_front_crop.jpg">
+<meta property="og:updated_time" content="2016-05-05T20:33:57.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Building a budgeting service">
+<meta name="twitter:description" content="As I wrote in my last blog post, around 3 years ago I decided to try to build a budgeting service like mint.com for the norwegian market. After around a year, having reached the prototype stage, I dec">
+<meta name="twitter:image" content="http://auduno.github.io/images/penger.no_front_crop.jpg">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+    <link rel="stylesheet" href="/css/style.css">
+    
+  
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-32670536-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css" rel="stylesheet">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script language="javascript" type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
+</head>
+
+<body>
+  <header>
+  <div id="icon">
+    <a href="/" class="nocolor"><p>Audun M. Øygard</p></a>
+    <br/>
+    <div id="socialicons">
+      <a href="http://www.twitter.com/matsiyatzy"><i class="icon-twitter"></i></a>
+      <a href="http://github.com/auduno"><i class="icon-github icon-large"></i></a>
+      <a href="https://www.linkedin.com/in/audun-mathias-%C3%B8ygard-1a572041"><i class="icon-linkedin icon-large"></i></a>
+      <a href="/atom.xml"><i class="icon-rss icon-medium" style="margin-left:2px;position:relative;top:0.1em;"></i></a>
+    </div>
+  </div>
+  <nav id="nav">
+    <p><a href="/about.html">About</a></p>
+    <p><a href="/">Blog</a></p>
+    <!--<p><a href="projects.html">Projects/Work</a></p>-->
+  </nav>
+  <div id="burger"></div>
+  <div id="noburger" class="hide"></div>
+</header>
+  <div id="content">
+    <article>
+
+
+<img src="/images/part2_header2.png" alt="image" class="headerimage">
+
+<h3>Building a budgeting service</h3>
+
+<h2>A post-hoc analysis, part 2</h2>
+
+
+<p class="date"><time datetime="2013-04-07">07. April 2013</time></p>
+
+<p>As I wrote in <a href="/post/40422171982/building-a-budgeting-service">my last blog post</a>, around 3 years ago I decided to try to build a budgeting service like <a href="https://www.mint.com/" target="_blank" rel="external">mint.com</a> for the norwegian market. After around a year, having reached the prototype stage, I decided to take a short break from further building, to think about the business details. This quickly turned into an &hellip; extended break.</p> 
+
+<p>In this post I&rsquo;ll write out some of the reasons I stopped working on it, and finally, some lessons learned.</p>
+
+<p>During the process of mocking up the prototype, I&rsquo;d already considered some business models:</p>
+
+<ul><li>
+	<h5>lead generation for loans, savings and credit card accounts</h5>
+    <p>In other words, getting a payment from the banks in return for sending users to one of their banking services. This is the business model that mint.com used, where they would recommend you banking services that might save you money. Of these, lead generation for loans probably is the most profitable, as loans are a large part of the business model for banks, and they&rsquo;re willing to pay quite a bit for leads.</p>
+	</li>
+	
+	<li>
+	<h5>third-party solution for banks</h5>
+    <p>This would mean selling the service of scraping and categorization to the banks as a plugin service in their own online banks. This didn&rsquo;t seem all that feasible to me, since a majority of banks already used a third-party service (<a href="https://www.evry.com/" target="_blank" rel="external">EVRY</a>, formerly known as EDB) to run their online banks, and these were likely to want to make it themselves instead of buying it from another third party. As I later discovered, the few banks that actually ran their own online banks, mostly the larger banks (DnB, Gjensidige, etc.), were already building budgeting services themselves.</p>
+    </li>
+	
+	<li>
+	<h5>freemium solution (&ldquo;pay for premium&rdquo;-solution)</h5>
+    <p>This is not a model I gave a lot of thought, since it was unlikely that the amount of users that were willing to pay for this services in Norway was large enough.</p>
+    </li>
+</ul>
+
+<p>The lead generation business model seemed less risky, so that was my main plan. However, there were a lot of problems with the business model that I never managed to solve.</p>
+
+<h4>Profitability</h4>
+
+<p>My main worry was the economic feasibility. Scraping all the different online banks demanded that we always keep the scraper up to date, which meant a lot of manual maintenance. The big question was whether the costs spent on maintenance would be balanced by profits from lead generation. This was really hard to answer since I didn&rsquo;t know exactly how much maintenance was needed, or how much the banks were willing to pay for leads. In a presentation held by Aaron Patzer of mint.com, he mentioned that they had a revenue of around 30$ per user. The revenue probably would have been higher in Norway, but I was never sure how many users we&rsquo;d get. Norway is after all a considerably smaller market than the US. Even though we managed to get a considerable share of the potential market size, given around 30$ per user we&rsquo;d only be talking about a couple of million NOK in revenue, which is not a lot, considering maintenance costs.</p>
+
+<h4>Marketing costs</h4>
+
+<p>The second big worry was how to get people use this service. Most Norwegians have never heard of budgeting services, which means it would be a problem to get people to try it at the outset. This would be especially hard since the service asked them to log in to their bank account, something that no other service in Norway (as far as I know) asks you to do. We would have to do quite a lot of outreach to ensure that users were certain that the service was safe. The best bet would probably be to market the service through personal economy sites, such as <a href="http://www.dinepenger.no/" target="_blank" rel="external">dinepenger.no</a>, which already had a number of economy calculators and manual budgeting tools, and somehow get them to vouch for the service. Any kind of certification, such as TRUSTe, Verisign, and RSA, would probably also help here.</p>
+
+<h4>Legality</h4>
+
+<p>Though it wasn&rsquo;t strictly illegal to scrape the account statements from online banks, a lot of the banks actually had clauses in their terms of services stating that the user was not allowed to give any third parties access to their online bank accounts. Any scraping done on remote servers would of course be a breach of these terms of services. Though it was deemed unlikely that the banks actually would do any counteractions against users allowing this (it would after all be the users, not us, they would be targeting legally), there was a major risk in that they might make life hard for us (i.e. making it harder to scrape) and that they might claim our services were insecure. On our side, we might claim that the users had a right to own their own information and that the banks were just trying to stop users from finding cheaper banking services. Some people I discussed this with, suggested that the banks were unlikely to say anything publicly, as <em>any</em> kind of discussion around the security of the banks would be negative PR for the banks. It <a href="http://www.dn.no/tekno/2012/06/13/-blir-du-svindlet-sa-star-du-personlig-ansvarlig" target="_blank" rel="external">turned out later</a> that &ldquo;finanstilsynet&rdquo; (which is Norways&rsquo; higher authority for banks) actually <em>were</em> willing to warn against giving up your information to these kinds of services in very negative tones, so the worry wasn&rsquo;t exactly unwarranted. Given this kind of pushback, it would probably have been an uphill battle.</p>
+
+<br><br><p>Altogether, these issues, especially concerns around profitability and legality, made me uncertain whether it really was worthwhile to continue with the project.</p>
+
+<p>The real reason I stopped working on it, though, was that I really, really needed a break. By the time the prototype was done, I&rsquo;d been working on this project in most of my spare time for a year. While the plan was to take a break from building to figure out whether the business was really profitable, I was too fatigued with the whole project, and though I thought about it from time to time, I didn&rsquo;t really make a serious effort. The short break quickly grew into months, and I gradually started thinking about other projects.</p>
+
+<p>So, here&rsquo;s some of my lessons learned:</p>
+
+<h4>Lessons learned</h4>
+
+<ul><li>
+	<h5>Figure out the business model first</h5>
+	<p>Though it&rsquo;s fun building stuff and you learn a lot doing it, if you end up building something that never earns money, you&rsquo;re either in the not-for-profit business or you&rsquo;ve wasted your time. Earning money (at least enough to keep day-to-day operations running) is and should be priority number one for any startup, so you should focus on that as early as possible. The issues with legality and maintenance cost vs profit, are actually something that I could have figured out before I started building it.</p>
+	</li>
+
+	<li>
+	<h5>Involve more people at an early stage.</h5>
+	<p>Having someone to discuss with and share the stress (and victories) with, is worth way more than you might think. Other people might add knowledge or points of view you don&rsquo;t have, and you&rsquo;re probably likely to pick up on problems with your business model earlier, though that depends on how balanced you are as a team. In my case it would have been optimal to work with someone else that had experience with the banking business, as they could tell me more about the profitability aspects around lead generation. Including other people also meant it would have been easier to keep up motivation, or at least spin the project into something else, which partly was the reason I stopped.</p>
+	</li>
+</ul><h4>Postscript</h4>
+
+<p>In hindsight, an automated personal budgeting service for the Norwegian market is probably unviable. Mint.com had a lot of advantages in that they were buying the transaction feeds from a third party, <a href="http://www.yodlee.com/" target="_blank" rel="external">Yodlee</a>, since they didn&rsquo;t directly have to deal with maintenance costs or legality issues. The only way that I see such a service could be viable in Norway, is if the banks start supporting a common API to get transaction information. This would considerably lower maintenance costs and stop any legality concerns. However, this is unlikely to be initiated by the banks, so it would probably have to be enforced through some sort of regulation. There are other services based on lead generation that are viable though, and since I stopped working on my project some have turned up.</p>
+
+<img src="/images/penger.no_front_crop.jpg" alt="image">
+
+<p>The site <a href="https://www.penger.no/" target="_blank" rel="external">penger.no</a>, which has simplified applying for loans from several banks at once, has abandoned the entire personal budgeting service and gone directly for the lead generation. Instead of getting information about users from their personal budgets, they&rsquo;ve simply asked the users to punch in the details themselves. The only drawback I can think of with this, is that the leads might be less qualified (the banks get less real information about income and spending), and thus banks might pay less for the leads.</p>
+
+<p>Penger.no have also solved a lot of the issues with marketing, since the service is partially owned by <a href="http://www.dinepenger.no/" target="_blank" rel="external">dinepenger.no</a> and <a href="http://www.finn.no/" target="_blank" rel="external">finn.no</a>. Dinepenger.no is able to give it credibility and means it can reach out to exactly those users that are interested in this kind of service, while ownership by finn.no (one of the top ten sites in Norway) means that they can advertise cheaply on pages of finn.no.</p>
+
+<p>Some banks, such as <a href="https://www.dnb.no/" target="_blank" rel="external">DnB</a>, <a href="https://skandiabanken.no/" target="_blank" rel="external">Skandiabanken</a> and <a href="https://www.storebrand.no/" target="_blank" rel="external">Storebrand</a>, have also implemented their version of budgeting tools as part of their online banking services. I haven&rsquo;t seen any that I&rsquo;m really satisfied with in terms of user experience and integration, though. These tools are of course also only based on transactions from the accounts the user has in these banks, so they do not give you the complete overview of your economy that I was interested in (unless you have all finance information (stocks, loans, savings, debit account, BSU) in one bank). What would have been really interesting, is an online bank where the budgeting integration was really thought through, like what <a href="https://www.simple.com/" target="_blank" rel="external">Simple</a> seem to be building in the US. I can only hope that some banks over here (or a startup) will try to to copy what they&rsquo;re doing. Meanwhile, it looks like I&rsquo;ll have to resort to spreadsheets for my complete budgeting needs&hellip;</p>
+
+<br><p>If you liked this article, you should <a href="https://twitter.com/matsiyatzy" target="_blank" rel="external">follow me on twitter</a>.</p>
+
+
+</article>
+
+
+<nav id="blognav">
+  
+    <div class="prev_post">
+      <a href="/2014/01/05/fitting-faces/" id="article-nav-newer" class="article-nav-link-wrap">
+        <img src="/css/images/prev_post2.png">
+        <p>Fitting faces</p>
+      </a>
+    </div>
+  
+  
+    <div class="next_post">
+      <a href="/2013/01/21/building-a-budgeting-service/" id="article-nav-older" class="article-nav-link-wrap">
+        <img src="/css/images/next_post.png">
+        <p>Building a budgeting service</p>
+      </a>
+    </div>
+  
+</nav>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+<script>
+  var disqus_shortname = 'audunotumblr';
+  
+  var disqus_url = 'http://auduno.github.io/2013/04/07/building-a-budgeting-service-pt2/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+  </div>
+  <div id="footer">
+	<div id="socialicons">
+	</div>
+</div>
+  <script>
+  		function displayMenu() {
+  			document.getElementById('burger').className = "hide";
+  			document.getElementById('noburger').className = "nohide";
+  			document.getElementById('nav').className = "nohide";
+  		}
+
+  		function hideMenu() {
+  			document.getElementById('burger').className = "nohide";
+  			document.getElementById('noburger').className = "hide";
+  			document.getElementById('nav').className = "hide";
+  		}
+
+  		document.getElementById('burger').onclick = displayMenu;
+  		document.getElementById('noburger').onclick = hideMenu;
+  	</script>
+</body>
+</html>

@@ -1,0 +1,1399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Audun M Øygard</title>
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://auduno.github.io/"/>
+  <updated>2016-06-18T19:36:36.000Z</updated>
+  <id>http://auduno.github.io/</id>
+  
+  <author>
+    <name>Audun M Øygard</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Peeking inside Convnets</title>
+    <link href="http://auduno.github.io/2016/05/01/peeking-inside-convnets/"/>
+    <id>http://auduno.github.io/2016/05/01/peeking-inside-convnets/</id>
+    <published>2016-04-30T22:00:00.000Z</published>
+    <updated>2016-06-18T19:36:36.000Z</updated>
+    
+    <content type="html">&lt;p&gt;Convolutional neural networks are used extensively for a number of image related tasks these days. Despite being very successful, they&#39;re mostly seen as &quot;black box&quot; models, since it&#39;s hard to understand what happens inside the network. There are however methods to &quot;peek inside&quot; the convnets, and thus understand a bit more about how they work.&lt;/p&gt;
+
+&lt;p&gt;In a &lt;a href=&quot;/2015/07/29/visualizing-googlenet-classes/&quot;&gt;previous blogpost&lt;/a&gt; I showed how you could use gradient ascent, with some special tricks, to make a convolutional network visualize the classes it&#39;s learnt to classify. In this post I&#39;ll show that the same technique can also be used to &quot;peek inside the network&quot; by visualizing what the individual units in a layer detect. To give you an idea of the results, here&#39;s some highlights of visualizations of individual units from convolutional layer 5 in the &lt;a href=&quot;https://gist.github.com/ksimonyan/fd8800eeb36e276cd6f9#file-readme-md&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;VGG-S&lt;/a&gt; network:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_10_crop.jpg&quot; alt=&quot;Visualization of filter 10 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_334_crop.jpg&quot; alt=&quot;Visualization of filter 334 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+&lt;/figure&gt;
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_345_crop.jpg&quot; alt=&quot;Visualization of filter 345 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_425_crop.jpg&quot; alt=&quot;Visualization of filter 425 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Visualization of units 10,334,425 and 435 in convolutional layer 5 in VGG-S.&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;From top left we can pretty clearly see the head of a cocker spaniel-type dog, the head of some kind of bird, the ears of a canine, and a seaside coastline. Not all unit vizualisations are as clearly defined as these, but most nevertheless give us some interesting insights into what the individual units detect.&lt;/p&gt;
+
+&lt;p&gt;Earlier methods for figuring out what the units detect (e.g. in &lt;a href=&quot;https://arxiv.org/abs/1311.2901&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Zeiler &amp; Fergus&lt;/a&gt;) have been to find images which maximally activate the individual units. Here&#39;s an example of the images (sampled from numerous crops of 100 000 images in the imagenet validation dataset) which give maximal activations for a specific unit in layer 5 of VGG-S:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:1.3em&quot;&gt;
+	&lt;img src=&quot;/images/max_activation_05.jpg&quot; alt=&quot;Images maximally activating filter 5 in VGG-S&quot;&gt;
+	&lt;figcaption&gt;Image crops maximally activating unit 5 in layer 5 VGG-S&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;While this gives us an idea of what the unit is detecting, by visualizing the same unit we can see explicitly the details the unit is focusing on. Applying this technique to the same unit as above, we can see that the unit seems to focus on the characteristic pattern on the muzzle of the dog, seemingly ignoring most other details in the image.&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:1.3em&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_05_crop.jpg&quot; alt=&quot;Visualization of filter 5 in VGG-S&quot; style=&quot;width:200px&quot;&gt;
+	&lt;figcaption&gt;Visualization of unit 5 in convolutional layer 5 in VGG-S&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;We can use our visualization technique to get an overview of what all the different units in a typical layer detects. Here we&#39;ve focused on convolutional layer 5 in VGG-S, which is the final convolutional layer in that specific network. Seemingly there are a large number of units that detect very specific features, such as (from top left below) forests/bushes in the background, buildings with pitched roofs, individual trees, clouds, collars, brass instruments, ship masts, bottle/jug tops, and seemingly the shoulders of people:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_94_crop.jpg&quot; alt=&quot;Visualization of filter 94 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_159_crop.jpg&quot; alt=&quot;Visualization of filter 159 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_201_crop.jpg&quot; alt=&quot;Visualization of filter 201 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_432_crop.jpg&quot; alt=&quot;Visualization of filter 432 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_258_crop.jpg&quot; alt=&quot;Visualization of filter 258 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_7_crop.jpg&quot; alt=&quot;Visualization of filter 7 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_136_crop.jpg&quot; alt=&quot;Visualization of filter 136 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_88_crop.jpg&quot; alt=&quot;Visualization of filter 88 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_449_crop.jpg&quot; alt=&quot;Visualization of filter 449 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Visualization of (from top left) unit 94,159,201,432,258,7,136,88 &amp; 449 in convolutional layer 5 in VGG-S&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;What is interesting to notice, is that the network doesn&#39;t seem to have learned detailed representations of faces. In e.g. the visualization featuring the collar, the face looks more like a spooky flesh-colored blob than a face. This might be an artifact of the visualization process, but it&#39;s not entirely unlikely that the network have either not found it necessary to learn the details, or not had the capacity to learn them.&lt;/p&gt;
+
+&lt;p&gt;There also are a surprisingly large number of units that detect dog-related features. I counted somewhere around 50, out of 512 units in the layer in total, which means a surprising 10% of the network may be dedicated solely to dogs. Here&#39;s a small sample of these:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_249_crop.jpg&quot; alt=&quot;Visualization of filter 249 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_468_crop.jpg&quot; alt=&quot;Visualization of filter 468 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+&lt;/figure&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_170_crop.jpg&quot; alt=&quot;Visualization of filter 170 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_75_crop.jpg&quot; alt=&quot;Visualization of filter 75 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Visualization of (from top left) unit 249,468,170 &amp; 75 in convolutional layer 5 in VGG-S&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;On the other hand I could only find a single unit that clearly detected cat features (!):&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:1.3em&quot;&gt;
+	&lt;img src=&quot;/images/vgg_filter_484_crop.jpg&quot; alt=&quot;Visualization of filter 484 in VGG-S&quot; style=&quot;width:200px&quot;&gt;
+	&lt;figcaption&gt;Visualization of unit 484 in convolutional layer 5 in VGG-S&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Some of the units are more general shape detectors, detecting edges, circles, corners, cones or similar:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_116_crop.jpg&quot; alt=&quot;Visualization of filter 116 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_125_crop.jpg&quot; alt=&quot;Visualization of filter 125 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_364_crop.jpg&quot; alt=&quot;Visualization of filter 364 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_422_crop.jpg&quot; alt=&quot;Visualization of filter 422 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_433_crop.jpg&quot; alt=&quot;Visualization of filter 433 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_265_crop.jpg&quot; alt=&quot;Visualization of filter 265 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Visualization of (from top left) unit 116,125,364,422,433 &amp; 265 in convolutional layer 5 in VGG-S&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;and some seem to detect textures, such as these detecting leopard fur and wood grain:
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_27_crop.jpg&quot; alt=&quot;Visualization of filter 27 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_497_crop.jpg&quot; alt=&quot;Visualization of filter 497 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_243_crop.jpg&quot; alt=&quot;Visualization of filter 243 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Visualization of (from left) unit 27,497 &amp; 265 in convolutional layer 5 in VGG-S&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;/p&gt;&lt;p&gt;Not all of the unit visualizations are so easy to interpret, such as these:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_252_crop.jpg&quot; alt=&quot;Visualization of filter 252 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_164_crop.jpg&quot; alt=&quot;Visualization of filter 164 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vggs_filter_300_crop.jpg&quot; alt=&quot;Visualization of filter 300 in VGG-S&quot; style=&quot;width:200px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Visualization of (from left) unit 252,164 &amp; 300 in convolutional layer 5 in VGG-S&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;However, if we find images that maximally activate these units, we can see that they detect respectively grids and more abstract features such as out-of-focus backgrounds, and shallow-focus/macro images.&lt;/p&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/max_activations_252.jpg&quot; alt=&quot;Images maximally activating filter 252 in VGG-S&quot;&gt;
+	&lt;img src=&quot;/images/max_activations_164.jpg&quot; alt=&quot;Images maximally activating filter 164 in VGG-S&quot;&gt;
+	&lt;img src=&quot;/images/max_activations_300.jpg&quot; alt=&quot;Images maximally activating filter 300 in VGG-S&quot;&gt;
+	&lt;figcaption&gt;Images maximally activating (from top) unit 252,164 &amp; 300 in convolutional layer 5 in VGG-S&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Overall, this visualization of the units give us useful insight into what the units in VGG-S detect. However, VGG-S is a relatively shallow network by todays standards, with only 5 convolutional layers. What about visualizing units in deeper networks, such as VGG-16 or GoogLeNet? Unfortunately, this doesn&#39;t seem to work as well, though it gives us some interesting results. Here for instance, is a visualization of some units in convolutional layer 4c from GoogLeNet:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/googlenet_4c_0411.jpg&quot; alt=&quot;Visualization of filter 411 in Googlenet&quot; style=&quot;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/googlenet_4c_0418.jpg&quot; alt=&quot;Visualization of filter 418 in Googlenet&quot; style=&quot;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/googlenet_4c_0223.jpg&quot; alt=&quot;Visualization of filter 223 in Googlenet&quot; style=&quot;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/googlenet_4c_0423.jpg&quot; alt=&quot;Visualization of filter 423 in Googlenet&quot; style=&quot;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/googlenet_4c_0390.jpg&quot; alt=&quot;Visualization of filter 390 in Googlenet&quot; style=&quot;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/googlenet_4c_0340.jpg&quot; alt=&quot;Visualization of filter 340 in Googlenet&quot; style=&quot;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Visualization of (from top left) unit 411,418,223,423,390 &amp; 340 in convolutional layer 4c in GoogLeNet&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;You might recognize some of these as the &quot;puppyslugs&quot; from DeepDream. While these visualization are more detailed than the ones we get from VGG-S, they also have a tendency to look more psychedelic and unreal. It is not completely clear why this happens, but it seems like the center of the visualization generally seems to be a good representation of what the unit detects, while the edges gives us lots of random details.&lt;/p&gt;
+
+&lt;!-- 4c 418, 4a tree --&gt;
+
+&lt;p&gt;Similarly for VGG-16, the visualizations we get are much harder to interpret, though we can see in some of these that the unit seems to detect respectively some kind of dog, a theater and a brass instrument (with players as blobs).&lt;/p&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/vgg16_filter_13.jpg&quot; alt=&quot;Visualization of filter 13 in VGG-16&quot; style=&quot;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg16_filter_10.jpg&quot; alt=&quot;Visualization of filter 10 in VGG-16&quot; style=&quot;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg16_filter_0.jpg&quot; alt=&quot;Visualization of filter 0 in VGG-16&quot; style=&quot;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg16_filter_4.jpg&quot; alt=&quot;Visualization of filter 4 in VGG-16&quot; style=&quot;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg16_filter_17.jpg&quot; alt=&quot;Visualization of filter 17 in VGG-16&quot; style=&quot;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/vgg16_filter_2.jpg&quot; alt=&quot;Visualization of filter 2 in VGG-16&quot; style=&quot;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Visualization of (from top left) unit 13,10,0,4,17 &amp; 2 in convolutional layer 5 in VGG-16&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;A hypothetical reason that these visualizations doesn&#39;t work as well for deeper networks, has to do with the nature of the convolutional networks. What each convolutional layer tries to do is to be able to detect specific features, without being sensitive to irrelevant variations such as pose, lighting, partial obstruction etc. In this sense, each convolutional layer &quot;compresses&quot; information and throws away irrelevant details such as pose etc. This works great when doing detection, which is what the network is actually meant to do. However, when we try to run the network in reverse and generate feasible images, for each layer we have to &quot;guess&quot; the irrelevant structural details that have been thrown away, and as the choices made in one layer might not be coordinated with other layers, this in effect introduces some amount of &quot;structural noise&quot; for each layer we have to run in reverse. This might be a minor issue for networks with few layers, such as VGG-S, but as we introduce more and more layers, the cumulative &quot;structural noise&quot; might simply overpower the generated structure in the image, and make the image look much less like what we would recognize as e.g. a dog, and more like what we recognize as the &quot;puppyslugs&quot; seen in DeepDream.&lt;/p&gt;
+
+&lt;p&gt;More investigations might have to be done to tell whether this is actually the reason that visualization fails for deeper networks, but I wouldn&#39;t be surprised if this is part of the reason. Below I briefly describe the technical details of how I made these visualizations.&lt;/p&gt;
+
+&lt;h4&gt;Technical details&lt;/h4&gt;
+
+&lt;p&gt;To visualize the features, I&#39;m using pretty much the same technique I described earlier in &lt;a href=&quot;&quot;&gt;this blogpost&lt;/a&gt;, starting from a randomly initialized image, and doing gradient ascent on the image with regards to the activation of a specific unit. We also use blurring between gradient descent iterations (which is equivalent to regularization via a smoothness prior), and gradually reduce the &quot;width&quot; of the blur during gradient descent in order to get natural-looking images. Since units in intermediate layers actually output a grid of activations over the entire image, we choose to optimize a single point in this grid, which gives us a feature visualization corresponding to the units receptive field.&lt;/p&gt;
+
+&lt;p&gt;Another trick I also used, was to modify the network to use leaky ReLUs instead of regular ReLUs, since otherwise the gradient will usually be zero when we start from a blank image, thus hindering initial gradient ascent. Since this modification doesn&#39;t seem to have significant effect on the predictions of the network, we can assume it doesn&#39;t have a major impact on the feature visualizations.&lt;/p&gt;
+
+&lt;p&gt;I&#39;ve released the code I used to make these visualizations, so &lt;a href=&quot;&quot;&gt;take a look&lt;/a&gt; if you want to know more details.&lt;/p&gt;
+
+&lt;h4&gt;Similar work&lt;/h4&gt;
+
+&lt;p&gt;There has been similar work on visualizing convolutional networks by e.g. Zeiler and Fergus and lately by Yosinski, Nugyen et al. In a &lt;a href=&quot;http://arxiv.org/abs/1602.03616&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;recent work&lt;/a&gt; by Nguyen, they manage to visualize features very well, based on a technique they called &quot;mean-image initialization&quot;. Since I started writing this blog post, they&#39;ve also published a &lt;a href=&quot;https://arxiv.org/abs/1605.09304&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;new paper&lt;/a&gt; using Generative Adversarial Networks as priors for the visualizations, which lead to far far better visualizations than the ones I&#39;ve showed above. If you are interested, do take a look at their paper or &lt;a href=&quot;https://github.com/Evolving-AI-Lab/synthesizing&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;the code&lt;/a&gt; they&#39;ve released!&lt;/p&gt;
+
+&lt;p&gt;If you enjoyed this post, you should  &lt;a href=&quot;https://twitter.com/matsiyatzy&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;follow me on twitter&lt;/a&gt;!&lt;/p&gt;</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Convolutional neural networks are used extensively for a number of image related tasks these days. Despite being very successful, they&#39;re
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Drawing with GoogLeNet</title>
+    <link href="http://auduno.github.io/2015/08/04/drawing-with-googlenet/"/>
+    <id>http://auduno.github.io/2015/08/04/drawing-with-googlenet/</id>
+    <published>2015-08-03T22:00:00.000Z</published>
+    <updated>2016-05-03T20:33:56.000Z</updated>
+    
+    <content type="html">&lt;p&gt;In my &lt;a href=&quot;/post/125362849838/visualizing-googlenet-classes&quot;&gt;previous post&lt;/a&gt;, I showed how you can use deep neural networks to generate image examples of the classes it&amp;rsquo;s been trained to classify. Since we&amp;rsquo;ve already started using deep neural networks in ways they were never intended to be used, let&amp;rsquo;s abuse them some more.&lt;/p&gt;
+
+&lt;p&gt;There&amp;rsquo;s nothing constraining us to generate image examples of one class at a time. Let&amp;rsquo;s see what happens if we try to generate two class visualizations close to each other, such as for instance a gorilla and a french horn&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:15px&quot;&gt;
+	&lt;img src=&quot;/images/gorilla_french-horn_crop.jpg&quot; alt=&quot;Gorilla playing the french horn&quot;&gt;
+	&lt;figcaption&gt;Gorilla playing an odd-looking french horn&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Well, it &lt;em&gt;kind of&lt;/em&gt; looks like a gorilla playing the french horn. Or let&amp;rsquo;s try dressing up a gibbon via &amp;ldquo;mixing&amp;rdquo; the gibbon class with some of the clothing classes:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;margin-bottom:15px;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/gibbon_poncho_crop.jpg&quot; alt=&quot;Gibbon in a poncho&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/gibbon_labcoat_crop.jpg&quot; alt=&quot;Gibbon in a labcoat&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;A gibbon in a poncho (left) and an ET-looking gibbon in a labcoat (right)&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Or what about making some scenic nature drawings, such as some foxes underneath an erupting volcano:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:15px&quot;&gt;
+	&lt;img src=&quot;/images/fox_volcano_3_crop.jpg&quot; alt=&quot;Foxes beneath an erupting volcano&quot;&gt;
+	&lt;figcaption&gt;Foxes beneath an erupting volcano&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Or a ballpoint pen drawing a castle:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:15px&quot;&gt;
+	&lt;img src=&quot;/images/pen_and_castle6_crop.jpg&quot; alt=&quot;Pen drawing a castle&quot;&gt;
+	&lt;figcaption&gt;A vague ballpoint pen drawing a castle&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;These mixes of classes &lt;em&gt;kind of&lt;/em&gt; work out, though it should be noted that these are the best selections from a number of mixes I tried. It&amp;rsquo;s also tempting to create mixes of animal classes to generate some new kind of monster breeds, but most of the time this doesn&amp;rsquo;t work so well. Here&amp;rsquo;s some I tried though, a mix of a scotch terrier and a tarantula, and a mix of a bee and a gibbon:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;margin-bottom:15px;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/mix_scotch-terrier_tarantula2_crop.jpg&quot; alt=&quot;Terrier/Tarantula&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/gibbon_and_bee_crop.jpg&quot; alt=&quot;Bee/Gibbon&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;A slightly spidery looking scotch terrier (left) and a slightly gibbon-looking bee (right)&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Another fun thing we can do when generatinge images is to do the gradient ascent randomly along paths instead of on a single point. This of course takes a bit longer time, but it allows us to &amp;ldquo;draw&amp;rdquo; with the output, such as for instance drawing a mountain range of alps:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:15px&quot;&gt;&lt;a id=&quot;alps&quot; href=&quot;javascript:;&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;
+		&lt;img src=&quot;/images/sine_alps_crop_thumb.jpg&quot; alt=&quot;Alps&quot;&gt;&lt;/a&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;or a line of jellyfish:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:15px&quot;&gt;&lt;a id=&quot;jellyfish&quot; href=&quot;javascript:;&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;
+		&lt;img src=&quot;/images/jellyfish_straight_path_crop_thumb.jpg&quot; alt=&quot;Jellyfish&quot;&gt;&lt;/a&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;or a circle of junco birds:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:15px&quot;&gt;&lt;a id=&quot;birds&quot; href=&quot;javascript:;&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;
+		&lt;img src=&quot;/images/circle_junco_thumb.jpg&quot; alt=&quot;Circle of birds&quot;&gt;&lt;/a&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;If we try to fill a larger region with visualizations of a class, we can also apply clipping masks, i.e. forcing the pixels to zero in some pattern during gradient ascent. So we can for instance use letters as clipping masks and try to create the alphabet with animals:&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/letter_a_apes_gibbon2.jpg&quot; alt=&quot;An A of apes&quot;&gt;
+	&lt;figcaption&gt;An A of apes&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;figure&gt;
+	&lt;img src=&quot;/images/letter_b_bear4.jpg&quot; alt=&quot;A B of bears&quot;&gt;
+	&lt;figcaption&gt;A B of bears&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;figure style=&quot;margin-bottom:15px&quot;&gt;
+	&lt;img src=&quot;/images/letter_c_cobra3.jpg&quot; alt=&quot;A C of cobras&quot;&gt;
+	&lt;figcaption&gt;And a C of cobras&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Alright, that&amp;rsquo;s enough abuse of our deep neural network for today. I&amp;rsquo;ve just scratched the surface here, but there are several fun ways to use deep neural networks for creative visual work with a bit of experimentation (and lots of patience). I&amp;rsquo;m going to put the ipython notebooks I used to make these examples in the &lt;a href=&quot;https://github.com/auduno/deepdraw&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;deepdraw repository&lt;/a&gt; as soon as I&amp;rsquo;ve cleaned up the code, so stay tuned &lt;a href=&quot;https://twitter.com/matsiyatzy&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;via twitter&lt;/a&gt;.&lt;/p&gt;
+
+
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+  window.onload = function() {
+  $(&quot;a#birds&quot;).click(function() {
+    $.fancybox(
+      [
+        {
+          &#39;href&#39; : &#39;/images/circle_junco.jpg&#39;,
+          &#39;title&#39; : &#39;A circle of birds&#39;
+        }
+      ],{
+      &#39;padding&#39;         : 0,
+      &#39;transitionIn&#39;		: &#39;none&#39;,
+      &#39;transitionOut&#39;		: &#39;none&#39;,
+      &#39;type&#39; : &#39;image&#39;,
+      &#39;changeFade&#39; : 0
+      }
+    )
+  });
+  $(&quot;a#jellyfish&quot;).click(function() {
+    $.fancybox(
+      [
+        {
+          &#39;href&#39; : &#39;/images/jellyfish_straight_path_crop.jpg&#39;,
+          &#39;title&#39; : &#39;A line of jellyfish&#39;
+        }
+      ],{
+      &#39;padding&#39;         : 0,
+      &#39;transitionIn&#39;		: &#39;none&#39;,
+      &#39;transitionOut&#39;		: &#39;none&#39;,
+      &#39;type&#39; : &#39;image&#39;,
+      &#39;changeFade&#39; : 0
+      }
+    )
+  });
+  $(&quot;a#alps&quot;).click(function() {
+    $.fancybox(
+      [
+        {
+          &#39;href&#39; : &#39;/images/sine_alps_crop.jpg&#39;,
+          &#39;title&#39; : &#39;An odd looking mountain range of alps&#39;
+        }
+      ],{
+      &#39;padding&#39;         : 0,
+      &#39;transitionIn&#39;		: &#39;none&#39;,
+      &#39;transitionOut&#39;		: &#39;none&#39;,
+      &#39;type&#39; : &#39;image&#39;,
+      &#39;changeFade&#39; : 0
+      }
+    )
+  });
+}
+&lt;/script&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;In my &lt;a href=&quot;/post/125362849838/visualizing-googlenet-classes&quot;&gt;previous post&lt;/a&gt;, I showed how you can use deep neural networks to gene
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Visualizing GoogLeNet Classes</title>
+    <link href="http://auduno.github.io/2015/07/29/visualizing-googlenet-classes/"/>
+    <id>http://auduno.github.io/2015/07/29/visualizing-googlenet-classes/</id>
+    <published>2015-07-28T22:00:00.000Z</published>
+    <updated>2016-05-03T20:37:27.000Z</updated>
+    
+    <content type="html">&lt;p&gt;Ever wondered what a deep neural network thinks a Dalmatian should look like? Well, wonder no more.&lt;/p&gt;
+
+&lt;p&gt;Recently Google &lt;a href=&quot;http://googleresearch.blogspot.no/2015/06/inceptionism-going-deeper-into-neural.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;published a post&lt;/a&gt; describing how they managed to use deep neural networks to generate class visualizations and modify images through the so called &amp;ldquo;inceptionism&amp;rdquo; method. They later published the code to modify images via the inceptionism method yourself, however, they didn&amp;rsquo;t publish code to generate the class visualizations they show in the same post.&lt;/p&gt;
+
+&lt;p&gt;While I never figured out &lt;em&gt;exactly&lt;/em&gt; how Google generated their class visualizations, after butchering the &lt;a href=&quot;https://github.com/google/deepdream&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;deepdream code&lt;/a&gt; and &lt;a href=&quot;https://github.com/kylemcdonald/deepdream/blob/master/dream.ipynb&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this&lt;/a&gt; ipython notebook from Kyle McDonald, I managed to coach GoogLeNet into drawing these:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_33.jpg&quot; alt=&quot;Loggerhead turtle&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_0783.png&quot; alt=&quot;Screws&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Generated images from class &amp;ldquo;Loggerhead turtle&amp;rdquo; (left), &amp;ldquo;Screws&amp;rdquo; (right)&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_260.jpg&quot; alt=&quot;Chow chow&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_0281.png&quot; alt=&quot;Tabby cat&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Generated images from class &amp;ldquo;Chow chow&amp;rdquo; (left), &amp;ldquo;Tabby cat&amp;rdquo; (right)&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_0294.png&quot; alt=&quot;Brown bear&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_254.jpg&quot; alt=&quot;Pug&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Generated images from class &amp;ldquo;Brown bear&amp;rdquo; (left), &amp;ldquo;Pug&amp;rdquo; (right)&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_bee_309.jpg&quot; alt=&quot;Bee&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_examples_76.jpg&quot; alt=&quot;Tarantula&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Generated images from class &amp;ldquo;Bee&amp;rdquo; (left), &amp;ldquo;Tarantula&amp;rdquo; (right)&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center;margin-bottom:15px&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_examples_0850.png&quot; alt=&quot;Teddybear&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_0251.png&quot; alt=&quot;Dalmatians&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Generated images from class &amp;ldquo;Teddybear&amp;rdquo; (left), &amp;ldquo;Dalmatian&amp;rdquo; (right)&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;It should be mentioned that all of these images are generated completely from noise, so all information is from the deep neural network, see an example of the gradual generation process below:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:1.3em&quot;&gt;
+	&lt;img src=&quot;/images/anim_230_1437687161.GIF&quot; alt=&quot;gradual learning process&quot;&gt;
+	&lt;figcaption&gt;Generation of image example for class &amp;ldquo;Shetland sheepdog&amp;rdquo;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;In this post I&amp;rsquo;ll describe a bit more details on how I generated these images from GoogLeNet, but for those eager to try this out yourself, jump over to &lt;a href=&quot;https://github.com/auduno/deepdraw&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;github&lt;/a&gt; where I&amp;rsquo;ve published ipython notebooks to do this yourself. For more examples of generated images, see some highlights &lt;a href=&quot;https://goo.gl/photos/8qcvjnYBQVSGG2eN6&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;here&lt;/a&gt;, or visualization of all 1000 imagenet classes &lt;a href=&quot;https://goo.gl/photos/FfsZZektqpZkdDnKA&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;br&gt;&lt;p&gt;Aside from the fact that our network seems to be drawing with rainbow crayons, it&amp;rsquo;s remarkable to see how detailed the images are. They&amp;rsquo;re far from perfect representations of the objects, but they give us valuable insight into what information the network thinks is essential for an object, and what isn&amp;rsquo;t. For instance, the tabby cats seem to lack faces while the dalmatians are mostly dots. Presumably this doesn&amp;rsquo;t mean that the network hasn&amp;rsquo;t learned the rest of the details of these objects, but simply that the rest of the details are not very discriminate characteristics of that class, so they&amp;rsquo;re ignored when generating the image.&lt;/p&gt;
+
+&lt;p&gt;As google also noted in their post, there are often also details that actually aren&amp;rsquo;t part of the object. For instance, in this visualization of the &amp;ldquo;Saxophone&amp;rdquo; class there&amp;rsquo;s a vague saxophone player holding the instrument:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:1.3em&quot;&gt;
+	&lt;img src=&quot;/images/sax_777.jpg&quot; alt=&quot;saxophone player&quot;&gt;
+	&lt;figcaption&gt;Visualization of class &amp;ldquo;Saxophone&amp;rdquo;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;This is presumably because most of the example images used for training had a saxophone player in them, so the network sees them as relevant parts of the object.&lt;/p&gt;
+
+&lt;p&gt;In the next part I&amp;rsquo;ll go a bit into details on how the gradient ascent is done. Note : this is for specially interested, with some knowledge of deep neural networks being necessary.&lt;/p&gt;
+
+&lt;h4&gt;Generating class visualizations with GoogLeNet&lt;/h4&gt;
+
+&lt;p&gt;In order to make a deep neural network generate images, we use a simple trick. Instead of using backpropagation to optimize the weights, which we do during training, we keep the weights fixed and instead optimize the input pixels. However, trying to use unconstrained gradient ascent to get a feasible class visualization works poorly, giving us images such as the one below.&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:1.3em&quot;&gt;
+	&lt;img src=&quot;/images/unblurred_opt_161.jpg&quot; alt=&quot;unconstrained optimization&quot;&gt;
+	&lt;figcaption&gt;Unconstrained gradient ascent on class &amp;ldquo;Basset hound&amp;rdquo;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;The reason for this is that our unconstrained gradient ascent quickly runs into local maximums that are hard to get out of, with high frequency and low frequency information competing and creating noise. To get around this, we can choose to just optimize the low-frequency information first, which will give us the general structure of the image, and then gradually introduce high-frequency details as we continue gradient ascent, in effect &amp;ldquo;washing out&amp;rdquo; an image. Doing this in a slow way, we manage to ensure that optimization converges with a feasible image. There are two possible routes for doing this:&lt;/p&gt;
+
+&lt;ul&gt;&lt;li&gt;applying gaussian blur to the image after we&amp;rsquo;ve applied the gradient step, starting with a large sigma and slowly decreasing it as we iterate&lt;/li&gt;
+	&lt;li&gt;applying gaussian blur to the gradient, starting with a large sigma and slowly decreasing it as we iterate (note that in this case we also have to use L2-regularization of the pixels to gradually decrease irrelevant noise from previous iterations)&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;I&amp;rsquo;ve had best results with the former approach, which is the approach I used to generate the images above, but it might be that someone might get better results with blurring the gradient via messing about with the parameters some more.&lt;/p&gt;
+
+&lt;p&gt;While this approach works okayish for relatively shallow networks like Alexnet, a problem you&amp;rsquo;ll quickly run into when doing this with GoogLeNet, is that as you gradually reduce the amount of blurring applied, the image gets saturated with high-frequency noise like this:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:1.3em&quot;&gt;
+	&lt;img src=&quot;/images/loss3_161_3.jpg&quot; alt=&quot;unconstrained optimization&quot;&gt;
+	&lt;figcaption&gt;Gradient ascent on class &amp;ldquo;Basset hound&amp;rdquo; with gradually decreasing blurring&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;The reason for this problem is a bit uncertain, but might have to do with the depth of the network. In the &lt;a href=&quot;http://arxiv.org/abs/1409.4842&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;original paper&lt;/a&gt; describing the GoogLeNet architecture, the authors mention that since the network is very deep, with 22 layers, they had to add two auxiliary classifiers at earlier points in the network to efficiently propagate gradients from the loss all the way back to the first layers. These classifiers, which were only used during training, ensured proper gradient flow and made sure that early layers were getting trained as well.&lt;/p&gt;
+
+&lt;p&gt;In our case, the pixels of the image are even further ahead in the network than first layer, so it might not seem so surprising that we have some problems with gradients and recovering a feasible image. Exactly why this affects high-frequency information more than low-frequency information is a bit hard to understand, but it might have to do with gradients for high-frequency information being more sensitive and unstable, due to larger weights for high-frequency information, as mentioned by Yosinski in the appendix to &lt;a href=&quot;http://arxiv.org/abs/1506.06579&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this paper&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;While the auxiliary classifiers in GoogleNet are only used during training, there&amp;rsquo;s nothing stopping us from using them for generating images. Doing gradient ascent on the first auxiliary classifier, we get this:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:1.3em&quot;&gt;
+	&lt;img src=&quot;/images/loss1_161_2.jpg&quot; alt=&quot;auxiliary classifier 1 optimization&quot;&gt;
+	&lt;figcaption&gt;Gradient ascent on class &amp;ldquo;Basset hound&amp;rdquo; with auxiliary classifier 1&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;while the second auxiliary classifier gives us this:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:1.3em&quot;&gt;
+	&lt;img src=&quot;/images/loss2_161_2.jpg&quot; alt=&quot;auxiliary classifier 2 optimization&quot;&gt;
+	&lt;figcaption&gt;Gradient ascent on class &amp;ldquo;Basset hound&amp;rdquo; with auxiliary classifier 2&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;As can be seen, the first classifier easily manages to generate an image without high-frequency noise , probably because it&amp;rsquo;s &amp;ldquo;closer&amp;rdquo; to the early layers. However, it does not retain the overall structure of the object, and peppers the image with unnecessary details. The reason for the lack of structure is that the deeper a network is, the more structure the network is able to learn. Since the first classifier is so early in the network, it has not yet learned all of the structures deeper layers has. We can similarly see that the second classifier has learned some more structure, but has slightly more problems with high-frequency noise (though not as bad as the final classifier).&lt;/p&gt;
+
+&lt;p&gt;So, is there any way to combine the gradients from these classifiers in order to ensure both structure and high-frequency information is retained? Doing gradient ascent on all three classifiers at the same time unfortunately does not help us much, as we get both poor structure and noisy high-frequency information. Instead, what we can do is to first do gradient ascent from the final classifier, as far as we can before we run into noise, then switch to doing gradient ascent from the second classifier for a while to &amp;ldquo;fill in&amp;rdquo; details, then finally switching to doing gradient ascent from the first classifier to get the final fine-grained details.&lt;/p&gt;
+
+&lt;p&gt;Another trick we used, both to get larger images and better details, was to scale up the image at certain intervals, similar to the &amp;ldquo;octaves&amp;rdquo; used in the deepdream code. Since the input image the network optimizes is restricted to 224x224 pixels, we randomly crop a part of the scaled up image to optimize at each step. Altogether, this gives us this result:&lt;/p&gt;
+
+&lt;figure style=&quot;margin-bottom:1.3em&quot;&gt;
+	&lt;img src=&quot;/images/anim_161_1437760444.GIF&quot; alt=&quot;optimization&quot;&gt;
+	&lt;figcaption&gt;Gradual generation of image from class &amp;ldquo;Basset hound&amp;rdquo; with scaling and switching between classifiers&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Though this approach gives us nicely detailed images, note that both the scaling and the auxiliary classifiers tend to degrade the overall structure of the image, and particularly larger objects often tend to be &amp;ldquo;torn apart&amp;rdquo;, such as this dog gradually turning into multiple dogs.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/anim_161_1437685108.GIF&quot; alt=&quot;optimization&quot;&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Since the network actually seems to be capable of creating more coherent objects, it&amp;rsquo;s possible that we could generate better images with clever priors and proper learning rates, though I didn&amp;rsquo;t have any luck with it so far. Purely hypothetically, deep networks with better gradient flow might also be able to recover more detailed and structured images. I&amp;rsquo;ve been curious to see if networks with batch normalization or Parametric ReLUs are better at generating images since they seem to have better gradient flow, so if anyone has a pretrained caffe model with PReLUs or batch normalization, let me know!&lt;/p&gt;
+
+&lt;p&gt;Another detail that&amp;rsquo;s worthy to note is that we did not optimize directly the loss layer, as the softmax denominator makes the gradient ascent put too much weight on reducing other class probabilities. Instead, we optimize the next to last layer, where we can make the gradient ascent focus exclusively on optimizing a likely image from our class.&lt;/p&gt;
+
+&lt;p&gt;As a final side note it&amp;rsquo;s very interesting to compare the images AlexNet and GoogLeNet generate. While the comparison might not be entirely representative, it certainly looks like Googlenet has learned a lot more details and structure than AlexNet.&lt;/p&gt;
+
+&lt;figure style=&quot;margin-left:auto;margin-right:auto;text-align:center;margin-bottom:1.3em&quot;&gt;
+	&lt;img src=&quot;/images/alexnet_382.jpg&quot; alt=&quot;alexnet-monkeys&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;img src=&quot;/images/deepdraw_example_382.jpg&quot; alt=&quot;googlenet-monkeys&quot; style=&quot;width:300px;display:inline-block;padding-left:15px;padding-right:15px&quot;&gt;
+	&lt;figcaption&gt;Generated images from class &amp;ldquo;Squirrel monkey&amp;rdquo; with AlexNet (left) and GoogLeNet (right).&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Now go ahead and &lt;a href=&quot;https://github.com/auduno/deepdraw&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;try it yourself&lt;/a&gt;! If you figure out other tricks or better choices of parameters for the gradient ascent (there almost certainly are), or just create some cool visualizations, let &lt;a href=&quot;https://twitter.com/matsiyatzy&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;me know via twitter&lt;/a&gt;!&lt;/p&gt;
+
+&lt;p&gt;A big hat tip to google and their original deepdream code, as well as &lt;a href=&quot;https://twitter.com/kcimc&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Kyle McDonald&lt;/a&gt;, which had the original idea of gradually reducing sigma of gaussian blurring to &amp;ldquo;wash out&amp;rdquo; the image, and kindly shared his code.&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Ever wondered what a deep neural network thinks a Dalmatian should look like? Well, wonder no more.&lt;/p&gt;
+
+&lt;p&gt;Recently Google &lt;a href=&quot;http
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Estimation in Sequential Analysis</title>
+    <link href="http://auduno.github.io/2015/01/04/estimation-in-sequential-analysis/"/>
+    <id>http://auduno.github.io/2015/01/04/estimation-in-sequential-analysis/</id>
+    <published>2015-01-03T23:00:00.000Z</published>
+    <updated>2016-05-01T12:05:59.000Z</updated>
+    
+    <content type="html">&lt;p&gt;In the &lt;a href=&quot;/2014/12/25/rapid-a-b-testing-with-sequential-analysis/&quot;&gt;previous post&lt;/a&gt; I introduced the Sequential Generalized Likelihood Ratio test, which is a sequential A/B-test that in most cases require much smaller sample sizes than the classical fixed sample-size test. In this post I’m going to explain some problems regarding estimation in sequential analysis tests in general, and how they can be solved.&lt;/p&gt;
+
+&lt;p&gt;Sequential analysis tests, such as the sequential GLR test I wrote about in my &lt;a href=&quot;/2014/12/25/rapid-a-b-testing-with-sequential-analysis/&quot;&gt;previous post&lt;/a&gt;, allows us to save time by stopping the test early when it’s possible. However, the fact that the test can stop early has some subtle consequences for the estimates we make after the test is done. Let’s take a look at the average maximum likelihood estimate when applied to the “comparison of proportions” sequential GLR test:&lt;/p&gt;
+
+&lt;figure class=&quot;narrowfig&quot;&gt;&lt;img src=&quot;/images/estimate_01.png&quot; alt=&quot;average estimate vs true difference&quot;&gt;&lt;/figure&gt;
+
+&lt;p&gt;It seems like the average estimate is slightly off - to get a better view, let’s take a look at just the bias, i.e. the average ML estimate minus the true difference :&lt;/p&gt;
+
+&lt;figure class=&quot;narrowfig&quot;&gt;&lt;img src=&quot;/images/estimate_02.png&quot; alt=&quot;bias vs true difference&quot;&gt;&lt;/figure&gt;
+
+&lt;p&gt;The estimates are (almost imperceptably) biased inwards when the true difference is close to zero, biased outwards when the difference between proportions are relatively large, and then unbiased again at the extreme ends. This is quite unlike fixed sample-size tests, which have no such bias at all. The reason for this difference is that there is an interaction between the stopping time and the estimate - sequential tests stop early when our samples are more extreme than some threshold, which means that the final estimates we get more often than not will be more extreme than what is true.&lt;/p&gt;
+
+&lt;p&gt;This might become a bit more intuitive if we take a look at a typical sample path for the MLE and the approximate thresholds for stopping the test in terms of the MLE. In this case the true difference is 0.2, and we do a two-sided sequential GLR test with α-level 0.05, β-level 0.10 and indifference region of size 0.1 :&lt;/p&gt;
+
+&lt;figure class=&quot;narrowfig&quot;&gt;&lt;img src=&quot;/images/estimate_thresholds_01.png&quot; alt=&quot;ML sample path&quot;&gt;&lt;/figure&gt;
+
+&lt;p&gt;As we collect data, the ML estimates jump quite a bit around before converging towards the true difference. As it jumps around, it&#39;s likely to cross the threshold at a higher point (as seen happening here after around 70 samples) and thus stop the test at this point. Similarly, when the true difference is close to zero, it will usually stop at values slightly closer to zero than the actual difference. What about the vanishing bias at the extremes? This is because at the most extreme values, the test will almost invariably stop at only a handful of samples, and thus the interaction between the stopping time and the estimate practically disappears.&lt;/p&gt;
+
+&lt;p&gt;So what can we do about this problem? Unfortunately, there is not an uniformly &lt;em&gt;best&lt;/em&gt; estimator we can use as a replacement for the MLE. Some of the estimators suggested to fix the bias have much larger mean squared error than the MLE due to having larger variance. However, a simple and commonly used correction (and what we use in the sequential A/B-testing library &lt;a href=&quot;https://github.com/auduno/seglir/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;SeGLiR&lt;/a&gt;), is the &lt;em&gt;Whitehead bias-adjusted&lt;/em&gt; estimate. The Whitehead bias-adjusted estimate is based on the fact that we know that:&lt;/p&gt;
+
+&lt;p style=&quot;text-align:center;&quot;&gt;&lt;span id=&quot;tex1&quot;&gt;E(\hat{\theta}) = \theta + b(\theta)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;where &lt;span id=&quot;tex7&quot;&gt;theta&lt;/span&gt; is the true difference, &lt;span id=&quot;tex8&quot;&gt;theta_hat&lt;/span&gt; is our estimate of the difference, and &lt;span id=&quot;tex5&quot;&gt;b(theta)&lt;/span&gt; is the bias of our test at &lt;span id=&quot;tex6&quot;&gt;theta&lt;/span&gt;. Given an estimate &lt;span id=&quot;tex3&quot;&gt;theta_hat&lt;/span&gt;, we can then find an approximately bias-adjusted estimate by solving for &lt;span id=&quot;tex4&quot;&gt;theta_sim&lt;/span&gt; so that:&lt;/p&gt;
+
+&lt;p style=&quot;text-align:center;&quot;&gt;&lt;span id=&quot;tex2&quot;&gt;\tilde{\theta} + b(\tilde{\theta}) = \hat{\theta}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This can be found by simple simulation and some optimization. Note that there are also other alternative estimators, such as the &lt;a href=&quot;http://www.tandfonline.com/doi/abs/10.1081/BIP-120037195?journalCode=lbps20&amp;#.VJ7EIBdAEM&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;conditional MLE&lt;/a&gt;, but since the brute-force simulation approach to this would take &lt;em&gt;much&lt;/em&gt; more time than the Whitehead bias-adjustment, it&#39;s not something I&#39;ve implemented in SeGLiR currently.&lt;/p&gt;
+
+&lt;p&gt;One important thing to note is that the bias problem is not specific to the sequential GLR test or even sequential frequentist tests. In fact any test with a stopping rule that depends on the parameter we estimate, such as Thompson sampling with a stopping rule (as &lt;a href=&quot;https://support.google.com/analytics/answer/2844870?hl=en&amp;ref_topic=1745207&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;used by google analytics&lt;/a&gt;) will have the same problem. John Kruschke discusses this in the context of bayesian analysis in &lt;a href=&quot;http://doingbayesiandataanalysis.blogspot.no/2013/11/optional-stopping-in-data-collection-p.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this blog post&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4&gt;Precision and Confidence intervals&lt;/h4&gt;
+
+&lt;p&gt;So, given that we&#39;ve bias-corrected the estimates, how precise are the estimates we get? Unfortunately, estimates from sequential analysis tests often are less precise than the fixed sample-size test. This is not so surprising, since the tests often stop earlier, and we thus have less data to base the estimates on. To see this for yourself, take a look at the estimates given in &lt;a href=&quot;http://auduno.github.io/SeGLiR/demo/demo2.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this demo&lt;/a&gt;.&lt;/p&gt; 
+
+&lt;p&gt;For this reason, it is natural to ask for confidence intervals to bound the estimates in sequential analysis tests. Classical fixed sample-size tests use the normal approximation to create confidence intervals for the estimate. This is usually not possible with sequential analysis tests, since the distribution of the test statistics under a stopping rule are very complex and usually impossible to approximate by common distributions. Instead we can resort to bootstrap confidence intervals, which are simple to simulate. These are unfortunately also sensitive to the bias issues above, so the best option is to use a bias-adjusted confidence interval&lt;a href=&quot;#footnote1&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt;. Note that since sequential tests stop early and we often have fewer samples, the confidence intervals will usually be wider than for the fixed sample-size test.&lt;/p&gt;
+
+&lt;p class=&quot;footnote&quot; id=&quot;footnote1&quot;&gt;[1] see Davison &amp; Hinkley : &lt;a href=&quot;https://books.google.no/books/about/Bootstrap_Methods_and_Their_Application.html?id=4aCDbm_t8jUC&amp;redir_esc=y&amp;hl=en&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Bootstrap Methods and their applications&lt;/a&gt;, chap. 5.3 for details&lt;/p&gt;
+
+&lt;h4&gt;P-values&lt;/h4&gt;
+
+&lt;p&gt;As a little aside, what about p-values, the statistic everyone loves to hate?&lt;/p&gt;
+
+&lt;p&gt;When doing classical hypothesis tests, p-values are usually used to describe the significance of the result we find. This is not quite as good an idea in sequential tests as in fixed sample-size tests. The reason for this is that the p-value is not uniquely defined in sequential tests. The p-value is defined as the probability that we get a result as extreme or more extreme than the one we see, given that the null-hypothesis is true. In fixed sample-size tests, a more extreme result is simply a result where the test statistic is well, more extreme. However, in the sequential setting, we also have the variable of when the test was stopped. So is a more &amp;ldquo;extreme result&amp;rdquo; then a test that stops earlier? Or a test that stops later, but with a more &amp;ldquo;extreme&amp;rdquo; test-statistic? There is no definite answer to this. In the statistical literature there are several different ways to &amp;ldquo;order&amp;rdquo; the outcomes and thus define what is more &amp;ldquo;extreme&amp;rdquo;, but unfortunately there is no consensus on which &amp;ldquo;ordering&amp;rdquo; is the best, which makes p-values in sequential analysis a somewhat ambiguous statistic.&lt;/p&gt;
+
+&lt;p&gt;Nevertheless, in SeGLiR we&#39;ve implemented a p-value via simple simulation, where we assume that a more &amp;ldquo;extreme result&amp;rdquo; is any result where the test statistic is more extreme than our result, regardless of when the test was stopped. This is what is called a Likelihood Ratio-ordering and is the ordering suggested by Cook &amp; DeMets in their book referenced below.&lt;/p&gt;
+
+&lt;br&gt;&lt;p&gt;As we&#39;ve seen in this post, estimation in sequential tests is a bit more tricky than in fixed sample-size tests. Because sequential tests use much less samples, estimates may be more imprecise, and because of the interaction with the stopping rule they tend to be biased, though there are ways to mitigate the worst effects of this. In an upcoming post, I&#39;m planning to compare sequential analysis tests with other variants of A/B-tests such as multi-armed bandits, and give a little guide on when to choose which test. If you&#39;re interested, &lt;a href=&quot;https://twitter.com/matsiyatzy&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;follow me on twitter&lt;/a&gt; for updates.&lt;/p&gt;
+
+&lt;h4&gt;References&lt;/h4&gt;
+
+&lt;p&gt;If you&#39;re interested in more details on estimation in sequential tests, here are some recommended books that cover this subject. While these are mostly about group sequential tests, the solutions are the same as in the case with fully sequential tests (which is what I&#39;ve described in my posts).&lt;/p&gt;
+&lt;ul&gt;
+	&lt;li&gt;C. Jennison &amp; B. Turnbull : &lt;a href=&quot;https://books.google.no/books/about/Group_Sequential_Methods_with_Applicatio.html?id=qBrpTcAYtNQC&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Group Sequential Methods with Applications to Clinical Trials&lt;/a&gt;, CRC Press 1999&lt;/li&gt;
+	&lt;li&gt;T. Cook &amp; D. DeMets : &lt;a href=&quot;http://www.amazon.com/Introduction-Statistical-Methods-Clinical-Chapman/dp/1584880279&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Introduction to Statistical Methods for Clinical Trials&lt;/a&gt;, Chapman &amp; Hall/CRC Press 2007&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script&gt;
+	var tex1 = document.getElementById(&#39;tex1&#39;)
+	katex.render(&quot;E(\\hat{\\theta}) = \\theta + b(\\theta)&quot;,tex1)
+	katex.render(&quot;\\tilde{\\theta} + b(\\tilde{\\theta}) = \\hat{\\theta}&quot;,tex2)
+	katex.render(&quot;\\hat{\\theta}&quot;,tex3)
+	katex.render(&quot;\\tilde{\\theta}&quot;,tex4)
+	katex.render(&quot;b(\\theta)&quot;,tex5)
+	katex.render(&quot;\\theta&quot;,tex6)
+	katex.render(&quot;\\theta&quot;,tex7)
+	katex.render(&quot;\\hat{\\theta}&quot;,tex8)
+&lt;/script&gt;</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;In the &lt;a href=&quot;/2014/12/25/rapid-a-b-testing-with-sequential-analysis/&quot;&gt;previous post&lt;/a&gt; I introduced the Sequential Generalized Likeli
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Rapid A/B-testing with Sequential Analysis</title>
+    <link href="http://auduno.github.io/2014/12/25/rapid-a-b-testing-with-sequential-analysis/"/>
+    <id>http://auduno.github.io/2014/12/25/rapid-a-b-testing-with-sequential-analysis/</id>
+    <published>2014-12-24T23:00:00.000Z</published>
+    <updated>2016-05-03T20:29:11.000Z</updated>
+    
+    <content type="html">&lt;p&gt;A common issue with classical A/B-tests, especially when you want to be able to detect small differences, is that the sample size needed can be prohibitively large. In many cases it can take several weeks, months or even years to collect enough data to conclude a test. In this post I&amp;rsquo;ll introduce a very little known test that in many cases severely reduces the number of samples needed, namely the Sequential Generalized Likelihood Ratio Test.&lt;/p&gt;
+
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;br&gt;&lt;p&gt;The Sequential Generalized Likelihood Ratio test (or sequential GLR test for short) is a test that is surprisingly little known outside of statistical clinical research. Unlike classical fixed sample-size tests, where significance is only checked after all samples have been collected, this test will continously check for significance at every new sample and stop the test as soon as a significant result is detected, while still guaranteeing the same type-1 and type-2 errors as the fixed-samplesize test. This means the test could be stopped as early as after a handful of samples if there is a strong effect present.&lt;/p&gt;
+
+&lt;p&gt;Despite this very nice property, I couldn&amp;rsquo;t find &lt;em&gt;any&lt;/em&gt; public implementation of this test, so I&amp;rsquo;ve created a node.js implementation of this test, &lt;a href=&quot;https://github.com/auduno/seglir/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;SeGLiR&lt;/a&gt;, which can easily be used in web application A/B testing. I&amp;rsquo;ll give a brief example of usage below, but to give you some idea about the potential savings, I&amp;rsquo;ll first show you a comparison of the needed samplesize for a fixed samplesize test versus the sequential GLR test.&lt;/p&gt;
+
+&lt;p&gt;The test I&amp;rsquo;ll compare is a &lt;em&gt;comparison of proportions&lt;/em&gt; test, which is commonly used in A/B-testing to compare conversion rates. We compare the tests at the same levels, &amp;alpha;-level 0.05 and &amp;beta;-level 0.10, and say that we want to detect a difference between proportions larger than 0.01 (in sequential analysis this is usually called an &amp;ldquo;indifference region&amp;rdquo; of size 0.01). Note that the expected samplesize for the sequential GLR test vary depending on the true proportions p&lt;sub&gt;1&lt;/sub&gt; and p&lt;sub&gt;2&lt;/sub&gt;, so we compare the samplesize at different true proportions. We&amp;rsquo;ll first look at the case where the expected samplesize for the sequential GLR test is worst, when the proportions are closest to 0.5.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/expected_samplesize_fig1.png&quot; alt=&quot;samplesize comparison&quot;&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;As you can see, the expected samplesize of the sequential GLR test is much smaller for almost any value of the true difference. The test will stop especially early when there is a large difference between the proportions, so if there is a significant advantage of choosing one of the alternatives, this can be acted upon as early as possible. Let&amp;rsquo;s take a closer look at the expected samplesize when the differences between the true proportions are small.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/expected_samplesize_fig2.png&quot; alt=&quot;samplesize comparison&quot;&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;The only case where the sample size for the sequential GLR test can be expected to be larger, is when the true difference between p&lt;sub&gt;1&lt;/sub&gt; and p&lt;sub&gt;2&lt;/sub&gt; is just below 0.01, i.e. the smallest difference we were interested in detecting. However, this is just when the proportions are close to 0.5. What about when p&lt;sub&gt;1&lt;/sub&gt; and p&lt;sub&gt;2&lt;/sub&gt; are farther from 0.5?&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/expected_samplesize_fig3.png&quot; alt=&quot;samplesize comparison&quot;&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Actually, as the true p&lt;sub&gt;1&lt;/sub&gt; and p&lt;sub&gt;2&lt;/sub&gt; get closer to either 0 or 1, the expected samplesize will &lt;em&gt;always&lt;/em&gt; be smaller than the fixed samplesize test. Since this is the &lt;em&gt;expected&lt;/em&gt; samplesize, to be sure that the test doesn&amp;rsquo;t often require a much higher samplesize, let&amp;rsquo;s also take a look at the more extreme outcomes, for instance the 5th and 95th percentiles (with p&lt;sub&gt;1&lt;/sub&gt; and p&lt;sub&gt;2&lt;/sub&gt; close to 0.5 as earlier):&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/expected_samplesize_fig4.png&quot; alt=&quot;samplesize comparison&quot;&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;For most of the true differences the samplesize is still lower than the fixed-samplesize test, except for differences below 0.015. A good next question might be if there is a &lt;em&gt;bound&lt;/em&gt; to the amount of samples we may have to collect? Actually, there exists a worst-case samplesize for the test, meaning that the test will always conclude before this point. In the example above, the worst-case samplesize, though extremely rare, is at 161103 samples. Note that there is a tradeoff between this worst-case samplesize and the size of the indifference region, which means that a smaller indifference region will lead to a larger worst-case samplesize, and a larger indifference region will lead to a smaller worst-case samplesize.&lt;/p&gt;
+
+&lt;p&gt;Given the very nice samplesize properties we&amp;rsquo;ve seen above, it might not come as a surprise that the sequential GLR test has been shown&lt;a href=&quot;#footnote1&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; to be the optimal test with regards to minimizing samplesize at a given &amp;alpha;- and &amp;beta;-level.&lt;/p&gt;
+
+&lt;p class=&quot;footnote&quot; id=&quot;footnote1&quot;&gt;[1] &lt;a href=&quot;https://books.google.no/books?id=zhsbBAAAQBAJ&amp;lpg=PP1&amp;pg=PA254#v=onepage&amp;q&amp;f=false&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Theorem 5.4.1&lt;/a&gt; in Tartakovsky et al, Sequential Analysis, CRC Press 2014&lt;/p&gt;
+
+&lt;h4&gt;Usage&lt;/h4&gt;
+
+&lt;p&gt;You can install &lt;em&gt;SeGLiR&lt;/em&gt;, the node.js library I&amp;rsquo;ve implemented for doing these types of tests, via node package manager : `npm install seglir`. Here&amp;rsquo;s an example of how to set up and run a similar sequential GLR test as the one above in node.js.&lt;/p&gt;
+
+&lt;pre class=&quot;prettyprint lang-js&quot; style=&quot;margin-bottom:1.7em;overflow-x:scroll;&quot;&gt;
+var glr = require(&#39;seglir&#39;)
+// set up an instance of a test, with indifference region of size 0.01,
+//   alpha-level 0.05 and beta-level 0.10
+var test = glr.test(&quot;bernoulli&quot;,&quot;two-sided&quot;,0.01,0.05,0.10)
+&lt;/pre&gt;
+
+&lt;p&gt;When setting up any statistical hypothesis test, you need to calculate the test statistic thresholds at which the null-hypothesis or the alternative hypothesis is rejected for a given &amp;alpha;- and &amp;beta;-level. Unfortunately, unlike the fixed samplesize tests, there is no analytical way to calculate these thresholds for the sequential GLR test, so SeGLiR will use simulation to find them. This simulation can take some time and doesn&amp;rsquo;t always converge, so I&amp;rsquo;ve added some precalculated thresholds for the most common levels. It probably saves a bit of time to check these precalculated thresholds in the &lt;a href=&quot;http://auduno.github.io/SeGLiR/documentation/reference.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;reference&lt;/a&gt; before setting up a test.&lt;/p&gt;
+
+&lt;p&gt;Add data as it comes in, until the instance returns either &amp;ldquo;true&amp;rdquo; (the null hypothesis was accepted, i.e. there is no difference between the proportions) or &amp;ldquo;false&amp;rdquo; (the alternative hypothesis was accepted, i.e. there is a difference between the proportions).&lt;/p&gt;
+
+&lt;pre class=&quot;prettyprint lang-js&quot; style=&quot;margin-bottom:1.7em;overflow-x:scroll;&quot;&gt;
+test.addData({x:0,y:1})
+test.addData({x:0})
+test.addData({y:0})
+test.addData({x:1,y:0})
+// add more data until the function returns either &quot;true&quot; or &quot;false&quot;
+&lt;/pre&gt;
+
+&lt;p&gt;When the test is done, you can get estimates of the true parameters by estimate():&lt;/p&gt;
+
+&lt;pre class=&quot;prettyprint lang-js&quot; style=&quot;margin-bottom:1.7em;&quot;&gt;
+test.estimate()
+&lt;/pre&gt;
+
+&lt;p&gt;To get more details about functions, check out the &lt;a href=&quot;http://auduno.github.io/SeGLiR/documentation/reference.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;SeGLiR reference&lt;/a&gt;. Try out comparing the fixed samplesize test and the sequential GLR yourself (using SeGLiR) in &lt;a href=&quot;http://auduno.github.io/SeGLiR/demo/demo.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this demo&lt;/a&gt;.&lt;/p&gt;
+
+&lt;br&gt;&lt;p&gt;To sum up, the sequential GLR test is an alternative to fixed samplesize tests that usually are much faster, at the cost of a large, but rare, worst-case samplesize. Another slight drawback with sequential tests is that post-analysis estimation can be a bit more tricky. I&amp;rsquo;ll elaborate on this in my next post, as well as talk a bit about the solutions I&amp;rsquo;ve implemented in SeGLiR. &lt;a href=&quot;https://twitter.com/matsiyatzy&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Follow me on twitter&lt;/a&gt; if you want to get updates!&lt;/p&gt;
+
+&lt;br&gt;&lt;p&gt;If you&amp;rsquo;re interested in a very brief introduction to the mathematical details of the sequential GLR test, take a look at the &lt;a href=&quot;http://auduno.github.io/SeGLiR/documentation/reference.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;SeGLiR reference&lt;/a&gt;. For a more rigorous mathematical introduction, see these excellent references:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Tartakovsky, Nikiforov &amp;amp; Basseville : &lt;a href=&quot;http://www.amazon.com/Sequential-Analysis-Hypothesis-Changepoint-Probability/dp/1439838208&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Sequential Analysis&lt;/a&gt;, CRC Press 2014&lt;/li&gt;
+	&lt;li&gt;Bartroff, Lai &amp;amp; Shih : &lt;a href=&quot;http://www.amazon.com/Sequential-Experimentation-Clinical-Trials-Statistics/dp/1461461138/ref=sr_1_1?s=books&amp;ie=UTF8&amp;qid=1416693815&amp;sr=1-1&amp;keywords=sequential%20experimentation%20in%20clinical%20trialsD&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Sequential Experimentation in Clinical Trials&lt;/a&gt;, Springer 2012&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script&gt;
+	$(document).ready( function(){
+	    prettyPrint();
+	});
+&lt;/script&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;A common issue with classical A/B-tests, especially when you want to be able to detect small differences, is that the sample size needed can be prohibitively large. In many cases it can take several weeks, months or even years to collect enough data to conclude a test. In this post I&amp;rsquo;ll introduce a very little known test that in many cases severely reduces the number of samples needed, namely the Sequential Generalized Likelihood Ratio Test.&lt;/p&gt;
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Some nice ML-libraries</title>
+    <link href="http://auduno.github.io/2014/08/29/some-nice-ml-libraries/"/>
+    <id>http://auduno.github.io/2014/08/29/some-nice-ml-libraries/</id>
+    <published>2014-08-28T22:00:00.000Z</published>
+    <updated>2016-05-03T16:38:41.000Z</updated>
+    
+    <content type="html">&lt;p&gt;I recently had a go at the Kaggle &lt;a href=&quot;https://www.kaggle.com/c/acquire-valued-shoppers-challenge&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Acquire Valued Shoppers Challenge&lt;/a&gt;. This competition was a bit special in that the dataset was 22 GB, one of the biggest datasets they&amp;rsquo;ve had in a competition. While 22 GB may not quite qualify as &lt;em&gt;big data&lt;/em&gt;, it&amp;rsquo;s certainly something that your average laptop will choke on when using standard methods. Ordinarily I&amp;rsquo;d reach for &lt;a href=&quot;http://scikit-learn.org/stable/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;scikit-learn&lt;/a&gt; for these tasks, but in this case some of the methods in scikit-learn were a bit slow, and some other libraries had nice methods that scikit-learn didn&amp;rsquo;t have, so I decided to try out some other libraries. In this post I&amp;rsquo;ll give a brief look at some of the alternative machine learning libraries that I used during the competition.&lt;/p&gt;
+
+&lt;p&gt;In the Kaggle challenge, the intention was to predict whether a customer would become a &amp;ldquo;repeat buyer&amp;rdquo; of a product after trying the product. To give some examples of usage of the libraries I&amp;rsquo;m going through, I&amp;rsquo;ll use the features I created for the challenge, and predict probabilities of whether the customer was a &amp;ldquo;repeat buyer&amp;rdquo;. To follow the examples, you can download the features &lt;a href=&quot;https://github.com/auduno/Kaggle-Acquire-Valued-Shoppers-Challenge&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;here&lt;/a&gt; and set up the training data for the examples like this:&lt;/p&gt;
+
+&lt;pre class=&quot;prettyprint lang-py&quot; style=&quot;overflow-x:scroll&quot;&gt;import pandas as pd
+train_data = pd.io.parsers.read_csv(&quot;./features/train/all_features.csv.gz&quot;, sep=&quot; &quot;, compression=&quot;gzip&quot;)
+train_label = train_data[&#39;label&#39;]
+del train_data[&#39;label&#39;]
+del train_data[&#39;repeattrips&#39;]
+test_data = pd.io.parsers.read_csv(&quot;./features/test/all_features.csv.gz&quot;, sep=&quot; &quot;, compression=&quot;gzip&quot;)
+del test_data[&#39;label&#39;]
+del test_data[&#39;repeattrips&#39;]
+&lt;/pre&gt;
+
+&lt;h4&gt;XGBoost&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/tqchen/xgboost&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;XGBoost&lt;/a&gt; (short for &amp;lsquo;extreme gradient boosting&amp;rsquo;) is a library solely devoted to, you guessed it, &lt;a href=&quot;https://en.wikipedia.org/wiki/Gradient_boosting&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;gradient boosting&lt;/a&gt;. Gradient boosting tends to be a frustrating affair, since it usually performs extremely well, but can also be very slow to train. Usually you would solve this by throwing several cores at the problem and use parallelization to speed it up, but neither scikit-learn or R&amp;rsquo;s implementation is parallellizable, and so there doesn&amp;rsquo;t seem to be much we can do. Fortunately there does exist alternative implementations that &lt;em&gt;do&lt;/em&gt; support parallelization, and one of these is XGBoost.&lt;/p&gt;
+
+&lt;p&gt;XGBoost has a python API, so it is very easy to integrate into a python workflow. An advantage XGBoost has compared to scikit-learn, is that while scikit-learn only has support for gradient boosting with decision trees as &amp;ldquo;base learners&amp;rdquo;, XGBoost also has support for linear models as base learners. In our cross-validation tests, this gave us a nice improvement in predictions.&lt;/p&gt;
+
+&lt;p&gt;Another nice feature XGBoost has is that it will print out prediction error on a given test set for every 10 iterations over the training set, which allows you to monitor approximately when it starts to overfit. This can be used to tune how many rounds of training you want to do (in scikit-learn this is called &lt;em&gt;n_estimators&lt;/em&gt;). On the other hand, XGBoost does not have support for feature-importances calculation, but they might implement this soon (see &lt;a href=&quot;https://github.com/tqchen/xgboost/issues/11&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this issue&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;In our example we first we create XGBoost train and test datasets, using the custom XGBoost DMatrix objects. We next set up our parameters: in the &amp;ldquo;param&amp;rdquo; dictionary, we set the &lt;em&gt;max_depth&lt;/em&gt; of the decision trees, the &lt;em&gt;learning rate&lt;/em&gt; of the boosting, here called &lt;em&gt;eta&lt;/em&gt;, the objective of the learning (in our case logistic, since this is classification) and the number of threads we&amp;rsquo;d like to use. Since we had four cores when running this example, we set this to four threads. The number of rounds to do is set directly when we call the train method. We train via calling &lt;em&gt;xgb.train()&lt;/em&gt;, and we can then call &lt;em&gt;predict&lt;/em&gt; on our returned train object to get our predictions. Simple!&lt;/p&gt;
+
+&lt;pre class=&quot;prettyprint lang-py&quot; style=&quot;overflow-x:scroll&quot;&gt;# import the xgboost library from wherever you built it
+import sys
+sys.path.append(&#39;/home/audun/xgboost-master/python/&#39;)
+import xgboost as xgb
+
+dtrain = xgb.DMatrix( train_data.values, label=train_label.values)
+dtest = xgb.DMatrix(test_data.values)
+param = {&#39;bst:max_depth&#39;:3, &#39;bst:eta&#39;:0.1, &#39;silent&#39;:1, &#39;objective&#39;:&#39;binary:logistic&#39;, &#39;nthread&#39;:4, &#39;eval_metric&#39;:&#39;auc&#39;}
+num_round = 100
+bst = xgb.train( param, dtrain, num_round )
+pred_prob = bst.predict( dtest )
+&lt;/pre&gt;
+
+&lt;figure&gt;&lt;img src=&quot;/images/barchart1.jpg&quot; alt=&quot;Timing&quot;&gt;&lt;figcaption&gt;Comparison of training time (seconds) of Scikit-learn&amp;rsquo;s GradientBoostingClassifier versus XGBoost&lt;/figcaption&gt;&lt;/figure&gt;&lt;p&gt;In our tests with four cores, it ran around four times as fast as scikit-learn&amp;rsquo;s GradientBoostingClassifier, which probably reflects the parallellization. With more cores, this would probably allow us to speed up the training even more. For some more detailed tutorials on how to use XGBoost, take a look at the &lt;a href=&quot;https://github.com/tqchen/xgboost/wiki&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;documentation here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;br&gt;&lt;p&gt;A common problem with large data sets, is that usually you need to have the training data in memory to train on it. When the data set is big, this is obviously not going to work. A solution to this is so-called out-of-core algorithms, which commonly means only looking at one example from the training set at a time, in other words keeping the training data &amp;ldquo;out of core&amp;rdquo;. Scikit-learn has support for out-of-core/online learning via &lt;a href=&quot;http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;SGDClassifier&lt;/a&gt;, but in addition there also exists some other libraries that are pretty speedy:&lt;/p&gt;
+
+&lt;h4&gt;Sofia-ml&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://code.google.com/archive/p/sofia-ml/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Sofia-ml&lt;/a&gt; currently supports SVM, logistic regression or perceptron methods and uses some speedy fitting algorithms known as &amp;ldquo;Pegasos&amp;rdquo; (short for &amp;ldquo;primal estimatimated sub-gradient solver for SVM&amp;rdquo;). &amp;ldquo;Pegasos&amp;rdquo; has an advantage in that you do not need to define pesky parameters such as learning rate (see &lt;a href=&quot;https://lingpipe-blog.com/2009/04/08/convergence-relative-sgd-pegasos-liblinear-svmlight-svmper/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this article&lt;/a&gt;). Another nice feature in sofia-ml is that it supposedly also can optimize ROC area via selecting smart choices of samples when iterating over the dataset. &amp;ldquo;ROC area&amp;rdquo; is also known as AUC, which happened to be the score measure in our competition (and numerous other Kaggle competitions).&lt;/p&gt;
+
+&lt;p&gt;Using sofia-ml is pretty straightforward, but since it is a command-line tool, it easily seems a bit esoteric for those used to scikit-learn. Before we call the training, we have to write out the data to an input format called &amp;ldquo;SVMlight sparse data format&amp;rdquo; which originally comes from the library &lt;a href=&quot;http://svmlight.joachims.org/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;SMVlight&lt;/a&gt;, but has since been adopted by a number of other machine learning libraries. In our tests, what took the longest time was actually writing out the data, so we found it very helpful to use Mathieu Blondel&amp;rsquo;s library &lt;a href=&quot;https://github.com/mblondel/svmlight-loader&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;svmlight-loader&lt;/a&gt;, which does the writing out in C++. Note that there are also &lt;a href=&quot;http://scikit-learn.org/stable/modules/generated/sklearn.datasets.dump_svmlight_file.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;tools for handling SVMlight formats&lt;/a&gt; in scikit-learn, but they&amp;rsquo;re not quite as fast as this one.&lt;/p&gt;
+
+&lt;p&gt;There is no python wrapper for sofia-ml, but it&amp;rsquo;s quite easy to do everything from python:&lt;/p&gt;
+
+&lt;pre class=&quot;prettyprint lang-py&quot; style=&quot;overflow-x:scroll&quot;&gt;from svmlight_loader import dump_svmlight_file
+from subprocess import call
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+
+# normalize data
+ss = StandardScaler()
+train_data_norm = ss.fit_transform(train_data)
+test_data_norm = ss.transform(test_data)
+
+# change these filenames to reflect your system!
+model_file = &quot;/home/audun/data/sofml.model&quot;
+training_file = &quot;/home/audun/data/train_data.dat&quot;
+test_file = &quot;/home/audun/data/test_data.dat&quot;
+pred_file = &quot;/home/audun/data/pred.csv&quot;
+
+# note that for sofia-ml (and vowpal wabbit), labels need to be {-1,1}, not {0,1}, so we change them
+train_label.values[np.where(train_label == 0)] = -1
+
+# export data
+dump_svmlight_file(train_data_norm, train_label, training_file, zero_based=False)
+dump_svmlight_file(test_data_norm, np.zeros((test_data.shape[0],)), test_file, zero_based=False)
+&lt;/pre&gt;
+
+&lt;p&gt;We call the training and prediction with a python subprocess. In our first line, we specify via command-line parameters that the learner type is SVM fitted with stochastic gradient descent, use loop type ROC (to optimize for AUC), set prediction type &amp;ldquo;logistic&amp;rdquo; in order to get classifications, and do 200000 gradient descent updates. Many more possible command-line parameters are listed &lt;a href=&quot;https://code.google.com/archive/p/sofia-ml/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;here&lt;/a&gt;. In the second line we create predictions on our test data from our model file, and we then read it in again via &lt;em&gt;pandas&lt;/em&gt;. Note that in the case of logistic predictions, sofia-ml returns untransformed predictions, so we need to transform the predictions via the logistic transformation to get probabilities.&lt;/p&gt;
+
+&lt;pre class=&quot;prettyprint lang-py&quot; style=&quot;overflow-x:scroll&quot;&gt;# train via subprocess call
+call(&quot;~/sofia-ml/sofia-ml --learner_type sgd-svm --loop_type roc --prediction_type logistic --iterations 200000 --training_file &quot;+training_file+&quot; --model_out &quot;+model_file, shell = True)
+
+# create test data via subprocess call
+call(&quot;~/sofia-ml/sofia-ml --model_in &quot;+model_file+&quot; --test_file &quot;+test_file+&quot; --results_file &quot;+pred_file, shell = True)
+
+# read in test data
+pred_prob = pd.io.parsers.read_csv(pred_file, sep=&quot;\t&quot;, names=[&quot;pred&quot;,&quot;true&quot;])[&#39;pred&#39;]
+# do logistic transformation to get probabilities
+pred_prob = 1./(1.+np.exp(-pred_prob))
+&lt;/pre&gt;
+
+&lt;p&gt;In our tests, fitting using Sofia-ml was extremely speedy, around 3 seconds!&lt;/p&gt;
+
+&lt;h4&gt;Vowpal Wabbit&lt;/h4&gt;
+
+&lt;p&gt;This is probably the most well-known library to do fast out-of-core learning, and operates pretty similarly to sofia-ml. Vowpal Wabbit has support for doing SVM, logistic regression, linear regression and quantile regression via optimizing for respectively hinge loss, logit loss, squared loss and quantile loss. Since Vowpal Wabbit is written in C++, carefully optimized and has some tricks up it&amp;rsquo;s sleeve, it&amp;rsquo;s very fast and performs very competitively on a lot of tasks.&lt;/p&gt;
+
+&lt;p&gt;Vowpal Wabbit, like sofia-ml, is a command line program, and uses a &lt;a href=&quot;https://github.com/JohnLangford/vowpal_wabbit/wiki/Input-format&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;slight modification&lt;/a&gt; of the SVMlight sparse data format for input. Since the differences between SVMlight and Vowpal Wabbits format were pretty small, we used the svmlight-loader library here as well, and modified the files to suit Vowpal Wabbit afterwards.&lt;/p&gt;
+
+&lt;p&gt;At the time of the competition, I didn&amp;rsquo;t find any python wrappers, but it seems there is now a python wrapper &lt;a href=&quot;https://github.com/JohnLangford/vowpal_wabbit/blob/master/python/pyvw.py&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;under development here&lt;/a&gt;. It&amp;rsquo;s not documented yet, so I&amp;rsquo;ll just use regular python methods to call Vowpal Wabbit in this example. First we have to write out training and test data:&lt;/p&gt;
+
+&lt;pre class=&quot;prettyprint lang-py&quot; style=&quot;overflow-x:scroll&quot;&gt;training_file = &quot;/home/audun/data/vw_trainset.csv&quot;
+training2_file = &quot;/home/audun/data/vw_trainset2.csv&quot;
+test_file = &quot;/home/audun/data/vw_testset.csv&quot;
+test2_file = &quot;/home/audun/data/vw_testset2.csv&quot;
+pred_file = &quot;/home/audun/data/pred.csv&quot;
+model_file = &quot;/home/audun/data/vw_trainset_model.vw&quot;
+
+dump_svmlight_file(train_data, train_label, training_file, zero_based=False)
+dump_svmlight_file(test_data, np.zeros((test_data.shape[0],)), test_file, zero_based=False)
+
+# add specifics for vowpal wabbit format
+import string
+fi = open(training_file,&quot;r&quot;)
+of = open(training2_file,&quot;w&quot;)
+for lines in fi:
+	li = lines.strip().split()
+	of.write( li[0] )
+	of.write(&quot; | &quot;)
+	of.write( string.join(li[1:],&quot; &quot;) + &quot;\n&quot;)
+of.close()
+fi.close()
+fi = open(test_file,&quot;r&quot;)
+of = open(test2_file,&quot;w&quot;)
+for lines in fi:
+	li = lines.strip().split()
+	of.write( li[0] )
+	of.write(&quot; | &quot;)
+	of.write( string.join(li[1:],&quot; &quot;) + &quot;\n&quot;)
+of.close()
+fi.close()
+&lt;/pre&gt;
+
+&lt;p&gt;We then do a subprocess call to run Vowpal Wabbit from the command line. There are a lot of possible parameters to the command line, but all of them are listed &lt;a href=&quot;https://github.com/JohnLangford/vowpal_wabbit/wiki/Command-line-arguments&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;here&lt;/a&gt;. The first line trains a model with logistic loss (i.e. for classification) on our training set, doing 40 passes over the data. The second line predicts data from our testset, based on our trained model, and writes the predictions out to a file.&lt;/p&gt;
+
+&lt;pre class=&quot;prettyprint lang-py&quot; style=&quot;overflow-x:scroll&quot;&gt;# train
+call(&quot;~/vowpalwabbit/vw &quot;+training2_file+&quot; -c -k --passes 40 -f &quot;+model_file+&quot; --loss_function logistic&quot;, shell=True)
+
+# predict
+call(&quot;~/vowpalwabbit/vw &quot;+test2_file+&quot; -t -i &quot;+model_file+&quot; -r &quot;+pred_file, shell=True)
+&lt;/pre&gt;
+
+&lt;p&gt;Next, we load the predictions from the output file. Note that like with sofia-ml the predictions need to be logistic transformed to get probabilities.&lt;/p&gt;
+
+&lt;pre class=&quot;prettyprint lang-py&quot; style=&quot;overflow-x:scroll&quot;&gt;pred_prob = pd.io.parsers.read_csv(pred_file, names=[&quot;pred&quot;])[&#39;pred&#39;]
+pred_prob = 1./(1.+np.exp(-pred_prob))
+&lt;/pre&gt;
+
+&lt;p&gt;Training is very fast, around 9 secs, even though the dataset is sizable. For a more in-depth tutorial on how to use Vowpal Wabbit take a look at &lt;a href=&quot;https://github.com/JohnLangford/vowpal_wabbit/wiki/Tutorial&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;the tutorial&lt;/a&gt; in their github repo.&lt;/p&gt;
+
+&lt;br&gt;&lt;p&gt;So there you go, some nice, not-so-well-known machine learning libraries! In the competition overall, with the help of these libraries, I managed to end up in the top 10%, and together with my 4th place in the earlier loan default prediction competition, this earned me a &amp;ldquo;kaggle master&amp;rdquo; badge.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/badge_crop.jpg&quot; alt=&quot;Kaggle master badge&quot;&gt;
+	&lt;figcaption&gt;Kaggle master badge.&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;If you know of any other unknown but great libraries, let me know. And If you liked this blogpost, you should &lt;a href=&quot;https://twitter.com/matsiyatzy&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;follow me on twitter!&lt;/a&gt;&lt;/p&gt;
+
+&lt;script&gt;
+	$(document).ready( function(){
+	    prettyPrint();
+	});
+&lt;/script&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;I recently had a go at the Kaggle &lt;a href=&quot;https://www.kaggle.com/c/acquire-valued-shoppers-challenge&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Acq
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Twisting faces</title>
+    <link href="http://auduno.github.io/2014/04/29/twisting-faces/"/>
+    <id>http://auduno.github.io/2014/04/29/twisting-faces/</id>
+    <published>2014-04-28T22:00:00.000Z</published>
+    <updated>2016-05-03T19:32:36.000Z</updated>
+    
+    <content type="html">&lt;p&gt;In the &lt;a href=&quot;/post/61888277175/fitting-faces&quot;&gt;previous post&lt;/a&gt;, I explained how &lt;a href=&quot;https://github.com/auduno/clmtrackr&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;CLMtrackr&lt;/a&gt; was put together. Since then, my examples of &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/facesubstitution.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;face substitution&lt;/a&gt; and &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/clm_emotiondetection.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;emotion detection&lt;/a&gt; has received a fair amount of attention, so in this post I&amp;rsquo;m going to explain a bit about how these are put together as well, plus comment on some fixes that I&amp;rsquo;ve done to CLMtrackr recently.&lt;/p&gt;
+
+&lt;h4&gt;Face substitution&lt;/h4&gt;
+
+&lt;p&gt;This demo was inspired by a &lt;a href=&quot;https://vimeo.com/29348533&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;face substitution demo&lt;/a&gt; by Arturo Castro &amp;amp; Kyle McDonald. Basically it substitutes, or overlays, another persons face over your face, and does some fancy tricks to make it look natural. To do this with CLMtrackr, we first have to annotate the face in the image we want to substitute, and we can then deform this face (using &lt;a href=&quot;https://github.com/auduno/clmtrackr/blob/dev/js/face_deformer.js&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;face_deformer.js&lt;/a&gt;) to the same shape as your face, and overlay it in the exact same pose and position.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/post_deform3.jpg&quot; alt=&quot;Deformed face&quot;&gt;
+	&lt;figcaption&gt;An annotated face in an image, the normalized face, and the face deformed to another position.&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;But in order to make it look natural (or creepy, as some would say), we also have to use a method called &lt;em&gt;poisson blending&lt;/em&gt;. Usually, when you paste one image onto another, it&amp;rsquo;s easy to tell that there&amp;rsquo;s been a copy-paste operation, since the colors of the edges of the pasted image won&amp;rsquo;t quite match up with the background.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/poisson_example.jpg&quot; alt=&quot;Poisson blending with a fighter jet&quot;&gt;
+	&lt;figcaption&gt;A fighter jet copy-pasted into an image, without poisson blending (left) and with poisson blending (right).&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;figure&gt;
+	&lt;img src=&quot;/images/poisson_face2.jpg&quot; alt=&quot;Poisson blending with a fighter jet&quot;&gt;
+	&lt;figcaption&gt;An applied face mask without poisson blending (left) and with poisson blending (right).&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Poisson blending counteracts this, by smoothing the &lt;em&gt;color gradients&lt;/em&gt; on the edges of the pasted image with the background image, so that the transformation from one image to the other will look smooth. We also then have to change the gradients of the rest of the pasted image, so we end up with a huge differential equation that needs to be solved. Thankfully, I didn&amp;rsquo;t have to implement the algorithms for solving this myself, since &lt;a href=&quot;https://twitter.com/wellflat&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&amp;lsquo;wellflat&amp;rsquo;&lt;/a&gt; had already &lt;a href=&quot;https://github.com/wellflat/imageprocessing-labs/tree/master/cv/poisson_blending&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;implemented it in javascript&lt;/a&gt;. Kudos to him! The poisson blending for the most part works very well, and you get a seamless blend of the two images. Note that since the poisson blending takes a bit of time in javascript, I only do the blending on the initialization of the image (i.e. when switching faces). This means that if you change the lighting after switching faces, the blending might look a bit off. If you&amp;rsquo;re interested in some more info about poisson blending, see for instance &lt;a href=&quot;http://www.ctralie.com/Teaching/PoissonImageEditing/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this article&lt;/a&gt;.&lt;/p&gt;
+
+&lt;!--[ I&#39;ve put up an example of using any image for face substitution. It can be a bit tricky to get it to work, but try it out. ]--&gt;
+
+&lt;h4&gt;Emotion detection&lt;/h4&gt;
+
+&lt;p&gt;For the emotion detection demo, I used a pretty basic classification method called &lt;a href=&quot;https://en.wikipedia.org/wiki/Logistic_regression&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;logistic regression&lt;/a&gt;. We already have a parametric model of the face, so we can use the parameters of the model as features. For training, we annotate images of people expressing the emotions we are interested in and project these annotations onto our PCA decomposition (as described in the previous post) to get the closest parametrization. These parameters are then input as training data for the regression. The classification works relatively OK, but a better method would be to first establish some neutral &amp;ldquo;baseline&amp;rdquo; for each person before classifying, since there is some variation from person to person which throws off the classification.&lt;/p&gt;
+
+&lt;p&gt;Another classification solution might be to use random forests, (which &lt;a href=&quot;https://github.com/karpathy/forestjs&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;happens to be implemented&lt;/a&gt; in javascript). This usually gives better classification results, but probably is a bit slower, so I didn&amp;rsquo;t try it out. Since most of the emotion classifiers are only trained on 20 or so positive examples, we would also probably get much better classification with more data. Code for training your own classifier with logistic regression &lt;a href=&quot;https://github.com/auduno/clmtools/blob/master/pdm_builder/create_classifier.py&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;is here&lt;/a&gt;, so give it a spin if you&amp;rsquo;re interested in improving it!&lt;/p&gt;
+
+&lt;p&gt;A fun side effect of the emotion classifier is that we can illustrate the learned emotions by using the regression coefficients as parameters for our facial model:&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/emotions.jpg&quot; alt=&quot;the face model&quot;&gt;
+	&lt;figcaption&gt;From top left: Anger, Disgust, Fear, Happiness, Surprise, Sadness&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Some of these learned emotions look very similar, which caused the classifier to have a hard time distinguishing them. Interestingly, we can also negate the coefficients to see what the opposites of the learned emotions look like:&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/emotions_neg.jpg&quot; alt=&quot;the face model&quot;&gt;
+	&lt;figcaption&gt;From top left, the opposites of: Anger, Disgust, Fear, Happiness, Surprise, Sadness&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Play with the visualizations of the learned emotion model &lt;a href=&quot;http://auduno.github.io/clmtrackr/examples/classviewer.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The classification method is not only restricted to emotions, so we could also try to classify whether a person is male or female. Try out a demo of this &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/clm_genderdetection.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;here&lt;/a&gt;, though note that it&amp;rsquo;s not really that accurate. Below are the resulting faces from the learned gender classifier:&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/post_gender2.jpg&quot; alt=&quot;the face model&quot;&gt;
+	&lt;figcaption&gt;Male (left), Female (right)&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;h4&gt;Deforming the face&lt;/h4&gt;
+
+&lt;p&gt;Some other toy examples I&amp;rsquo;ve added is &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/facedeform.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;live face deformation&lt;/a&gt; and &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/caricature.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;live &amp;ldquo;caricatures&amp;rdquo;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/post_facedeformation2.jpg&quot; alt=&quot;Deformed face&quot;&gt;
+	&lt;figcaption&gt;Deformed face&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Both of these demos are based on capturing your face, deforming the face in some way, and pasting it back over your original face. The caricature demo was fairly easy to put together - the parameters in our parametric model of face describe the &amp;ldquo;offsets&amp;rdquo; from a mean face, meaning that these offsets distinguish any face from an &amp;ldquo;average face&amp;rdquo;. We can use this to create very simple &amp;ldquo;caricatures&amp;rdquo;, where we exaggerate the difference from the mean face by multiplying the parameters, and then overlay the deformed face with the new parameters over the original video. We can of course also modify (add constant offsets to) the parameters manually, i.e. deform your own face in realtime, which gives rise to the face deformation demo.&lt;/p&gt;
+
+&lt;h4&gt;Improvements&lt;/h4&gt;
+
+&lt;p&gt;As I discussed doing in my previous blog post, I&amp;rsquo;ve also added &lt;a href=&quot;https://en.wikipedia.org/wiki/Local_binary_patterns&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;local binary patterns&lt;/a&gt; and &lt;a href=&quot;https://en.wikipedia.org/wiki/Sobel_operator&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;sobel gradients&lt;/a&gt; as preprocessing for responses. Especially local binary patterns seem to be more precise than raw responses, at the cost of some slowdown (due to need to preprocess patches). Since they&amp;rsquo;re slower, they&amp;rsquo;re not used by default, so you&amp;rsquo;ll have to enable them on initialization if you want to use them. Check out the reference for documentation on how to enable the different types of responses. There&amp;rsquo;s also the possibility to &lt;em&gt;blend&lt;/em&gt; or &lt;em&gt;cycle&lt;/em&gt; through different types of responses, which in theory might improve precision, a la &lt;a href=&quot;https://en.wikipedia.org/wiki/Ensemble_learning&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;ensemble models&lt;/a&gt;. Try out the different responses and combinations &lt;a href=&quot;https://auduno.github.io/clmtrackr/clm_video_responses.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;br&gt;&lt;p&gt;In other news, CLMtrackr was used in this years april fools on reddit : &lt;a href=&quot;http://www.redditblog.com/2014/03/headdit-revolutionary-new-way-to-browse.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&amp;ldquo;headdit&amp;rdquo;&lt;/a&gt;. For an april fools, the gesture recognition worked surprisingly well, though I&amp;rsquo;ll admit to not throwing away my mouse and keyboard just yet.&lt;/p&gt;
+
+&lt;p&gt;If you liked this blogpost, you should &lt;a href=&quot;https://twitter.com/matsiyatzy&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;follow me on twitter!&lt;/a&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;In the &lt;a href=&quot;/post/61888277175/fitting-faces&quot;&gt;previous post&lt;/a&gt;, I explained how &lt;a href=&quot;https://github.com/auduno/clmtrackr&quot; target=
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Fitting faces</title>
+    <link href="http://auduno.github.io/2014/01/05/fitting-faces/"/>
+    <id>http://auduno.github.io/2014/01/05/fitting-faces/</id>
+    <published>2014-01-04T23:00:00.000Z</published>
+    <updated>2016-05-03T18:26:02.000Z</updated>
+    
+    <content type="html">&lt;p&gt;A while ago I put out a semi-finished version of &lt;a href=&quot;https://github.com/auduno/clmtrackr&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;CLMtrackr&lt;/a&gt;, which is a javascript library for fitting a facial model to faces in images or video. Fitting a facial model is useful in cases where you need precise positions of facial features, such as for instance emotion detection, face masking and person identification. Though the tracking is pretty processor-intensive, we manage to reach real-time tracking in modern browsers, even though it&amp;rsquo;s implemented in javascript. If you&amp;rsquo;re interested in seeing some applications of CLMtrackr, check out the demos of &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/facesubstitution.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;face substitution&lt;/a&gt;, &lt;a href=&quot;https://auduno.github.io/clmtrackr/face_deformation_video.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;face deformation&lt;/a&gt;, or &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/clm_emotiondetection.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;emotion detection&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In this post, I&amp;rsquo;ll explain a few details about how CLMtrackr is put together.&lt;/p&gt; 
+
+&lt;p&gt;First off, here&amp;rsquo;s an example of CLMtrackr tracking a face real-time:&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;iframe src=&quot;http://player.vimeo.com/video/75659453&quot; width=&quot;360&quot; height=&quot;281&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen&gt;&lt;/iframe&gt;
+	&lt;figcaption&gt;An example of fitting/tracking a face in the canonical &lt;a href=&quot;http://www-prima.inrialpes.fr/FGnet/data/01-TalkingFace/talking_face.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;talking face&lt;/a&gt; video&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;h4&gt;How does CLMtrackr work:&lt;/h4&gt;
+
+&lt;p&gt;CLMtrackr is based on the algorithms described in &lt;a href=&quot;http://www.ri.cmu.edu/pub_files/2009/9/CameraReady-6.pdf&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this paper&lt;/a&gt; by Jason Saragih &amp;amp; Simon Lucey, more precisely &amp;ldquo;Face Alignment through Subspace Constrained Mean-Shifts&amp;rdquo;. The explanation in the paper is pretty dense, so I&amp;rsquo;ll try to do a simpler explanation here.&lt;/p&gt;
+
+&lt;p&gt;Our aim is to fit a facial model to a face in an image or video from an approximate initialization. In our case the facial model consists of 70 points, see below.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/facemodel.png&quot; alt=&quot;the face model&quot;&gt;
+	&lt;figcaption&gt;The facial model&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;The algorithm fits the facial model by using 70 small classifiers, i.e. one classifier for each point in the model. Given an initial approximate position, the classifiers search a small region (thus the name &amp;lsquo;local&amp;rsquo;) around each point for a better fit, and the model is then moved incrementally in the direction giving the best fit, gradually converging on the optimal fit.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/facemodel_w_filters_crop1.jpg&quot; alt=&quot;image&quot;&gt;
+	&lt;figcaption&gt;The model with some of the SVM kernels used for classification&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;I&amp;rsquo;ll go on to describe the facial model and classifiers and how we create/train them.&lt;/p&gt;
+
+&lt;h4&gt;Model&lt;/h4&gt;
+
+&lt;p&gt;A face is relatively easy to model, since it doesn&amp;rsquo;t really vary that much from person to person apart from posture and expression. Such a model &lt;em&gt;could&lt;/em&gt; be manually built, but it is far easier to learn from annotated data, in our case faces where the feature points have been marked (annotated). Since annotating faces takes a surprisingly long time, we used some existing annotation from &lt;a href=&quot;http://www.milbo.org/muct/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;the MUCT database&lt;/a&gt; (with slight modifications), plus some faces we manually annotated ourselves.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/annotated2_small.jpg&quot; alt=&quot;annotated face&quot;&gt;
+	&lt;figcaption&gt;An annotated face from the MUCT database&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;To build a model from these annotations, we use Principal Component Analysis, or PCA for short. We first calculate the mean points of all the annotations, and then use PCA to extract the variations of the faces as linear combinations of vectors, or &lt;strong&gt;components&lt;/strong&gt;. Very roughly explained, PCA will extract these &lt;strong&gt;components&lt;/strong&gt; in order of importance, i.e. how much of the variation in face can be accounted for by each component. Since the first handful of these components manage to cover most of the variation in face postures, we can toss away the rest without any loss in model precision.&lt;/p&gt;
+
+&lt;p&gt;The first components that PCA extract will usually cover basic variations from posture, such as yaw, pitch, then followed by opening and closing mouth, smile, etc.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;iframe src=&quot;http://auduno.github.io/clmtrackr/docs/param_model/clm_pca.html&quot; width=&quot;500&quot; height=&quot;300&quot; style=&quot;border:0px;&quot;&gt;&lt;/iframe&gt;
+	&lt;figcaption&gt;The first of the extracted components&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Any facial pose can then be modelled as the mean points plus weighted combinations of these components, and the weights can be thought of as &amp;ldquo;parameters&amp;rdquo; for the facial model. Check out the complete model &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/modelviewer_pca.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;From the PCA, we also store the eigenvalues of each component, which tells us the standard deviation of the weights of each component according to the facial poses in our annotated data &lt;a href=&quot;#footnote1&quot;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt;, which is very useful when we want to regularize the weights in the optimization step.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Note&lt;/em&gt; : PCA is not the only method you can use to extract a parametric face model. You could also use for instance Sparse PCA which will lead to &amp;ldquo;sparse&amp;rdquo; transformations. Sparse PCA doesn&amp;rsquo;t give us any significant improvements in fitting/tracking, but often gives us components which seem more natural, which is useful for adjusting the regularization of each components weights manually. Test out a parametric face model based on &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/modelviewer_spca.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Sparse PCA&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p class=&quot;footnote&quot; id=&quot;footnote1&quot;&gt;[1] : this also means that it is important that the faces used for training the model is a good selection of faces in a variety of different poses and expressions, otherwise we end up with a model which is too strictly regularized and doesn&amp;rsquo;t manage to model &amp;ldquo;extreme&amp;rdquo; poses&lt;/p&gt;
+
+&lt;h4&gt;Patches&lt;/h4&gt;
+
+&lt;p&gt;As I mentioned, we have one classifier for each each point in the model, so 70 classifiers altogether for our model. To train these classifiers, say for instance the classifier for point 27 (the left pupil), we crop a X by X patch centered on the marked position of point 27 in each of our annotated facial images. This set of patches are then used as input for training a classifier.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/training_patches.png&quot; alt=&quot;training&quot;&gt;
+	&lt;figcaption&gt;Training a classifier on patches from the annotated faces&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;The classifier we use could be any classifier suited for image classification, such as Logistic Regression, SVM, regular Correlation Filters and even Random Forests, but in our case we implemented a logistic regression classifier with an SVM kernel (which is what the original paper suggests), and also a MOSSE filter. More about implementation issues of these below.&lt;/p&gt;
+
+&lt;p&gt;When using these classifiers in fitting the model, we crop a searchwindow around each of our initial approximate positions, and apply the respective classifier to a grid of Y by Y pixels within the searchwindow. We thus get a Y * Y &amp;ldquo;response&amp;rdquo; output which maps the probability of each of these pixels being the &amp;ldquo;aligned&amp;rdquo; feature point.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/response_fig2b.jpg&quot; alt=&quot;the response from the patch&quot;&gt;
+	&lt;figcaption&gt;The cropped patch and &amp;ldquo;response&amp;rdquo; for the left pupil&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;h4&gt;Optimization&lt;/h4&gt;
+
+&lt;p&gt;So, given that we have the responses from our classifiers, how do we apply this information to fit the facial model in the best possible way? &lt;/p&gt;
+
+&lt;p&gt;For each of the responses, we calculate the way the model should move in order to go to the region with highest likelihood. This is calculated by mean-shift (which is roughly equivalent to gradient descent). We then regularize this movement by constraining the &amp;ldquo;new positions&amp;rdquo; to the coordinate space spanned by the facial model. In this way we ensure that the points of the model does not move in a manner that is inconsistent with the model overall. This process is done iteratively, which means the facial model will gradually converge towards the optimal fit &lt;a href=&quot;#footnote2&quot;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p class=&quot;footnote&quot; id=&quot;footnote2&quot;&gt;[2] : this happens to be a case of expectation-maximization, where finding the best movement according to responses is the expectation step and regularization to model is the maximization step&lt;/p&gt;
+
+&lt;h4&gt;Initalization &amp;amp; checking&lt;/h4&gt;
+
+&lt;p&gt;One thing that has to be noted is that since the searchwindows we use are pretty small, the model is not able to fit to a face if is outside the &amp;ldquo;reach&amp;rdquo; of these searchwindows &lt;a href=&quot;#footnote3&quot;&gt;&lt;sup&gt;[3]&lt;/sup&gt;&lt;/a&gt;. Therefore it is critical that we initialize the model in a place not too far from it&amp;rsquo;s &amp;ldquo;true&amp;rdquo; position. To do so, we first use a face detector to find the rough bounding box of the face, and then identify the approximate positions of eyes and nose via a correlation filter. We then use procrustes analysis to roughly fit the mean facial model to the found positions of the eyes and nose, and use this as the initial placement of the model.&lt;/p&gt;
+
+&lt;p&gt;Altogether, this is what initialization and fitting looks like when slowed down:&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/anim1.gif&quot; alt=&quot;fitting the face model&quot;&gt;
+	&lt;figcaption&gt;The initialization and fitting of the face model&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;While we&amp;rsquo;re tracking and fitting the face, we also need to check that the model hasn&amp;rsquo;t drifted too far away from the &amp;ldquo;true&amp;rdquo; position of the face. A way to do this, is to check once every second or so that the approximate region that the face model covers, seems to resemble a face. We do this using the same classifiers as on the patches, logistic regression, only trained on the entire face. If the face model does not seem to be on top of a face, we reinitialize the face detection.&lt;/p&gt;
+
+&lt;p class=&quot;footnote&quot; id=&quot;footnote3&quot;&gt;[3] : we could of course just make the searchwindows bigger, but every pixel we widen the searchwindow increases the time to fit exponentially, so we prefer to use small windows&lt;/p&gt;
+
+&lt;h4&gt;Performance/implementation issues&lt;/h4&gt;
+
+&lt;p&gt;The straightforward implementation of this algorithm in javascript is pretty slow. The main bottleneck is the classifiers which are called several times for each point in the model on every iteration. Depending on the size of the searchwindow (n) and the size of the classifier patches (m), the straightforward implementation is an O(m&lt;sup&gt;2&lt;/sup&gt; * n&lt;sup&gt;2&lt;/sup&gt;) operation. Using convolution via FFT we can bring it down to O(n log(n)), but this is still slower than what we want. Fortunately, the SVM kernels lends itself excellently to fast computation via the GPU, which we can do via WebGL, available on most browsers these days. Of course, webGL was never meant to be used for scientifical computing, only graphical rendering, so we have to jump through some hoops to get it to work.&lt;/p&gt;
+
+&lt;p&gt;The main problem we have is that while most graphic cards support floating point calculations and we can easily &lt;em&gt;import&lt;/em&gt; floating points to the GPU, there is no way to &lt;em&gt;export&lt;/em&gt; floating point numbers back to javascript in WebGL. We are only able to &lt;em&gt;read&lt;/em&gt; the pixels (which only support 8-bit ints) rendered by the GPU to the canvas. To get around this, we have to use a trick : we &amp;ldquo;pack&amp;rdquo; our 32-bit floats into four 8-bit ints, &amp;ldquo;export&amp;rdquo; them by drawing them to canvas, then read the pixels and &amp;ldquo;unpack&amp;rdquo; them back into 32-bit floats again on the javascript side. In our case we split the floats across each of the four channels (R,G,B,A), which means that each rendered pixel holds one float. Though this seems like a lot of hassle for some performance tweaks, it&amp;rsquo;s worth it, since the WebGL implementation is twice as fast as the javascript implementation.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;http://auduno.github.io/clmtrackr/docs/media/packing.png&quot; alt=&quot;packing and unpacking floats in the GPU&quot;&gt;
+	&lt;figcaption&gt;Packing and unpacking the floats from the GPU&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Once we get the responses, we have to deal with the matrix math in order to do regularization. This is another bottleneck, and really exposes the huge differences in speed of numerical computing between the javascript engines of the different browsers. I used the excellent library &amp;ldquo;numeric.js&amp;rdquo; to do these calculations - it currently seems to be the fastest and most full-featured matrix library out there for javascript, and I highly recommend it to anyone thinking of doing matrix math in javascript.&lt;/p&gt;
+
+&lt;p&gt;In our final benchmark, we managed to run around 70 iterations of the algorithm (with default settings) per second in Chrome, which is good enough to fit and track a face in real-time.&lt;/p&gt;
+
+&lt;h4&gt;Improvements&lt;/h4&gt;
+
+&lt;p&gt;CLMtrackr is by no means perfect, and you may notice that it doesn&amp;rsquo;t fit postures that deviates from the mean shape all that well. This is due to the classifiers not being discriminate enough. We tried training the classifiers on the gradient of the patches, but this is slower and not all that much better overall. Optimally each response would be an ensemble of SVM, gradient and local binary filters (which I never got around to implementing), but for the current being, this would probably run too slow. If you have some ideas to fix this, let me know!&lt;/p&gt;
+
+&lt;p&gt;Another improvement which might improve tracking is using a 3D model instead of a 2D model. Creating a 3D model is however a more difficult task, since it involves inferring a 3D model from 2D images, and I could never get around to implementing it.&lt;/p&gt;
+
+&lt;p&gt;Oh, and there&amp;rsquo;s also things such as structured SVM learning, but that will have to wait until another time.&lt;/p&gt;
+
+&lt;br&gt;&lt;p&gt;Have you used CLMtrackr for anything cool? Let me know! If you liked this article, you should &lt;a href=&quot;https://twitter.com/matsiyatzy&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;follow me on twitter&lt;/a&gt;.&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;A while ago I put out a semi-finished version of &lt;a href=&quot;https://github.com/auduno/clmtrackr&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;CLMtrackr&lt;/
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Building a budgeting service</title>
+    <link href="http://auduno.github.io/2013/04/07/building-a-budgeting-service-pt2/"/>
+    <id>http://auduno.github.io/2013/04/07/building-a-budgeting-service-pt2/</id>
+    <published>2013-04-06T22:00:00.000Z</published>
+    <updated>2016-05-05T20:33:57.000Z</updated>
+    
+    <content type="html">&lt;p&gt;As I wrote in &lt;a href=&quot;/post/40422171982/building-a-budgeting-service&quot;&gt;my last blog post&lt;/a&gt;, around 3 years ago I decided to try to build a budgeting service like &lt;a href=&quot;https://www.mint.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;mint.com&lt;/a&gt; for the norwegian market. After around a year, having reached the prototype stage, I decided to take a short break from further building, to think about the business details. This quickly turned into an &amp;hellip; extended break.&lt;/p&gt; 
+
+&lt;p&gt;In this post I&amp;rsquo;ll write out some of the reasons I stopped working on it, and finally, some lessons learned.&lt;/p&gt;
+
+&lt;p&gt;During the process of mocking up the prototype, I&amp;rsquo;d already considered some business models:&lt;/p&gt;
+
+&lt;ul&gt;&lt;li&gt;
+	&lt;h5&gt;lead generation for loans, savings and credit card accounts&lt;/h5&gt;
+    &lt;p&gt;In other words, getting a payment from the banks in return for sending users to one of their banking services. This is the business model that mint.com used, where they would recommend you banking services that might save you money. Of these, lead generation for loans probably is the most profitable, as loans are a large part of the business model for banks, and they&amp;rsquo;re willing to pay quite a bit for leads.&lt;/p&gt;
+	&lt;/li&gt;
+	
+	&lt;li&gt;
+	&lt;h5&gt;third-party solution for banks&lt;/h5&gt;
+    &lt;p&gt;This would mean selling the service of scraping and categorization to the banks as a plugin service in their own online banks. This didn&amp;rsquo;t seem all that feasible to me, since a majority of banks already used a third-party service (&lt;a href=&quot;https://www.evry.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;EVRY&lt;/a&gt;, formerly known as EDB) to run their online banks, and these were likely to want to make it themselves instead of buying it from another third party. As I later discovered, the few banks that actually ran their own online banks, mostly the larger banks (DnB, Gjensidige, etc.), were already building budgeting services themselves.&lt;/p&gt;
+    &lt;/li&gt;
+	
+	&lt;li&gt;
+	&lt;h5&gt;freemium solution (&amp;ldquo;pay for premium&amp;rdquo;-solution)&lt;/h5&gt;
+    &lt;p&gt;This is not a model I gave a lot of thought, since it was unlikely that the amount of users that were willing to pay for this services in Norway was large enough.&lt;/p&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The lead generation business model seemed less risky, so that was my main plan. However, there were a lot of problems with the business model that I never managed to solve.&lt;/p&gt;
+
+&lt;h4&gt;Profitability&lt;/h4&gt;
+
+&lt;p&gt;My main worry was the economic feasibility. Scraping all the different online banks demanded that we always keep the scraper up to date, which meant a lot of manual maintenance. The big question was whether the costs spent on maintenance would be balanced by profits from lead generation. This was really hard to answer since I didn&amp;rsquo;t know exactly how much maintenance was needed, or how much the banks were willing to pay for leads. In a presentation held by Aaron Patzer of mint.com, he mentioned that they had a revenue of around 30$ per user. The revenue probably would have been higher in Norway, but I was never sure how many users we&amp;rsquo;d get. Norway is after all a considerably smaller market than the US. Even though we managed to get a considerable share of the potential market size, given around 30$ per user we&amp;rsquo;d only be talking about a couple of million NOK in revenue, which is not a lot, considering maintenance costs.&lt;/p&gt;
+
+&lt;h4&gt;Marketing costs&lt;/h4&gt;
+
+&lt;p&gt;The second big worry was how to get people use this service. Most Norwegians have never heard of budgeting services, which means it would be a problem to get people to try it at the outset. This would be especially hard since the service asked them to log in to their bank account, something that no other service in Norway (as far as I know) asks you to do. We would have to do quite a lot of outreach to ensure that users were certain that the service was safe. The best bet would probably be to market the service through personal economy sites, such as &lt;a href=&quot;http://www.dinepenger.no/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;dinepenger.no&lt;/a&gt;, which already had a number of economy calculators and manual budgeting tools, and somehow get them to vouch for the service. Any kind of certification, such as TRUSTe, Verisign, and RSA, would probably also help here.&lt;/p&gt;
+
+&lt;h4&gt;Legality&lt;/h4&gt;
+
+&lt;p&gt;Though it wasn&amp;rsquo;t strictly illegal to scrape the account statements from online banks, a lot of the banks actually had clauses in their terms of services stating that the user was not allowed to give any third parties access to their online bank accounts. Any scraping done on remote servers would of course be a breach of these terms of services. Though it was deemed unlikely that the banks actually would do any counteractions against users allowing this (it would after all be the users, not us, they would be targeting legally), there was a major risk in that they might make life hard for us (i.e. making it harder to scrape) and that they might claim our services were insecure. On our side, we might claim that the users had a right to own their own information and that the banks were just trying to stop users from finding cheaper banking services. Some people I discussed this with, suggested that the banks were unlikely to say anything publicly, as &lt;em&gt;any&lt;/em&gt; kind of discussion around the security of the banks would be negative PR for the banks. It &lt;a href=&quot;http://www.dn.no/tekno/2012/06/13/-blir-du-svindlet-sa-star-du-personlig-ansvarlig&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;turned out later&lt;/a&gt; that &amp;ldquo;finanstilsynet&amp;rdquo; (which is Norways&amp;rsquo; higher authority for banks) actually &lt;em&gt;were&lt;/em&gt; willing to warn against giving up your information to these kinds of services in very negative tones, so the worry wasn&amp;rsquo;t exactly unwarranted. Given this kind of pushback, it would probably have been an uphill battle.&lt;/p&gt;
+
+&lt;br&gt;&lt;br&gt;&lt;p&gt;Altogether, these issues, especially concerns around profitability and legality, made me uncertain whether it really was worthwhile to continue with the project.&lt;/p&gt;
+
+&lt;p&gt;The real reason I stopped working on it, though, was that I really, really needed a break. By the time the prototype was done, I&amp;rsquo;d been working on this project in most of my spare time for a year. While the plan was to take a break from building to figure out whether the business was really profitable, I was too fatigued with the whole project, and though I thought about it from time to time, I didn&amp;rsquo;t really make a serious effort. The short break quickly grew into months, and I gradually started thinking about other projects.&lt;/p&gt;
+
+&lt;p&gt;So, here&amp;rsquo;s some of my lessons learned:&lt;/p&gt;
+
+&lt;h4&gt;Lessons learned&lt;/h4&gt;
+
+&lt;ul&gt;&lt;li&gt;
+	&lt;h5&gt;Figure out the business model first&lt;/h5&gt;
+	&lt;p&gt;Though it&amp;rsquo;s fun building stuff and you learn a lot doing it, if you end up building something that never earns money, you&amp;rsquo;re either in the not-for-profit business or you&amp;rsquo;ve wasted your time. Earning money (at least enough to keep day-to-day operations running) is and should be priority number one for any startup, so you should focus on that as early as possible. The issues with legality and maintenance cost vs profit, are actually something that I could have figured out before I started building it.&lt;/p&gt;
+	&lt;/li&gt;
+
+	&lt;li&gt;
+	&lt;h5&gt;Involve more people at an early stage.&lt;/h5&gt;
+	&lt;p&gt;Having someone to discuss with and share the stress (and victories) with, is worth way more than you might think. Other people might add knowledge or points of view you don&amp;rsquo;t have, and you&amp;rsquo;re probably likely to pick up on problems with your business model earlier, though that depends on how balanced you are as a team. In my case it would have been optimal to work with someone else that had experience with the banking business, as they could tell me more about the profitability aspects around lead generation. Including other people also meant it would have been easier to keep up motivation, or at least spin the project into something else, which partly was the reason I stopped.&lt;/p&gt;
+	&lt;/li&gt;
+&lt;/ul&gt;&lt;h4&gt;Postscript&lt;/h4&gt;
+
+&lt;p&gt;In hindsight, an automated personal budgeting service for the Norwegian market is probably unviable. Mint.com had a lot of advantages in that they were buying the transaction feeds from a third party, &lt;a href=&quot;http://www.yodlee.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Yodlee&lt;/a&gt;, since they didn&amp;rsquo;t directly have to deal with maintenance costs or legality issues. The only way that I see such a service could be viable in Norway, is if the banks start supporting a common API to get transaction information. This would considerably lower maintenance costs and stop any legality concerns. However, this is unlikely to be initiated by the banks, so it would probably have to be enforced through some sort of regulation. There are other services based on lead generation that are viable though, and since I stopped working on my project some have turned up.&lt;/p&gt;
+
+&lt;img src=&quot;/images/penger.no_front_crop.jpg&quot; alt=&quot;image&quot;&gt;
+
+&lt;p&gt;The site &lt;a href=&quot;https://www.penger.no/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;penger.no&lt;/a&gt;, which has simplified applying for loans from several banks at once, has abandoned the entire personal budgeting service and gone directly for the lead generation. Instead of getting information about users from their personal budgets, they&amp;rsquo;ve simply asked the users to punch in the details themselves. The only drawback I can think of with this, is that the leads might be less qualified (the banks get less real information about income and spending), and thus banks might pay less for the leads.&lt;/p&gt;
+
+&lt;p&gt;Penger.no have also solved a lot of the issues with marketing, since the service is partially owned by &lt;a href=&quot;http://www.dinepenger.no/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;dinepenger.no&lt;/a&gt; and &lt;a href=&quot;http://www.finn.no/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;finn.no&lt;/a&gt;. Dinepenger.no is able to give it credibility and means it can reach out to exactly those users that are interested in this kind of service, while ownership by finn.no (one of the top ten sites in Norway) means that they can advertise cheaply on pages of finn.no.&lt;/p&gt;
+
+&lt;p&gt;Some banks, such as &lt;a href=&quot;https://www.dnb.no/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;DnB&lt;/a&gt;, &lt;a href=&quot;https://skandiabanken.no/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Skandiabanken&lt;/a&gt; and &lt;a href=&quot;https://www.storebrand.no/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Storebrand&lt;/a&gt;, have also implemented their version of budgeting tools as part of their online banking services. I haven&amp;rsquo;t seen any that I&amp;rsquo;m really satisfied with in terms of user experience and integration, though. These tools are of course also only based on transactions from the accounts the user has in these banks, so they do not give you the complete overview of your economy that I was interested in (unless you have all finance information (stocks, loans, savings, debit account, BSU) in one bank). What would have been really interesting, is an online bank where the budgeting integration was really thought through, like what &lt;a href=&quot;https://www.simple.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Simple&lt;/a&gt; seem to be building in the US. I can only hope that some banks over here (or a startup) will try to to copy what they&amp;rsquo;re doing. Meanwhile, it looks like I&amp;rsquo;ll have to resort to spreadsheets for my complete budgeting needs&amp;hellip;&lt;/p&gt;
+
+&lt;br&gt;&lt;p&gt;If you liked this article, you should &lt;a href=&quot;https://twitter.com/matsiyatzy&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;follow me on twitter&lt;/a&gt;.&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;As I wrote in &lt;a href=&quot;/post/40422171982/building-a-budgeting-service&quot;&gt;my last blog post&lt;/a&gt;, around 3 years ago I decided to try to buil
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Building a budgeting service</title>
+    <link href="http://auduno.github.io/2013/01/21/building-a-budgeting-service/"/>
+    <id>http://auduno.github.io/2013/01/21/building-a-budgeting-service/</id>
+    <published>2013-01-20T23:00:00.000Z</published>
+    <updated>2016-05-05T20:34:10.000Z</updated>
+    
+    <content type="html">&lt;p&gt;So, it&amp;rsquo;s been over a year since I &amp;ldquo;took a break&amp;rdquo; from working on my stealth &lt;s&gt;startup&lt;/s&gt; project, and I guess it&amp;rsquo;s safe to say that I&amp;rsquo;m not going to pick it up again. Around 3 years ago, inspired by the success of the personal budgeting service &lt;a href=&quot;https://www.mint.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;mint.com&lt;/a&gt; in the US, and wanting something similar myself, I started investigating possibilities for making a personal budgeting service for the norwegian market. I ended up working on the project in my spare time for over a year.&lt;/p&gt;
+
+&lt;p&gt;In this post I&amp;rsquo;ll go through the challenges I encountered, some of the solutions, and in a later post I&amp;rsquo;ll go through the reasons I stopped working on it, and some lessons learned.&lt;/p&gt;
+
+&lt;p&gt;In short, I decided to prototype a web service for personal budgeting, i.e. setting up an overview of how much money you spend each month, how you spend it, tips for spending less, as well as other useful information. The budget was supposed to be set up automatically (as &lt;a href=&quot;http://www.mint.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;mint.com&lt;/a&gt; did) based on transaction information from users&amp;rsquo; bankaccount statements. In order to do this, my web service had to pull the transaction information from the banking websites, categorize the transactions (in order to find out how money was spent), and finally present the aggregated information in a sensible way to the user.&lt;/p&gt;
+
+&lt;p&gt;It was not obvious that this would be possible at all when I started investigating it, since dealing with norwegian banks have some specific challenges that I&amp;rsquo;ll get to below. I anyway started mocking up a prototype around the spring of 2010, and ended up working on it until the fall of 2011.&lt;/p&gt;
+
+&lt;h4&gt;The prototype&lt;/h4&gt;
+
+&lt;p&gt;The working title was, pretty arbitrarily, &amp;ldquo;Nano&amp;rdquo;, and this is what the final prototype looked like (click image for slideshow):&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;a id=&quot;images&quot; href=&quot;javascript:;&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;
+		&lt;img src=&quot;/images/Oversikt_thumb_400.jpg&quot; alt=&quot;image&quot;&gt;
+	&lt;/a&gt;
+	&lt;figcaption&gt;Click image for slideshow&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;The resulting web service was actually able to pull down transaction information from an users&amp;rsquo; bankaccount (after the user had provided login information), categorize the transactions, and present a very simple overview of trends and expenses. It was neither polished nor perfect, but it managed to do what it was supposed to.&lt;/p&gt;
+
+&lt;p&gt;The main challenges in building the web service was getting the transaction details from the banks and managing to categorize the transactions based on the relatively limited information we got. I&amp;rsquo;ll go through how I solved these here.&lt;/p&gt;
+
+&lt;h4&gt;Getting the transactions&lt;/h4&gt;
+
+&lt;p&gt;From what I could gather, the way &lt;a href=&quot;https://www.mint.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;mint.com&lt;/a&gt; (or rather, &lt;a href=&quot;http://www.yodlee.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Yodlee&lt;/a&gt;) collected information from the bank accounts of users was by a mixture of &lt;a href=&quot;https://en.wikipedia.org/wiki/Open_Financial_Exchange&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;existing financial APIs&lt;/a&gt;, and simply scraping the users&amp;rsquo; bank account using login username and password that the user shared with mint. It was, unfortunately, not straightforward to do the same in Norway.&lt;/p&gt;
+
+&lt;p&gt;Norwegian banks have no APIs to access bank account information, at least not with details such as historical transactions. Most banks allow you to download your account information in excel format when you&amp;rsquo;re logged in, but there is no API to do so for third parties, and getting users to download and upload the excel sheets to the web service manually was not really an option.&lt;/p&gt;
+
+&lt;p&gt;As for scraping the websites, unlike the web banking solutions in the US, where username and password is sufficient to get complete access to a users&amp;rsquo; bank account details, scandinavian banks all have &lt;a href=&quot;https://en.wikipedia.org/wiki/Two-factor_authentication&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;two-factor authentication&lt;/a&gt; (called &lt;a href=&quot;https://www.bankid.no/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;BankID&lt;/a&gt;). Two-factor authentication usually means that in addition to a password, you also need input from something the user has, usually a code-chip or a challenge/response code-card. This is much more secure, but unfortunately makes logging into banks without having the code-chip or code-card impossible, so just passing the username and password to a remote server and letting it do the scraping would not be possible.&lt;/p&gt;
+
+&lt;p&gt;To get around this, the easiest idea I could come up with, was to simply open the bank website in a small iframe &lt;em&gt;inside&lt;/em&gt; our web service, expose the bank&amp;rsquo;s own login mechanism directly to the user, let the user log in, and then use javascript/DOM events to scrape the bankaccount and send the information to our server in the background. This actually worked great for a few months, the only disadvantage being that the user had to wait while the scraper did its work in the background, and could not close the browser window while it was going on.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/BankID_crop.jpg&quot; alt=&quot;The iframed BankID login&quot;&gt;
+	&lt;figcaption&gt;The iframed BankID login&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Unfortunately, as I painfully discovered a few months later, the &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/HTTP/X-Frame-Options&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;X-Frame-Options response header&lt;/a&gt; had just became a semi-standard and trickled into most browsers around this time. This header enabled site owners to specify whether it was allowed to &amp;ldquo;frame&amp;rdquo; their website inside another page. Not surprisingly, most banks promptly specified that this should not be allowed, so I had to start from scratch. In hindsight, I&amp;rsquo;m surprised this was possible at all when I started, as it was a massive opportunity to spoof banking sites and manipulate users into giving away their login information, if used maliciously.&lt;/p&gt;
+
+&lt;p&gt;As a quick fix, I tried to use extensions to modify the X-Frame-Options headers and work around the restrictions. Though I managed to do it, it proved to only be possible in Firefox, so I discarded it as an option. Also, getting the user to install an extension as the first step of the web service would probably make for truly horrible conversion rates.&lt;/p&gt;
+
+&lt;p&gt;Since I couldn&amp;rsquo;t do the scraping inside the users&amp;rsquo; browser, the only option was then to anyway try to do the scraping remotely. I would still have to expose the login mechanism to the user somehow, though. I originally thought about trying to expose it via remote display (such as VNC), but found that a much more robust solution was to simply mirror the login mechanism instead. This was not trivial, as &lt;a href=&quot;https://www.bankid.no/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;BankID&lt;/a&gt;, the two-factor authentication mechanism used in Norway, is implemented as a Java plugin, which means you can&amp;rsquo;t use regular DOM APIs for interacting with it. As such, any automated login couldn&amp;rsquo;t be done with regular javascript web automation tools (such as Selenium). Instead, I ended up using &lt;a href=&quot;http://www.sikuli.org/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Sikuli&lt;/a&gt;, which is an automation tool based on OCR and image recognition. This worked surprisingly well, the result was that the login information would be passed to the remote server, and any type of BankID challenge could be channeled back to the user and responded to in a timely manner. After the login was done, the scraping could continue remotely.&lt;/p&gt;
+
+&lt;figure&gt;
+	&lt;img src=&quot;/images/Sikuli_script.jpg&quot; alt=&quot;The iframed BankID login&quot;&gt;
+	&lt;figcaption&gt;Sikuli scripting with image recognition&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;In the end I had a mechanism that was relatively painless for the user. On first using the web service, and whenever the user wanted to update with most recent transaction information, the user would log in to their bank via an interface that was similar to BankID, and the remote server would then take over and scrape all details. After scraping was done on the server, the transaction information was passed back to the webserver, where it would be categorized and exposed to the user.&lt;/p&gt;
+
+&lt;p&gt;The main drawback was that there was no way to update the transaction information at a later stage without the user logging in to the bank again. Mint.com&amp;rsquo;s mobile app enabled you to view your always updated account information and budget while on the go, but this would not be possible here. I speculated that it might have been possible to never log out of the bank on the remote server, keep the browsing session open &lt;em&gt;forever&lt;/em&gt;, and then just scrape whenever we needed it, but this sounded a bit too fragile, and banks would probably have put an end to it as soon as they discovered it. As I started work on the web service, there was some testing of BankID on mobile, which might have been feasible to use for a mobile app, but given that it was (and still is) only available to &lt;em&gt;some&lt;/em&gt; banks and phone operators, I never tested it out.&lt;/p&gt;
+
+&lt;h4&gt;Classification&lt;/h4&gt;
+
+&lt;p&gt;Once I&amp;rsquo;d managed to scrape the transaction details from the users&amp;rsquo; bank accounts, we needed to classify the transactions, which was by far the most interesting part of the work. Most transactions looked like this: the transaction amount, the type of transaction (visa, sales, giro or otherwise) and a character string (the &amp;ldquo;vendor id&amp;rdquo;) which served to identify the vendor where the transaction was done. The challenge was then to use these details to classify the transaction as specific expenses, such as &lt;em&gt;food&lt;/em&gt;, &lt;em&gt;gym&lt;/em&gt;, &lt;em&gt;gas&lt;/em&gt;, &lt;em&gt;cinema&lt;/em&gt;, etc.&lt;/p&gt;
+
+&lt;p&gt;From what I could deduce, the format of the vendor ids was supposed to be something like this:&lt;/p&gt;
+
+&lt;img src=&quot;/images/vendorformat1.png&quot; alt=&quot;The vendor ID format&quot;&gt;
+
+&lt;p&gt;The major portion of transactions were from pretty well known norwegian chains, such as &amp;ldquo;REMA 1000&amp;rdquo;, &amp;ldquo;ICA&amp;rdquo; &amp;amp; &amp;ldquo;Clas Ohlson&amp;rdquo;, which means it was trivial to identify these (and the corresponding category) with a simple lookup. The rest, though, were tricky. When the vendor was not a major chain, we needed to get the address in order to do a yellow pages lookup.&lt;/p&gt;
+
+&lt;p&gt;Judging from the format above, we should be able to &lt;a href=&quot;https://en.wikipedia.org/wiki/Tokenization&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;tokenize&lt;/a&gt; the strings and pull out the address very easily. That, however, often proved to be problematic. Here are some examples of vendor ids from transactions:&lt;/p&gt;
+
+&lt;ul style=&quot;list-style-type : none&quot;&gt;
+  &lt;li&gt;28.01 T BIL ARKITEKT STE OSLO&lt;/li&gt;
+  &lt;li&gt;23.01 ICA Supermarked  Alexsa OSLO&lt;/li&gt;
+  &lt;li&gt;23.02 FLYTOGET1021015 OSLO S 245012&lt;/li&gt;
+  &lt;li&gt;08.02 KIWI STORGATEN  . .&lt;/li&gt;
+  &lt;li&gt;07.02 ORANGE MINI SEN UELANDSGT 61 OSLO&lt;/li&gt;
+  &lt;li&gt;26.03 POINT NAT JERNBANE 0161 OSLO&lt;/li&gt;
+  &lt;li&gt;15.02 JAVA ULLEV&amp;Aring;LSVEIN OSLO&lt;/li&gt;
+  &lt;li&gt;17.09 OLYMPEN, MOB 1  GRNLANDSL 15 0194 OSLO&lt;/li&gt;
+  &lt;li&gt;01.02 R&amp;Oslash;TTERNATURPROD ULLEV&amp;Aring;LSVN.3 OSLO&lt;/li&gt;
+  &lt;li&gt;23.02 CG 0130 KJ&amp;Oslash;KKEN KJ&amp;Oslash;KKENAVD UETG&lt;/li&gt;
+  &lt;li&gt;22.06 Kl&amp;oslash;fta &amp;Oslash;st Bili stsente KL&amp;Oslash;FTA&lt;/li&gt;
+  &lt;li&gt;16.11 SHELL AS   AS&lt;/li&gt;
+  &lt;li&gt;15.05 ST.HANSHAUGEN ULLEV&amp;Aring;LSVN.  OSLO&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Since each field had character limits, a lot of long street names or company names were abruptly cut short or creatively shortened (such as &lt;em&gt;grnlandsl&lt;/em&gt; to mean &lt;em&gt;gr&amp;oslash;nlandsleiret&lt;/em&gt;). Company names and adresses could be concatenated. Street numbers and zip codes might or might not be present in almost any field. Some just wrote the address, not the vendor name. Some didn&amp;rsquo;t write the address. Some vendor ids were so misspelled that I can only assume the vendor was under the influence while punching it in.&lt;/p&gt;
+
+&lt;p&gt;Misspellings were relatively easy to solve with &lt;a href=&quot;https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;edit-distance&lt;/a&gt;, but in order to figure out what was feasible edits, we needed to look up all known possible addresses, placenames and zip-codes, which fortunately was provided for free in a downloadable database-format by &lt;a href=&quot;http://www.bring.no/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Posten&lt;/a&gt;. With a liberal amount of lookups in this database, we very often could figure out the most likely tokenization and corresponding address and vendor. There was quite a lot of manual tuning involved to make it work optimally, though.&lt;/p&gt;
+
+&lt;p&gt;What I didn&amp;rsquo;t have access to, was how probable each address or place was, which might have helped a lot for ambiguous addresses. Going forward, I could probably have used some sort of public register to calculate population density for each address/region and learned how probable each feasible address was this way.&lt;/p&gt;
+
+&lt;p&gt;Anyhow, once I had the top 10 most likely address and vendor names, I could easily do a lookup in yellow pages and see there what type of business the vendor was registered under, making it easy to classify.&lt;/p&gt;
+&lt;br&gt;&lt;p&gt;All around I managed to get to around 85% classification error with this method, on a limited set of transactions (my own, plus transactions from some friends). In a real transaction list most transactions were usually from major chains (REMA 1000, Kiwi, ICA, etc), so classification would probably be correct somewhere around 90-95% of the time. The rest we would have to ask the user to categorize.&lt;/p&gt;
+
+&lt;p&gt;Using external lookup web services, such as yellow pages, would probably not have been feasible on scale, since some of them I&amp;rsquo;d have to pay quite a bit for. Categorization would also have taken way too long time this way. Going further, I probably would have started out seeding the database with user data and input from external services and used this as training input to a machine learning classifier, which could then be used to try to categorize the vendors based on address and name. If we had very low confidence in some classification, we could resort to more complex processing involving yellow pages as last resort. In a real system, we would also learn from input from users, which would help greatly in categorizing ambiguous vendor ids.&lt;/p&gt;
+
+&lt;br&gt;&lt;p&gt;In &lt;a href=&quot;/post/47357960809/building-a-budgeting-service-pt-2&quot;&gt;my next post&lt;/a&gt;, I go through some of the reasons I stopped working on the prototype.&lt;/p&gt;
+
+&lt;br&gt;
+
+&lt;p&gt;If you liked this article, you should &lt;a href=&quot;https://twitter.com/matsiyatzy&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;follow me on twitter&lt;/a&gt;.&lt;/p&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+  window.onload = function() {
+  $(&quot;a#images&quot;).click(function() {
+    $.fancybox(
+      [
+        {
+          &#39;href&#39; : &#39;/images/Mainpage_comp.jpg&#39;,
+          &#39;title&#39; : &#39;The landing page&#39;
+        },
+        {
+          &#39;href&#39; : &#39;/images/Oversikt1_fix_comp.jpg&#39;,
+          &#39;title&#39; : &#39;Overview of aggregated balance&#39;
+        },
+        {
+          &#39;href&#39; : &#39;/images/Kontoer1_comp.jpg&#39;,
+          &#39;title&#39; : &#39;Overview of accounts&#39;
+        },
+        {
+          &#39;href&#39; : &#39;/images/Transaksjon1_fixed_comp.jpg&#39;,
+          &#39;title&#39; : &#39;Overview of transactions and classifications&#39;
+        },
+        {
+          &#39;href&#39; : &#39;/images/Utgifter1_comp.jpg&#39;,
+          &#39;title&#39; : &#39;Piechart overview of categorized expenses&#39;
+        },
+        {
+          &#39;href&#39; : &#39;/images/Utgifter2_comp.jpg&#39;,
+          &#39;title&#39; : &#39;Barchart overview of categorized expenses&#39;
+        },
+        {
+          &#39;href&#39; : &#39;/images/Firstscreen_fix_comp.jpg&#39;,
+          &#39;title&#39; : &#39;First page for new users&#39;
+        },
+        {
+          &#39;href&#39; : &#39;/images/Firstscreen1_login_comp.jpg&#39;,
+          &#39;title&#39; : &#39;First page for new users, with iframed BankID login&#39;
+        }
+      ],{
+      &#39;padding&#39;         : 0,
+      &#39;transitionIn&#39;		: &#39;none&#39;,
+      &#39;transitionOut&#39;		: &#39;none&#39;,
+      &#39;type&#39; : &#39;image&#39;,
+      &#39;changeFade&#39; : 0
+      }
+    )
+  });
+}
+&lt;/script&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;So, it&amp;rsquo;s been over a year since I &amp;ldquo;took a break&amp;rdquo; from working on my stealth &lt;s&gt;startup&lt;/s&gt; project, and I guess it&amp;rsqu
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Head tracking with WebRTC</title>
+    <link href="http://auduno.github.io/2012/06/15/head-tracking-with-webrtc/"/>
+    <id>http://auduno.github.io/2012/06/15/head-tracking-with-webrtc/</id>
+    <published>2012-06-14T22:00:00.000Z</published>
+    <updated>2016-05-03T19:10:31.000Z</updated>
+    
+    <content type="html">&lt;iframe src=&quot;http://player.vimeo.com/video/44049736&quot; width=&quot;500&quot; height=&quot;281&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen&gt;&lt;/iframe&gt;
+
+
+&lt;p&gt;A lot of new exciting standards are coming to browsers these days, among them the &lt;a href=&quot;https://www.w3.org/TR/webrtc/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;WebRTC standard&lt;/a&gt;, which adds support for streaming video and audio from native devices such as a webcamera. One of the exciting things that this enables, is so called &lt;em&gt;head tracking&lt;/em&gt;. We decided to do a little demonstration of this for the &lt;a href=&quot;http://www.opera.com/computer&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Opera 12&lt;/a&gt; release, which is the first desktop browser to support video-streaming via the getUserMedia API.&lt;/p&gt;
+
+&lt;p&gt;If you haven&amp;rsquo;t tried our fancy game out already, do so here:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.shinydemos.com/facekat/&quot; alt=&quot;facekat&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;img src=&quot;/images/facekat2.png&quot; alt=&quot;facekat&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The demo in the topmost video can be found &lt;a href=&quot;https://auduno.github.io/headtrackr/examples/targets.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;here&lt;/a&gt;, though note that this needs WebGL support as well. Both demos work best if your camera is mounted over your screen (like internal webcameras on most laptops) and when your face is evenly lighted. And of course you have to have &lt;a href=&quot;http://caniuse.com/#feat=stream&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;a browser that supports getUserMedia&lt;/a&gt; and a computer with a webcamera.&lt;/p&gt;
+
+&lt;p&gt;The javascript library which I made for the task, &lt;em&gt;headtrackr.js&lt;/em&gt;, is now available freely &lt;a href=&quot;https://github.com/auduno/headtrackr/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;here&lt;/a&gt;. It&amp;rsquo;s not currently well documented, but I&amp;rsquo;ll try to do so in the coming weeks. In this post I&amp;rsquo;ll give you a very rough overview of how it&amp;rsquo;s put together.&lt;/p&gt;
+
+&lt;p&gt;My implementation of head tracking consists of four main parts:&lt;/p&gt;
+
+&lt;ul&gt;
+	&lt;li&gt;a face detector&lt;/li&gt;
+	&lt;li&gt;a tracking mechanism&lt;/li&gt;
+	&lt;li&gt;a smoother&lt;/li&gt;
+	&lt;li&gt;the headposition calculation&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/figure3d.png&quot; alt=&quot;diagram&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;For the face detection, we use an existing javascript library called &lt;a href=&quot;https://github.com/liuliu/ccv&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;ccv&lt;/a&gt;. This library uses a &lt;a href=&quot;https://en.wikipedia.org/wiki/Viola%E2%80%93Jones_object_detection_framework&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Viola-Jones type&lt;/a&gt; algorithm (with &lt;a href=&quot;http://liuliu.me/eyes/javascript-face-detection-explained/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;some modifications&lt;/a&gt;) for detecting the face, which is a very fast and reasonably precise face detection algorithm. We could have used this to detect the face in every videoframe, however, this would probably not have run in real-time. It also would not have been able to detect the face in all positions, for instance if the head was tilted, or turned slightly away from the camera.&lt;/p&gt;
+
+&lt;p&gt;Instead we use a more lightweight object tracking algorithm called &lt;em&gt;camshift&lt;/em&gt;, which we initialize with the position of the face we detected. The camshift algorithm is an algorithm that tracks any object in an image (or video) just based on its color histogram and the color histogram of the surrounding elements, see &lt;a href=&quot;http://www.cognotics.com/opencv/servo_2007_series/part_3/sidebar.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this article&lt;/a&gt; for details. Our javascript implementation was ported from an &lt;a href=&quot;http://www.libspark.org/browser/as3/FaceIt/trunk/src/org/libspark/faceit/camshift?rev=2813&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;actionscript library called FaceIt&lt;/a&gt;, with some modifications. You can test the camshift-algorithm alone &lt;a href=&quot;https://auduno.github.io/headtrackr/examples/camshift.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Though the camshift algorithm is pretty fast, it&amp;rsquo;s also a bit unprecise and will jump a bit around, which can cause annoying jittering of the face tracking. Therefore we apply a smoother for each position we receive. In our case we use double exponential smoothing, as it&amp;rsquo;s pretty easy to calculate.&lt;/p&gt;
+
+&lt;p&gt;We now know the approximate position and size of the face in the image. In order to calculate the position of the head, we need to know one more thing. Webcameras have widely differing angles of &amp;ldquo;field of view&amp;rdquo;, which will affect the size and position of the face in the video. For an example, see the image below (courtesy of &lt;a href=&quot;https://www.flickr.com/photos/freeparking/507248108/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;D Flam&lt;/a&gt;). To get around this, we estimate the &amp;ldquo;field of view&amp;rdquo; of the current camera, by assuming that the user at first initialization is sitting around 60 cms away from the camera (which is a comfortable distance from the screen, at least for laptop displays), and then seeing how large portion of the image the face fills. This estimated &amp;ldquo;field of view&amp;rdquo; is then used for the rest of the head tracking session.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.flickr.com/photos/freeparking/507248108/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;img src=&quot;/images/fov_56_70.png&quot; alt=&quot;Image courtesy of http://www.flickr.com/people/freeparking/&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Using this &amp;ldquo;field of view&amp;rdquo;-estimate, and some assumptions about the average size of a person&amp;rsquo;s face, we can calculate the distance of the head from the camera by way of some trigonometry. I won&amp;rsquo;t go into the details, but here&amp;rsquo;s a figure. Hope you remember your maths!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/trig01.png&quot; alt=&quot;trigonometry diagram&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Calculating the x- and y-position relative to the camera is a similar exercise. At this point we have the position of the head in relation to the camera. In the &lt;a href=&quot;http://www.shinydemos.com/facekat/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;facekat demo&lt;/a&gt; above, we just used these positions as the input to a mouseEvent-type controller.&lt;/p&gt;
+
+&lt;p&gt;If we want to go further to create the &lt;a href=&quot;https://en.wikipedia.org/wiki/Head-coupled_perspective&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;em&gt;head-coupled perspective&lt;/em&gt;&lt;/a&gt; seen in the first video, we&amp;rsquo;ll have to use the headpositions to directly control the camera in a 3D model. To get the completely correct perspective we also have to use an off-axis view (aka &lt;em&gt;asymmetric frustum&lt;/em&gt;). This is because we want to counteract the distortion that arises when the user is looking at the screen from an angle, perhaps best explained by the figure below.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/offaxisFigure.png&quot; alt=&quot;off-axis view diagram&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;In our case we used the excellent 3D library &lt;a href=&quot;https://github.com/mrdoob/three.js/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;three.js&lt;/a&gt;. In three.js it&amp;rsquo;s pretty straightforward to create the off-axis view if we abuse the interface called &lt;em&gt;camera.setViewOffset&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Overall, the finished result works decently, at least if you have a good camera and even lighting. Note that the effect looks much more convincing on video, as we then have no visual cue for the depth of the other objects in the scene, while in real life our eyes are not so easily fooled.&lt;/p&gt;
+
+&lt;p&gt;One of the problems I stumbled upon while working with this demo, was that the quality of webcameras vary widely. Regular webcameras often have a lot of chromatic aberration on the edges of the field of view due to cheap lenses, which dramatically affects the tracking effectiveness outside of the immediate center of the video. In my experience the built-in cameras on Apple Macbooks had very little such distortion. You get what you pay for, I guess.&lt;/p&gt;
+
+&lt;p&gt;Most webcameras also adjust brightness and whitebalance automatically, which in our case is not very helpful, as it messes up the camshift tracking. Often the first thing that happens when video starts streaming is that the camera starts to adjust whitebalance, which means that we have to check that the colors are stable before doing any sort of face detection. If the camera adjusts the brightness a lot after we&amp;rsquo;ve started tracking the face, there&amp;rsquo;s not much we can do except reinitiate the face detection.&lt;/p&gt;
+
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+
+&lt;p&gt;To give credit where credit is due, the inspiration for this demo was &lt;a href=&quot;https://www.youtube.com/embed/Jd3-eiid-Uw&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this video&lt;/a&gt; that was buzzing around the web a couple of years ago. In it, Johnny Chung Lee had hacked a Wii remote to capture the motions of the user. Later on, &lt;a href=&quot;http://iihm.imag.fr/en/demo/hcpmobile/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;some french researchers&lt;/a&gt; decided to try out the same thing without the Wii remote. Instead of motion sensors they used the front-facing camera of the Ipad to detect and track the rough position of the head, with pretty convincing results. The result is available as the Ipad app &lt;a href=&quot;http://iihm.imag.fr/francone/i3D/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;i3D&lt;/a&gt; and can be seen here:&lt;/p&gt;
+
+&lt;iframe width=&quot;450&quot; height=&quot;253&quot; src=&quot;http://www.youtube.com/embed/19XZJa15hOs&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;
+
+&lt;p&gt;Although head-coupled perspective might not be ready for any type of generic interaction via the web camera &lt;em&gt;yet&lt;/em&gt;, it works fine with simple games like &lt;a href=&quot;http://www.shinydemos.com/facekat/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;em&gt;facekat&lt;/em&gt;&lt;/a&gt;. I&amp;rsquo;m sure there are many improvements that can make it more precise and failproof, though. The library and demos were patched together pretty fast, and there are several improvements that I didn&amp;rsquo;t get time to test out, such as:&lt;/p&gt;
+
+&lt;ul&gt;&lt;li&gt;tweaking the settings of the camshift algorithm&lt;/li&gt;
+&lt;li&gt;using other tracking algorithms, such as &lt;a href=&quot;http://www.robinhewitt.com/pubs/BayesShiftTracker.pdf&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;bayesian mean shift&lt;/a&gt;, which also uses information about the background immediately surrounding the face&lt;/li&gt;
+&lt;li&gt;maybe using edge detection to further demarcate the edges of the face, though this might be a bit heavy on processing&lt;/li&gt;
+&lt;li&gt;using requestAnimationFrame instead of setIntervals&lt;/li&gt;
+&lt;li&gt;using hue and saturation for the camshift algorithm (which the original camshift paper suggests) instead of RGB&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;If you feel like implementing any of these, feel free to &lt;a href=&quot;https://github.com/auduno/headtrackr&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;grab a fork&lt;/a&gt;! Meanwhile, I&amp;rsquo;m pretty sure we&amp;rsquo;ll see many more exciting things turn up once WebRTC becomes supported across more browsers, check out &lt;a href=&quot;https://vimeo.com/41666669&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this&lt;/a&gt; for instance&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Update&lt;/strong&gt;: a slightly edited version of this post, which also includes some more details about the trigonometry calculations, was &lt;a href=&quot;https://dev.opera.com/articles/head-tracking-with-webrtc/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;published at dev.opera.com&lt;/a&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;iframe src=&quot;http://player.vimeo.com/video/44049736&quot; width=&quot;500&quot; height=&quot;281&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot;
+    
+    </summary>
+    
+    
+  </entry>
+  
+</feed>

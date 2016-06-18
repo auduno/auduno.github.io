@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  
+  <title>Estimation in Sequential Analysis | Audun M Øygard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="In the previous post I introduced the Sequential Generalized Likelihood Ratio test, which is a sequential A/B-test that in most cases require much smaller sample sizes than the classical fixed sample-">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Estimation in Sequential Analysis">
+<meta property="og:url" content="http://auduno.github.io/2015/01/04/estimation-in-sequential-analysis/index.html">
+<meta property="og:site_name" content="Audun M Øygard">
+<meta property="og:description" content="In the previous post I introduced the Sequential Generalized Likelihood Ratio test, which is a sequential A/B-test that in most cases require much smaller sample sizes than the classical fixed sample-">
+<meta property="og:image" content="http://auduno.github.io/images/estimate_01.png">
+<meta property="og:image" content="http://auduno.github.io/images/estimate_02.png">
+<meta property="og:image" content="http://auduno.github.io/images/estimate_thresholds_01.png">
+<meta property="og:updated_time" content="2016-05-01T12:05:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Estimation in Sequential Analysis">
+<meta name="twitter:description" content="In the previous post I introduced the Sequential Generalized Likelihood Ratio test, which is a sequential A/B-test that in most cases require much smaller sample sizes than the classical fixed sample-">
+<meta name="twitter:image" content="http://auduno.github.io/images/estimate_01.png">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+    <link rel="stylesheet" href="/css/style.css">
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.css">
+      <script src="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.js"></script>
+    
+  
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-32670536-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css" rel="stylesheet">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script language="javascript" type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
+</head>
+
+<body>
+  <header>
+  <div id="icon">
+    <a href="/" class="nocolor"><p>Audun M. Øygard</p></a>
+    <br/>
+    <div id="socialicons">
+      <a href="http://www.twitter.com/matsiyatzy"><i class="icon-twitter"></i></a>
+      <a href="http://github.com/auduno"><i class="icon-github icon-large"></i></a>
+      <a href="https://www.linkedin.com/in/audun-mathias-%C3%B8ygard-1a572041"><i class="icon-linkedin icon-large"></i></a>
+      <a href="/atom.xml"><i class="icon-rss icon-medium" style="margin-left:2px;position:relative;top:0.1em;"></i></a>
+    </div>
+  </div>
+  <nav id="nav">
+    <p><a href="/about.html">About</a></p>
+    <p><a href="/">Blog</a></p>
+    <!--<p><a href="projects.html">Projects/Work</a></p>-->
+  </nav>
+  <div id="burger"></div>
+  <div id="noburger" class="hide"></div>
+</header>
+  <div id="content">
+    <article>
+
+
+<img src="/images/header_estimate2.png" alt="image" class="headerimage">
+
+<h3>Estimation in Sequential Analysis</h3>
+
+
+<p class="date"><time datetime="2015-01-04">04. January 2015</time></p>
+
+<p>In the <a href="/2014/12/25/rapid-a-b-testing-with-sequential-analysis/">previous post</a> I introduced the Sequential Generalized Likelihood Ratio test, which is a sequential A/B-test that in most cases require much smaller sample sizes than the classical fixed sample-size test. In this post I’m going to explain some problems regarding estimation in sequential analysis tests in general, and how they can be solved.</p>
+
+<p>Sequential analysis tests, such as the sequential GLR test I wrote about in my <a href="/2014/12/25/rapid-a-b-testing-with-sequential-analysis/">previous post</a>, allows us to save time by stopping the test early when it’s possible. However, the fact that the test can stop early has some subtle consequences for the estimates we make after the test is done. Let’s take a look at the average maximum likelihood estimate when applied to the “comparison of proportions” sequential GLR test:</p>
+
+<figure class="narrowfig"><img src="/images/estimate_01.png" alt="average estimate vs true difference"></figure>
+
+<p>It seems like the average estimate is slightly off - to get a better view, let’s take a look at just the bias, i.e. the average ML estimate minus the true difference :</p>
+
+<figure class="narrowfig"><img src="/images/estimate_02.png" alt="bias vs true difference"></figure>
+
+<p>The estimates are (almost imperceptably) biased inwards when the true difference is close to zero, biased outwards when the difference between proportions are relatively large, and then unbiased again at the extreme ends. This is quite unlike fixed sample-size tests, which have no such bias at all. The reason for this difference is that there is an interaction between the stopping time and the estimate - sequential tests stop early when our samples are more extreme than some threshold, which means that the final estimates we get more often than not will be more extreme than what is true.</p>
+
+<p>This might become a bit more intuitive if we take a look at a typical sample path for the MLE and the approximate thresholds for stopping the test in terms of the MLE. In this case the true difference is 0.2, and we do a two-sided sequential GLR test with α-level 0.05, β-level 0.10 and indifference region of size 0.1 :</p>
+
+<figure class="narrowfig"><img src="/images/estimate_thresholds_01.png" alt="ML sample path"></figure>
+
+<p>As we collect data, the ML estimates jump quite a bit around before converging towards the true difference. As it jumps around, it's likely to cross the threshold at a higher point (as seen happening here after around 70 samples) and thus stop the test at this point. Similarly, when the true difference is close to zero, it will usually stop at values slightly closer to zero than the actual difference. What about the vanishing bias at the extremes? This is because at the most extreme values, the test will almost invariably stop at only a handful of samples, and thus the interaction between the stopping time and the estimate practically disappears.</p>
+
+<p>So what can we do about this problem? Unfortunately, there is not an uniformly <em>best</em> estimator we can use as a replacement for the MLE. Some of the estimators suggested to fix the bias have much larger mean squared error than the MLE due to having larger variance. However, a simple and commonly used correction (and what we use in the sequential A/B-testing library <a href="https://github.com/auduno/seglir/" target="_blank" rel="external">SeGLiR</a>), is the <em>Whitehead bias-adjusted</em> estimate. The Whitehead bias-adjusted estimate is based on the fact that we know that:</p>
+
+<p style="text-align:center;"><span id="tex1">E(\hat{\theta}) = \theta + b(\theta)</span></p><p>where <span id="tex7">theta</span> is the true difference, <span id="tex8">theta_hat</span> is our estimate of the difference, and <span id="tex5">b(theta)</span> is the bias of our test at <span id="tex6">theta</span>. Given an estimate <span id="tex3">theta_hat</span>, we can then find an approximately bias-adjusted estimate by solving for <span id="tex4">theta_sim</span> so that:</p>
+
+<p style="text-align:center;"><span id="tex2">\tilde{\theta} + b(\tilde{\theta}) = \hat{\theta}</span></p><p>This can be found by simple simulation and some optimization. Note that there are also other alternative estimators, such as the <a href="http://www.tandfonline.com/doi/abs/10.1081/BIP-120037195?journalCode=lbps20&#.VJ7EIBdAEM" target="_blank" rel="external">conditional MLE</a>, but since the brute-force simulation approach to this would take <em>much</em> more time than the Whitehead bias-adjustment, it's not something I've implemented in SeGLiR currently.</p>
+
+<p>One important thing to note is that the bias problem is not specific to the sequential GLR test or even sequential frequentist tests. In fact any test with a stopping rule that depends on the parameter we estimate, such as Thompson sampling with a stopping rule (as <a href="https://support.google.com/analytics/answer/2844870?hl=en&ref_topic=1745207" target="_blank" rel="external">used by google analytics</a>) will have the same problem. John Kruschke discusses this in the context of bayesian analysis in <a href="http://doingbayesiandataanalysis.blogspot.no/2013/11/optional-stopping-in-data-collection-p.html" target="_blank" rel="external">this blog post</a>.</p>
+
+<h4>Precision and Confidence intervals</h4>
+
+<p>So, given that we've bias-corrected the estimates, how precise are the estimates we get? Unfortunately, estimates from sequential analysis tests often are less precise than the fixed sample-size test. This is not so surprising, since the tests often stop earlier, and we thus have less data to base the estimates on. To see this for yourself, take a look at the estimates given in <a href="http://auduno.github.io/SeGLiR/demo/demo2.html" target="_blank" rel="external">this demo</a>.</p> 
+
+<p>For this reason, it is natural to ask for confidence intervals to bound the estimates in sequential analysis tests. Classical fixed sample-size tests use the normal approximation to create confidence intervals for the estimate. This is usually not possible with sequential analysis tests, since the distribution of the test statistics under a stopping rule are very complex and usually impossible to approximate by common distributions. Instead we can resort to bootstrap confidence intervals, which are simple to simulate. These are unfortunately also sensitive to the bias issues above, so the best option is to use a bias-adjusted confidence interval<a href="#footnote1"><sup>[1]</sup></a>. Note that since sequential tests stop early and we often have fewer samples, the confidence intervals will usually be wider than for the fixed sample-size test.</p>
+
+<p class="footnote" id="footnote1">[1] see Davison & Hinkley : <a href="https://books.google.no/books/about/Bootstrap_Methods_and_Their_Application.html?id=4aCDbm_t8jUC&redir_esc=y&hl=en" target="_blank" rel="external">Bootstrap Methods and their applications</a>, chap. 5.3 for details</p>
+
+<h4>P-values</h4>
+
+<p>As a little aside, what about p-values, the statistic everyone loves to hate?</p>
+
+<p>When doing classical hypothesis tests, p-values are usually used to describe the significance of the result we find. This is not quite as good an idea in sequential tests as in fixed sample-size tests. The reason for this is that the p-value is not uniquely defined in sequential tests. The p-value is defined as the probability that we get a result as extreme or more extreme than the one we see, given that the null-hypothesis is true. In fixed sample-size tests, a more extreme result is simply a result where the test statistic is well, more extreme. However, in the sequential setting, we also have the variable of when the test was stopped. So is a more &ldquo;extreme result&rdquo; then a test that stops earlier? Or a test that stops later, but with a more &ldquo;extreme&rdquo; test-statistic? There is no definite answer to this. In the statistical literature there are several different ways to &ldquo;order&rdquo; the outcomes and thus define what is more &ldquo;extreme&rdquo;, but unfortunately there is no consensus on which &ldquo;ordering&rdquo; is the best, which makes p-values in sequential analysis a somewhat ambiguous statistic.</p>
+
+<p>Nevertheless, in SeGLiR we've implemented a p-value via simple simulation, where we assume that a more &ldquo;extreme result&rdquo; is any result where the test statistic is more extreme than our result, regardless of when the test was stopped. This is what is called a Likelihood Ratio-ordering and is the ordering suggested by Cook & DeMets in their book referenced below.</p>
+
+<br><p>As we've seen in this post, estimation in sequential tests is a bit more tricky than in fixed sample-size tests. Because sequential tests use much less samples, estimates may be more imprecise, and because of the interaction with the stopping rule they tend to be biased, though there are ways to mitigate the worst effects of this. In an upcoming post, I'm planning to compare sequential analysis tests with other variants of A/B-tests such as multi-armed bandits, and give a little guide on when to choose which test. If you're interested, <a href="https://twitter.com/matsiyatzy" target="_blank" rel="external">follow me on twitter</a> for updates.</p>
+
+<h4>References</h4>
+
+<p>If you're interested in more details on estimation in sequential tests, here are some recommended books that cover this subject. While these are mostly about group sequential tests, the solutions are the same as in the case with fully sequential tests (which is what I've described in my posts).</p>
+<ul>
+	<li>C. Jennison & B. Turnbull : <a href="https://books.google.no/books/about/Group_Sequential_Methods_with_Applicatio.html?id=qBrpTcAYtNQC" target="_blank" rel="external">Group Sequential Methods with Applications to Clinical Trials</a>, CRC Press 1999</li>
+	<li>T. Cook & D. DeMets : <a href="http://www.amazon.com/Introduction-Statistical-Methods-Clinical-Chapman/dp/1584880279" target="_blank" rel="external">Introduction to Statistical Methods for Clinical Trials</a>, Chapman & Hall/CRC Press 2007</li>
+</ul>
+
+<script>
+	var tex1 = document.getElementById('tex1')
+	katex.render("E(\\hat{\\theta}) = \\theta + b(\\theta)",tex1)
+	katex.render("\\tilde{\\theta} + b(\\tilde{\\theta}) = \\hat{\\theta}",tex2)
+	katex.render("\\hat{\\theta}",tex3)
+	katex.render("\\tilde{\\theta}",tex4)
+	katex.render("b(\\theta)",tex5)
+	katex.render("\\theta",tex6)
+	katex.render("\\theta",tex7)
+	katex.render("\\hat{\\theta}",tex8)
+</script>
+
+</article>
+
+
+<nav id="blognav">
+  
+    <div class="prev_post">
+      <a href="/2015/07/29/visualizing-googlenet-classes/" id="article-nav-newer" class="article-nav-link-wrap">
+        <img src="/css/images/prev_post2.png">
+        <p>Visualizing GoogLeNet Classes</p>
+      </a>
+    </div>
+  
+  
+    <div class="next_post">
+      <a href="/2014/12/25/rapid-a-b-testing-with-sequential-analysis/" id="article-nav-older" class="article-nav-link-wrap">
+        <img src="/css/images/next_post.png">
+        <p>Rapid A/B-testing with Sequential Analysis</p>
+      </a>
+    </div>
+  
+</nav>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+<script>
+  var disqus_shortname = 'audunotumblr';
+  
+  var disqus_url = 'http://auduno.github.io/2015/01/04/estimation-in-sequential-analysis/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+  </div>
+  <div id="footer">
+	<div id="socialicons">
+	</div>
+</div>
+  <script>
+  		function displayMenu() {
+  			document.getElementById('burger').className = "hide";
+  			document.getElementById('noburger').className = "nohide";
+  			document.getElementById('nav').className = "nohide";
+  		}
+
+  		function hideMenu() {
+  			document.getElementById('burger').className = "nohide";
+  			document.getElementById('noburger').className = "hide";
+  			document.getElementById('nav').className = "hide";
+  		}
+
+  		document.getElementById('burger').onclick = displayMenu;
+  		document.getElementById('noburger').onclick = hideMenu;
+  	</script>
+</body>
+</html>

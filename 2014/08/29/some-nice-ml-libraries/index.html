@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  
+  <title>Some nice ML-libraries | Audun M Øygard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="I recently had a go at the Kaggle Acquire Valued Shoppers Challenge. This competition was a bit special in that the dataset was 22 GB, one of the biggest datasets they&amp;rsquo;ve had in a competition. W">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Some nice ML-libraries">
+<meta property="og:url" content="http://auduno.github.io/2014/08/29/some-nice-ml-libraries/index.html">
+<meta property="og:site_name" content="Audun M Øygard">
+<meta property="og:description" content="I recently had a go at the Kaggle Acquire Valued Shoppers Challenge. This competition was a bit special in that the dataset was 22 GB, one of the biggest datasets they&amp;rsquo;ve had in a competition. W">
+<meta property="og:image" content="http://auduno.github.io/images/barchart1.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/badge_crop.jpg">
+<meta property="og:updated_time" content="2016-05-03T16:38:41.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Some nice ML-libraries">
+<meta name="twitter:description" content="I recently had a go at the Kaggle Acquire Valued Shoppers Challenge. This competition was a bit special in that the dataset was 22 GB, one of the biggest datasets they&amp;rsquo;ve had in a competition. W">
+<meta name="twitter:image" content="http://auduno.github.io/images/barchart1.jpg">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+    <link rel="stylesheet" href="/css/style.css">
+    
+  
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-32670536-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css" rel="stylesheet">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script language="javascript" type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
+</head>
+
+<body>
+  <header>
+  <div id="icon">
+    <a href="/" class="nocolor"><p>Audun M. Øygard</p></a>
+    <br/>
+    <div id="socialicons">
+      <a href="http://www.twitter.com/matsiyatzy"><i class="icon-twitter"></i></a>
+      <a href="http://github.com/auduno"><i class="icon-github icon-large"></i></a>
+      <a href="https://www.linkedin.com/in/audun-mathias-%C3%B8ygard-1a572041"><i class="icon-linkedin icon-large"></i></a>
+      <a href="/atom.xml"><i class="icon-rss icon-medium" style="margin-left:2px;position:relative;top:0.1em;"></i></a>
+    </div>
+  </div>
+  <nav id="nav">
+    <p><a href="/about.html">About</a></p>
+    <p><a href="/">Blog</a></p>
+    <!--<p><a href="projects.html">Projects/Work</a></p>-->
+  </nav>
+  <div id="burger"></div>
+  <div id="noburger" class="hide"></div>
+</header>
+  <div id="content">
+    <article>
+
+
+<img src="/images/header1.png" alt="image" class="headerimage">
+
+<h3>Some nice ML-libraries</h3>
+
+
+<p class="date"><time datetime="2014-08-29">29. August 2014</time></p>
+
+<p>I recently had a go at the Kaggle <a href="https://www.kaggle.com/c/acquire-valued-shoppers-challenge" target="_blank" rel="external">Acquire Valued Shoppers Challenge</a>. This competition was a bit special in that the dataset was 22 GB, one of the biggest datasets they&rsquo;ve had in a competition. While 22 GB may not quite qualify as <em>big data</em>, it&rsquo;s certainly something that your average laptop will choke on when using standard methods. Ordinarily I&rsquo;d reach for <a href="http://scikit-learn.org/stable/" target="_blank" rel="external">scikit-learn</a> for these tasks, but in this case some of the methods in scikit-learn were a bit slow, and some other libraries had nice methods that scikit-learn didn&rsquo;t have, so I decided to try out some other libraries. In this post I&rsquo;ll give a brief look at some of the alternative machine learning libraries that I used during the competition.</p>
+
+<p>In the Kaggle challenge, the intention was to predict whether a customer would become a &ldquo;repeat buyer&rdquo; of a product after trying the product. To give some examples of usage of the libraries I&rsquo;m going through, I&rsquo;ll use the features I created for the challenge, and predict probabilities of whether the customer was a &ldquo;repeat buyer&rdquo;. To follow the examples, you can download the features <a href="https://github.com/auduno/Kaggle-Acquire-Valued-Shoppers-Challenge" target="_blank" rel="external">here</a> and set up the training data for the examples like this:</p>
+
+<pre class="prettyprint lang-py" style="overflow-x:scroll">import pandas as pd
+train_data = pd.io.parsers.read_csv("./features/train/all_features.csv.gz", sep=" ", compression="gzip")
+train_label = train_data['label']
+del train_data['label']
+del train_data['repeattrips']
+test_data = pd.io.parsers.read_csv("./features/test/all_features.csv.gz", sep=" ", compression="gzip")
+del test_data['label']
+del test_data['repeattrips']
+</pre>
+
+<h4>XGBoost</h4>
+
+<p><a href="https://github.com/tqchen/xgboost" target="_blank" rel="external">XGBoost</a> (short for &lsquo;extreme gradient boosting&rsquo;) is a library solely devoted to, you guessed it, <a href="https://en.wikipedia.org/wiki/Gradient_boosting" target="_blank" rel="external">gradient boosting</a>. Gradient boosting tends to be a frustrating affair, since it usually performs extremely well, but can also be very slow to train. Usually you would solve this by throwing several cores at the problem and use parallelization to speed it up, but neither scikit-learn or R&rsquo;s implementation is parallellizable, and so there doesn&rsquo;t seem to be much we can do. Fortunately there does exist alternative implementations that <em>do</em> support parallelization, and one of these is XGBoost.</p>
+
+<p>XGBoost has a python API, so it is very easy to integrate into a python workflow. An advantage XGBoost has compared to scikit-learn, is that while scikit-learn only has support for gradient boosting with decision trees as &ldquo;base learners&rdquo;, XGBoost also has support for linear models as base learners. In our cross-validation tests, this gave us a nice improvement in predictions.</p>
+
+<p>Another nice feature XGBoost has is that it will print out prediction error on a given test set for every 10 iterations over the training set, which allows you to monitor approximately when it starts to overfit. This can be used to tune how many rounds of training you want to do (in scikit-learn this is called <em>n_estimators</em>). On the other hand, XGBoost does not have support for feature-importances calculation, but they might implement this soon (see <a href="https://github.com/tqchen/xgboost/issues/11" target="_blank" rel="external">this issue</a>).</p>
+
+<p>In our example we first we create XGBoost train and test datasets, using the custom XGBoost DMatrix objects. We next set up our parameters: in the &ldquo;param&rdquo; dictionary, we set the <em>max_depth</em> of the decision trees, the <em>learning rate</em> of the boosting, here called <em>eta</em>, the objective of the learning (in our case logistic, since this is classification) and the number of threads we&rsquo;d like to use. Since we had four cores when running this example, we set this to four threads. The number of rounds to do is set directly when we call the train method. We train via calling <em>xgb.train()</em>, and we can then call <em>predict</em> on our returned train object to get our predictions. Simple!</p>
+
+<pre class="prettyprint lang-py" style="overflow-x:scroll"># import the xgboost library from wherever you built it
+import sys
+sys.path.append('/home/audun/xgboost-master/python/')
+import xgboost as xgb
+
+dtrain = xgb.DMatrix( train_data.values, label=train_label.values)
+dtest = xgb.DMatrix(test_data.values)
+param = {'bst:max_depth':3, 'bst:eta':0.1, 'silent':1, 'objective':'binary:logistic', 'nthread':4, 'eval_metric':'auc'}
+num_round = 100
+bst = xgb.train( param, dtrain, num_round )
+pred_prob = bst.predict( dtest )
+</pre>
+
+<figure><img src="/images/barchart1.jpg" alt="Timing"><figcaption>Comparison of training time (seconds) of Scikit-learn&rsquo;s GradientBoostingClassifier versus XGBoost</figcaption></figure><p>In our tests with four cores, it ran around four times as fast as scikit-learn&rsquo;s GradientBoostingClassifier, which probably reflects the parallellization. With more cores, this would probably allow us to speed up the training even more. For some more detailed tutorials on how to use XGBoost, take a look at the <a href="https://github.com/tqchen/xgboost/wiki" target="_blank" rel="external">documentation here</a>.</p>
+
+<br><p>A common problem with large data sets, is that usually you need to have the training data in memory to train on it. When the data set is big, this is obviously not going to work. A solution to this is so-called out-of-core algorithms, which commonly means only looking at one example from the training set at a time, in other words keeping the training data &ldquo;out of core&rdquo;. Scikit-learn has support for out-of-core/online learning via <a href="http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html" target="_blank" rel="external">SGDClassifier</a>, but in addition there also exists some other libraries that are pretty speedy:</p>
+
+<h4>Sofia-ml</h4>
+
+<p><a href="https://code.google.com/archive/p/sofia-ml/" target="_blank" rel="external">Sofia-ml</a> currently supports SVM, logistic regression or perceptron methods and uses some speedy fitting algorithms known as &ldquo;Pegasos&rdquo; (short for &ldquo;primal estimatimated sub-gradient solver for SVM&rdquo;). &ldquo;Pegasos&rdquo; has an advantage in that you do not need to define pesky parameters such as learning rate (see <a href="https://lingpipe-blog.com/2009/04/08/convergence-relative-sgd-pegasos-liblinear-svmlight-svmper/" target="_blank" rel="external">this article</a>). Another nice feature in sofia-ml is that it supposedly also can optimize ROC area via selecting smart choices of samples when iterating over the dataset. &ldquo;ROC area&rdquo; is also known as AUC, which happened to be the score measure in our competition (and numerous other Kaggle competitions).</p>
+
+<p>Using sofia-ml is pretty straightforward, but since it is a command-line tool, it easily seems a bit esoteric for those used to scikit-learn. Before we call the training, we have to write out the data to an input format called &ldquo;SVMlight sparse data format&rdquo; which originally comes from the library <a href="http://svmlight.joachims.org/" target="_blank" rel="external">SMVlight</a>, but has since been adopted by a number of other machine learning libraries. In our tests, what took the longest time was actually writing out the data, so we found it very helpful to use Mathieu Blondel&rsquo;s library <a href="https://github.com/mblondel/svmlight-loader" target="_blank" rel="external">svmlight-loader</a>, which does the writing out in C++. Note that there are also <a href="http://scikit-learn.org/stable/modules/generated/sklearn.datasets.dump_svmlight_file.html" target="_blank" rel="external">tools for handling SVMlight formats</a> in scikit-learn, but they&rsquo;re not quite as fast as this one.</p>
+
+<p>There is no python wrapper for sofia-ml, but it&rsquo;s quite easy to do everything from python:</p>
+
+<pre class="prettyprint lang-py" style="overflow-x:scroll">from svmlight_loader import dump_svmlight_file
+from subprocess import call
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+
+# normalize data
+ss = StandardScaler()
+train_data_norm = ss.fit_transform(train_data)
+test_data_norm = ss.transform(test_data)
+
+# change these filenames to reflect your system!
+model_file = "/home/audun/data/sofml.model"
+training_file = "/home/audun/data/train_data.dat"
+test_file = "/home/audun/data/test_data.dat"
+pred_file = "/home/audun/data/pred.csv"
+
+# note that for sofia-ml (and vowpal wabbit), labels need to be {-1,1}, not {0,1}, so we change them
+train_label.values[np.where(train_label == 0)] = -1
+
+# export data
+dump_svmlight_file(train_data_norm, train_label, training_file, zero_based=False)
+dump_svmlight_file(test_data_norm, np.zeros((test_data.shape[0],)), test_file, zero_based=False)
+</pre>
+
+<p>We call the training and prediction with a python subprocess. In our first line, we specify via command-line parameters that the learner type is SVM fitted with stochastic gradient descent, use loop type ROC (to optimize for AUC), set prediction type &ldquo;logistic&rdquo; in order to get classifications, and do 200000 gradient descent updates. Many more possible command-line parameters are listed <a href="https://code.google.com/archive/p/sofia-ml/" target="_blank" rel="external">here</a>. In the second line we create predictions on our test data from our model file, and we then read it in again via <em>pandas</em>. Note that in the case of logistic predictions, sofia-ml returns untransformed predictions, so we need to transform the predictions via the logistic transformation to get probabilities.</p>
+
+<pre class="prettyprint lang-py" style="overflow-x:scroll"># train via subprocess call
+call("~/sofia-ml/sofia-ml --learner_type sgd-svm --loop_type roc --prediction_type logistic --iterations 200000 --training_file "+training_file+" --model_out "+model_file, shell = True)
+
+# create test data via subprocess call
+call("~/sofia-ml/sofia-ml --model_in "+model_file+" --test_file "+test_file+" --results_file "+pred_file, shell = True)
+
+# read in test data
+pred_prob = pd.io.parsers.read_csv(pred_file, sep="\t", names=["pred","true"])['pred']
+# do logistic transformation to get probabilities
+pred_prob = 1./(1.+np.exp(-pred_prob))
+</pre>
+
+<p>In our tests, fitting using Sofia-ml was extremely speedy, around 3 seconds!</p>
+
+<h4>Vowpal Wabbit</h4>
+
+<p>This is probably the most well-known library to do fast out-of-core learning, and operates pretty similarly to sofia-ml. Vowpal Wabbit has support for doing SVM, logistic regression, linear regression and quantile regression via optimizing for respectively hinge loss, logit loss, squared loss and quantile loss. Since Vowpal Wabbit is written in C++, carefully optimized and has some tricks up it&rsquo;s sleeve, it&rsquo;s very fast and performs very competitively on a lot of tasks.</p>
+
+<p>Vowpal Wabbit, like sofia-ml, is a command line program, and uses a <a href="https://github.com/JohnLangford/vowpal_wabbit/wiki/Input-format" target="_blank" rel="external">slight modification</a> of the SVMlight sparse data format for input. Since the differences between SVMlight and Vowpal Wabbits format were pretty small, we used the svmlight-loader library here as well, and modified the files to suit Vowpal Wabbit afterwards.</p>
+
+<p>At the time of the competition, I didn&rsquo;t find any python wrappers, but it seems there is now a python wrapper <a href="https://github.com/JohnLangford/vowpal_wabbit/blob/master/python/pyvw.py" target="_blank" rel="external">under development here</a>. It&rsquo;s not documented yet, so I&rsquo;ll just use regular python methods to call Vowpal Wabbit in this example. First we have to write out training and test data:</p>
+
+<pre class="prettyprint lang-py" style="overflow-x:scroll">training_file = "/home/audun/data/vw_trainset.csv"
+training2_file = "/home/audun/data/vw_trainset2.csv"
+test_file = "/home/audun/data/vw_testset.csv"
+test2_file = "/home/audun/data/vw_testset2.csv"
+pred_file = "/home/audun/data/pred.csv"
+model_file = "/home/audun/data/vw_trainset_model.vw"
+
+dump_svmlight_file(train_data, train_label, training_file, zero_based=False)
+dump_svmlight_file(test_data, np.zeros((test_data.shape[0],)), test_file, zero_based=False)
+
+# add specifics for vowpal wabbit format
+import string
+fi = open(training_file,"r")
+of = open(training2_file,"w")
+for lines in fi:
+	li = lines.strip().split()
+	of.write( li[0] )
+	of.write(" | ")
+	of.write( string.join(li[1:]," ") + "\n")
+of.close()
+fi.close()
+fi = open(test_file,"r")
+of = open(test2_file,"w")
+for lines in fi:
+	li = lines.strip().split()
+	of.write( li[0] )
+	of.write(" | ")
+	of.write( string.join(li[1:]," ") + "\n")
+of.close()
+fi.close()
+</pre>
+
+<p>We then do a subprocess call to run Vowpal Wabbit from the command line. There are a lot of possible parameters to the command line, but all of them are listed <a href="https://github.com/JohnLangford/vowpal_wabbit/wiki/Command-line-arguments" target="_blank" rel="external">here</a>. The first line trains a model with logistic loss (i.e. for classification) on our training set, doing 40 passes over the data. The second line predicts data from our testset, based on our trained model, and writes the predictions out to a file.</p>
+
+<pre class="prettyprint lang-py" style="overflow-x:scroll"># train
+call("~/vowpalwabbit/vw "+training2_file+" -c -k --passes 40 -f "+model_file+" --loss_function logistic", shell=True)
+
+# predict
+call("~/vowpalwabbit/vw "+test2_file+" -t -i "+model_file+" -r "+pred_file, shell=True)
+</pre>
+
+<p>Next, we load the predictions from the output file. Note that like with sofia-ml the predictions need to be logistic transformed to get probabilities.</p>
+
+<pre class="prettyprint lang-py" style="overflow-x:scroll">pred_prob = pd.io.parsers.read_csv(pred_file, names=["pred"])['pred']
+pred_prob = 1./(1.+np.exp(-pred_prob))
+</pre>
+
+<p>Training is very fast, around 9 secs, even though the dataset is sizable. For a more in-depth tutorial on how to use Vowpal Wabbit take a look at <a href="https://github.com/JohnLangford/vowpal_wabbit/wiki/Tutorial" target="_blank" rel="external">the tutorial</a> in their github repo.</p>
+
+<br><p>So there you go, some nice, not-so-well-known machine learning libraries! In the competition overall, with the help of these libraries, I managed to end up in the top 10%, and together with my 4th place in the earlier loan default prediction competition, this earned me a &ldquo;kaggle master&rdquo; badge.</p>
+
+<figure>
+	<img src="/images/badge_crop.jpg" alt="Kaggle master badge">
+	<figcaption>Kaggle master badge.</figcaption>
+</figure>
+
+<p>If you know of any other unknown but great libraries, let me know. And If you liked this blogpost, you should <a href="https://twitter.com/matsiyatzy" target="_blank" rel="external">follow me on twitter!</a></p>
+
+<script>
+	$(document).ready( function(){
+	    prettyPrint();
+	});
+</script>
+
+
+</article>
+
+
+<nav id="blognav">
+  
+    <div class="prev_post">
+      <a href="/2014/12/25/rapid-a-b-testing-with-sequential-analysis/" id="article-nav-newer" class="article-nav-link-wrap">
+        <img src="/css/images/prev_post2.png">
+        <p>Rapid A/B-testing with Sequential Analysis</p>
+      </a>
+    </div>
+  
+  
+    <div class="next_post">
+      <a href="/2014/04/29/twisting-faces/" id="article-nav-older" class="article-nav-link-wrap">
+        <img src="/css/images/next_post.png">
+        <p>Twisting faces</p>
+      </a>
+    </div>
+  
+</nav>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+<script>
+  var disqus_shortname = 'audunotumblr';
+  
+  var disqus_url = 'http://auduno.github.io/2014/08/29/some-nice-ml-libraries/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+  </div>
+  <div id="footer">
+	<div id="socialicons">
+	</div>
+</div>
+  <script>
+  		function displayMenu() {
+  			document.getElementById('burger').className = "hide";
+  			document.getElementById('noburger').className = "nohide";
+  			document.getElementById('nav').className = "nohide";
+  		}
+
+  		function hideMenu() {
+  			document.getElementById('burger').className = "nohide";
+  			document.getElementById('noburger').className = "hide";
+  			document.getElementById('nav').className = "hide";
+  		}
+
+  		document.getElementById('burger').onclick = displayMenu;
+  		document.getElementById('noburger').onclick = hideMenu;
+  	</script>
+</body>
+</html>

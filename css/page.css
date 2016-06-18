@@ -1,0 +1,314 @@
+@font-face {
+	font-family : 'Sailec';
+	src: url('fonts/Sailec.ttf') format('truetype');
+}
+
+/*html, body {
+	height:100%;
+}*/
+
+body {
+	background-color: #e6e6e6;
+	margin: 0px;
+}
+
+h2 {
+	font-weight: normal;
+	font-size: 1em;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+#socialicons a {
+	color: rgb(209, 177, 19);
+}
+
+header {
+	/*height: 70px;*/
+	width: 100%;
+	position: absolute;
+	top : 0;
+	text-align: right;
+	/*padding-top: 50px;*/
+	z-index: 1000;
+}
+
+header p {
+	display: inline;
+	margin-right: 20px;
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+
+header nav {
+	font-family : Sailec;
+	font-size : 27px;
+	padding-right: 40px;
+	padding-top:50px;
+}
+
+#content {
+	font-family : Sailec;
+	font-size : 20px;
+	line-height: 160%;
+	/*margin-top : 350px;
+	margin-left : 100px;
+	margin-right : 100px;
+	position : absolute;
+	left: 100px;
+	bottom:70px;*/
+	/*min-height : 650px;*/
+	height : 100%;
+	/*position: relative;*/
+}
+
+#section {
+	/*width: 700px;*/
+	/*position : absolute;
+	left : 100px;
+	bottom : 70px;*/
+	margin-top : 250px;
+	margin-left : 100px;
+	margin-right : 20px;
+}
+
+#sectionabout {
+	max-width: 700px;
+	position : absolute;
+	left : 100px;
+	bottom : 170px;
+	font-size : 18px;
+	line-height : 120%;
+	margin-right : 20px;
+}
+
+#sectionabout a {
+    color: rgb(209, 177, 19);
+}
+
+#content h2, #content p {
+	margin-bottom : 0px;
+	margin-top : 0px;
+}
+
+#icon {
+	float : left;
+	margin-left: 100px;
+	padding-top:50px;
+}
+
+h3 {
+	font-weight: normal;
+	font-size: 1.8em;
+}
+
+p.postdate {
+	/*width: 100px;*/
+	width: 5.5em;
+	display: inline-block;
+	font-size: 0.7em;
+	/*text-align:right;*/
+}
+
+p.posttitle {
+	display: inline-block;
+}
+
+.nocolor {
+	color: #000;
+}
+
+li {
+	list-style-type : none;
+}
+
+ul {
+	padding-left : 0px;
+}
+
+@media (max-width: 768px) {
+	#content {
+		font-size : 17px;
+		/*min-height : 550px;*/
+	}
+
+	#icon {
+		margin-left : 70px;
+	}
+
+	header nav {
+		font-size:22px;
+	}
+
+	#section {
+		margin-left : 70px;
+	}
+
+	#sectionabout {
+		font-size : 16px;
+		left : 70px;
+		bottom : 50px;
+	}
+}
+
+@media (max-width: 600px) {
+	#section {
+		margin-left : 50px;
+	}
+
+	#sectionabout {
+		left : 50px;
+		bottom : 40px;
+	}
+
+	#icon {
+		margin-left : 50px;
+	}
+}
+
+span.postdate {
+	/*width: 100px;*/
+	width: 5.5em;
+	display: inline-block;
+	font-size: 0.7em;
+	/*text-align:right;*/
+}
+
+span.posttitle {
+	display: inline;
+}
+
+@media (max-width: 600px) {
+	header p {
+		display: block;
+		/*margin-right : 0px;*/
+		margin-top : 0.5em;
+		margin-bottom : 0.5em;
+	}
+
+	header nav {
+		padding-top : 30px;
+		padding-bottom : 10px;
+		padding-right : 60px;
+		display : none;
+		/*background-color : #ccc;*/
+	}
+
+	#burger, #noburger {
+		width : 48px;
+		height : 48px;
+		background-repeat: no-repeat;
+		background-size: 48px 48px;
+		position : absolute;
+		right : 30px;
+		top : 30px;
+		cursor : pointer;
+	}
+
+	#burger {
+		background-image: url(images/header-mobile-button-open.png);
+	}
+
+	#noburger {
+		background-image: url(images/header-mobile-button-close.png);
+	}
+
+	#burger:hover, #noburger:hover {
+		opacity : 0.7;
+	}
+
+	header nav.nohide {
+		display : block;
+	}
+
+	header nav.hide {
+		display : none;
+	}
+
+	.hide {
+		display : none;
+	}
+
+	#icon {
+		padding-top : 30px;
+	}
+}
+
+@media (max-width : 550px) {
+	#section {
+		margin-left : 20px;
+	}
+
+	#sectionabout {
+		left : 20px;
+		font-size : 13px;
+	}
+
+	#icon {
+		margin-left : 20px;
+		padding-top : 15px;
+	}
+
+	#burger, #noburger {
+		right : 15px;
+		top : 15px;
+	}
+
+	header nav {
+		padding-top : 15px;
+		padding-right : 50px;
+	}
+
+	#content {
+		font-size : 13px;
+	}
+}
+
+@media (max-height : 450px) {
+	#section {
+		margin-top : 200px;
+	}
+
+	#sectionabout {
+		bottom : 50px;
+	}
+}
+
+@media (max-height : 350px) {
+	#section  {
+		margin-top : 150px;
+	}
+
+	#sectionabout {
+		bottom : 40px;
+		font-size: 13px
+	}
+}
+
+@media (max-height : 250px) {
+	#section {
+		margin-top : 100px;
+	}
+}
+
+#icon {
+	font-family : Sailec;
+	text-align : left;
+}
+
+#icon p {
+	margin-top : 10px;
+	/*margin-left : 20px;*/
+	display : inline-block;
+	margin-bottom : 0px;
+	font-size : 15px;
+	text-decoration : underline;
+}
+
+#socialicons {
+	/*margin-left : 20px;*/
+	margin-top : 5px;
+}

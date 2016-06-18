@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  
+  <title>Visualizing GoogLeNet Classes | Audun M Øygard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ever wondered what a deep neural network thinks a Dalmatian should look like? Well, wonder no more.
+
+Recently Google published a post describing how they managed to use deep neural networks to generat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Visualizing GoogLeNet Classes">
+<meta property="og:url" content="http://auduno.github.io/2015/07/29/visualizing-googlenet-classes/index.html">
+<meta property="og:site_name" content="Audun M Øygard">
+<meta property="og:description" content="Ever wondered what a deep neural network thinks a Dalmatian should look like? Well, wonder no more.
+
+Recently Google published a post describing how they managed to use deep neural networks to generat">
+<meta property="og:image" content="http://auduno.github.io/images/deepdraw_example_33.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/deepdraw_example_0783.png">
+<meta property="og:image" content="http://auduno.github.io/images/deepdraw_example_260.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/deepdraw_example_0281.png">
+<meta property="og:image" content="http://auduno.github.io/images/deepdraw_example_0294.png">
+<meta property="og:image" content="http://auduno.github.io/images/deepdraw_example_254.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/deepdraw_example_bee_309.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/deepdraw_examples_76.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/deepdraw_examples_0850.png">
+<meta property="og:image" content="http://auduno.github.io/images/deepdraw_example_0251.png">
+<meta property="og:image" content="http://auduno.github.io/images/anim_230_1437687161.GIF">
+<meta property="og:image" content="http://auduno.github.io/images/sax_777.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/unblurred_opt_161.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/loss3_161_3.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/loss1_161_2.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/loss2_161_2.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/anim_161_1437760444.GIF">
+<meta property="og:image" content="http://auduno.github.io/images/anim_161_1437685108.GIF">
+<meta property="og:image" content="http://auduno.github.io/images/alexnet_382.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/deepdraw_example_382.jpg">
+<meta property="og:updated_time" content="2016-05-03T20:37:27.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Visualizing GoogLeNet Classes">
+<meta name="twitter:description" content="Ever wondered what a deep neural network thinks a Dalmatian should look like? Well, wonder no more.
+
+Recently Google published a post describing how they managed to use deep neural networks to generat">
+<meta name="twitter:image" content="http://auduno.github.io/images/deepdraw_example_33.jpg">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+    <link rel="stylesheet" href="/css/style.css">
+    
+  
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-32670536-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css" rel="stylesheet">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script language="javascript" type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
+</head>
+
+<body>
+  <header>
+  <div id="icon">
+    <a href="/" class="nocolor"><p>Audun M. Øygard</p></a>
+    <br/>
+    <div id="socialicons">
+      <a href="http://www.twitter.com/matsiyatzy"><i class="icon-twitter"></i></a>
+      <a href="http://github.com/auduno"><i class="icon-github icon-large"></i></a>
+      <a href="https://www.linkedin.com/in/audun-mathias-%C3%B8ygard-1a572041"><i class="icon-linkedin icon-large"></i></a>
+      <a href="/atom.xml"><i class="icon-rss icon-medium" style="margin-left:2px;position:relative;top:0.1em;"></i></a>
+    </div>
+  </div>
+  <nav id="nav">
+    <p><a href="/about.html">About</a></p>
+    <p><a href="/">Blog</a></p>
+    <!--<p><a href="projects.html">Projects/Work</a></p>-->
+  </nav>
+  <div id="burger"></div>
+  <div id="noburger" class="hide"></div>
+</header>
+  <div id="content">
+    <article>
+
+
+<img src="/images/deepdraw_example_0013.png" alt="image" class="headerimage">
+
+<h3>Visualizing GoogLeNet Classes</h3>
+
+
+<p class="date"><time datetime="2015-07-29">29. July 2015</time></p>
+
+<p>Ever wondered what a deep neural network thinks a Dalmatian should look like? Well, wonder no more.</p>
+
+<p>Recently Google <a href="http://googleresearch.blogspot.no/2015/06/inceptionism-going-deeper-into-neural.html" target="_blank" rel="external">published a post</a> describing how they managed to use deep neural networks to generate class visualizations and modify images through the so called &ldquo;inceptionism&rdquo; method. They later published the code to modify images via the inceptionism method yourself, however, they didn&rsquo;t publish code to generate the class visualizations they show in the same post.</p>
+
+<p>While I never figured out <em>exactly</em> how Google generated their class visualizations, after butchering the <a href="https://github.com/google/deepdream" target="_blank" rel="external">deepdream code</a> and <a href="https://github.com/kylemcdonald/deepdream/blob/master/dream.ipynb" target="_blank" rel="external">this</a> ipython notebook from Kyle McDonald, I managed to coach GoogLeNet into drawing these:</p>
+
+<figure style="margin-left:auto;margin-right:auto;text-align:center">
+	<img src="/images/deepdraw_example_33.jpg" alt="Loggerhead turtle" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<img src="/images/deepdraw_example_0783.png" alt="Screws" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<figcaption>Generated images from class &ldquo;Loggerhead turtle&rdquo; (left), &ldquo;Screws&rdquo; (right)</figcaption>
+</figure>
+<figure style="margin-left:auto;margin-right:auto;text-align:center">
+	<img src="/images/deepdraw_example_260.jpg" alt="Chow chow" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<img src="/images/deepdraw_example_0281.png" alt="Tabby cat" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<figcaption>Generated images from class &ldquo;Chow chow&rdquo; (left), &ldquo;Tabby cat&rdquo; (right)</figcaption>
+</figure>
+<figure style="margin-left:auto;margin-right:auto;text-align:center">
+	<img src="/images/deepdraw_example_0294.png" alt="Brown bear" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<img src="/images/deepdraw_example_254.jpg" alt="Pug" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<figcaption>Generated images from class &ldquo;Brown bear&rdquo; (left), &ldquo;Pug&rdquo; (right)</figcaption>
+</figure>
+<figure style="margin-left:auto;margin-right:auto;text-align:center">
+	<img src="/images/deepdraw_example_bee_309.jpg" alt="Bee" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<img src="/images/deepdraw_examples_76.jpg" alt="Tarantula" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<figcaption>Generated images from class &ldquo;Bee&rdquo; (left), &ldquo;Tarantula&rdquo; (right)</figcaption>
+</figure>
+<figure style="margin-left:auto;margin-right:auto;text-align:center;margin-bottom:15px">
+	<img src="/images/deepdraw_examples_0850.png" alt="Teddybear" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<img src="/images/deepdraw_example_0251.png" alt="Dalmatians" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<figcaption>Generated images from class &ldquo;Teddybear&rdquo; (left), &ldquo;Dalmatian&rdquo; (right)</figcaption>
+</figure>
+
+<p>It should be mentioned that all of these images are generated completely from noise, so all information is from the deep neural network, see an example of the gradual generation process below:</p>
+
+<figure style="margin-bottom:1.3em">
+	<img src="/images/anim_230_1437687161.GIF" alt="gradual learning process">
+	<figcaption>Generation of image example for class &ldquo;Shetland sheepdog&rdquo;</figcaption>
+</figure>
+
+<p>In this post I&rsquo;ll describe a bit more details on how I generated these images from GoogLeNet, but for those eager to try this out yourself, jump over to <a href="https://github.com/auduno/deepdraw" target="_blank" rel="external">github</a> where I&rsquo;ve published ipython notebooks to do this yourself. For more examples of generated images, see some highlights <a href="https://goo.gl/photos/8qcvjnYBQVSGG2eN6" target="_blank" rel="external">here</a>, or visualization of all 1000 imagenet classes <a href="https://goo.gl/photos/FfsZZektqpZkdDnKA" target="_blank" rel="external">here</a>.</p>
+
+<br><p>Aside from the fact that our network seems to be drawing with rainbow crayons, it&rsquo;s remarkable to see how detailed the images are. They&rsquo;re far from perfect representations of the objects, but they give us valuable insight into what information the network thinks is essential for an object, and what isn&rsquo;t. For instance, the tabby cats seem to lack faces while the dalmatians are mostly dots. Presumably this doesn&rsquo;t mean that the network hasn&rsquo;t learned the rest of the details of these objects, but simply that the rest of the details are not very discriminate characteristics of that class, so they&rsquo;re ignored when generating the image.</p>
+
+<p>As google also noted in their post, there are often also details that actually aren&rsquo;t part of the object. For instance, in this visualization of the &ldquo;Saxophone&rdquo; class there&rsquo;s a vague saxophone player holding the instrument:</p>
+
+<figure style="margin-bottom:1.3em">
+	<img src="/images/sax_777.jpg" alt="saxophone player">
+	<figcaption>Visualization of class &ldquo;Saxophone&rdquo;</figcaption>
+</figure>
+
+<p>This is presumably because most of the example images used for training had a saxophone player in them, so the network sees them as relevant parts of the object.</p>
+
+<p>In the next part I&rsquo;ll go a bit into details on how the gradient ascent is done. Note : this is for specially interested, with some knowledge of deep neural networks being necessary.</p>
+
+<h4>Generating class visualizations with GoogLeNet</h4>
+
+<p>In order to make a deep neural network generate images, we use a simple trick. Instead of using backpropagation to optimize the weights, which we do during training, we keep the weights fixed and instead optimize the input pixels. However, trying to use unconstrained gradient ascent to get a feasible class visualization works poorly, giving us images such as the one below.</p>
+
+<figure style="margin-bottom:1.3em">
+	<img src="/images/unblurred_opt_161.jpg" alt="unconstrained optimization">
+	<figcaption>Unconstrained gradient ascent on class &ldquo;Basset hound&rdquo;</figcaption>
+</figure>
+
+<p>The reason for this is that our unconstrained gradient ascent quickly runs into local maximums that are hard to get out of, with high frequency and low frequency information competing and creating noise. To get around this, we can choose to just optimize the low-frequency information first, which will give us the general structure of the image, and then gradually introduce high-frequency details as we continue gradient ascent, in effect &ldquo;washing out&rdquo; an image. Doing this in a slow way, we manage to ensure that optimization converges with a feasible image. There are two possible routes for doing this:</p>
+
+<ul><li>applying gaussian blur to the image after we&rsquo;ve applied the gradient step, starting with a large sigma and slowly decreasing it as we iterate</li>
+	<li>applying gaussian blur to the gradient, starting with a large sigma and slowly decreasing it as we iterate (note that in this case we also have to use L2-regularization of the pixels to gradually decrease irrelevant noise from previous iterations)</li>
+</ul><p>I&rsquo;ve had best results with the former approach, which is the approach I used to generate the images above, but it might be that someone might get better results with blurring the gradient via messing about with the parameters some more.</p>
+
+<p>While this approach works okayish for relatively shallow networks like Alexnet, a problem you&rsquo;ll quickly run into when doing this with GoogLeNet, is that as you gradually reduce the amount of blurring applied, the image gets saturated with high-frequency noise like this:</p>
+
+<figure style="margin-bottom:1.3em">
+	<img src="/images/loss3_161_3.jpg" alt="unconstrained optimization">
+	<figcaption>Gradient ascent on class &ldquo;Basset hound&rdquo; with gradually decreasing blurring</figcaption>
+</figure>
+
+<p>The reason for this problem is a bit uncertain, but might have to do with the depth of the network. In the <a href="http://arxiv.org/abs/1409.4842" target="_blank" rel="external">original paper</a> describing the GoogLeNet architecture, the authors mention that since the network is very deep, with 22 layers, they had to add two auxiliary classifiers at earlier points in the network to efficiently propagate gradients from the loss all the way back to the first layers. These classifiers, which were only used during training, ensured proper gradient flow and made sure that early layers were getting trained as well.</p>
+
+<p>In our case, the pixels of the image are even further ahead in the network than first layer, so it might not seem so surprising that we have some problems with gradients and recovering a feasible image. Exactly why this affects high-frequency information more than low-frequency information is a bit hard to understand, but it might have to do with gradients for high-frequency information being more sensitive and unstable, due to larger weights for high-frequency information, as mentioned by Yosinski in the appendix to <a href="http://arxiv.org/abs/1506.06579" target="_blank" rel="external">this paper</a>.</p>
+
+<p>While the auxiliary classifiers in GoogleNet are only used during training, there&rsquo;s nothing stopping us from using them for generating images. Doing gradient ascent on the first auxiliary classifier, we get this:</p>
+
+<figure style="margin-bottom:1.3em">
+	<img src="/images/loss1_161_2.jpg" alt="auxiliary classifier 1 optimization">
+	<figcaption>Gradient ascent on class &ldquo;Basset hound&rdquo; with auxiliary classifier 1</figcaption>
+</figure>
+
+<p>while the second auxiliary classifier gives us this:</p>
+
+<figure style="margin-bottom:1.3em">
+	<img src="/images/loss2_161_2.jpg" alt="auxiliary classifier 2 optimization">
+	<figcaption>Gradient ascent on class &ldquo;Basset hound&rdquo; with auxiliary classifier 2</figcaption>
+</figure>
+
+<p>As can be seen, the first classifier easily manages to generate an image without high-frequency noise , probably because it&rsquo;s &ldquo;closer&rdquo; to the early layers. However, it does not retain the overall structure of the object, and peppers the image with unnecessary details. The reason for the lack of structure is that the deeper a network is, the more structure the network is able to learn. Since the first classifier is so early in the network, it has not yet learned all of the structures deeper layers has. We can similarly see that the second classifier has learned some more structure, but has slightly more problems with high-frequency noise (though not as bad as the final classifier).</p>
+
+<p>So, is there any way to combine the gradients from these classifiers in order to ensure both structure and high-frequency information is retained? Doing gradient ascent on all three classifiers at the same time unfortunately does not help us much, as we get both poor structure and noisy high-frequency information. Instead, what we can do is to first do gradient ascent from the final classifier, as far as we can before we run into noise, then switch to doing gradient ascent from the second classifier for a while to &ldquo;fill in&rdquo; details, then finally switching to doing gradient ascent from the first classifier to get the final fine-grained details.</p>
+
+<p>Another trick we used, both to get larger images and better details, was to scale up the image at certain intervals, similar to the &ldquo;octaves&rdquo; used in the deepdream code. Since the input image the network optimizes is restricted to 224x224 pixels, we randomly crop a part of the scaled up image to optimize at each step. Altogether, this gives us this result:</p>
+
+<figure style="margin-bottom:1.3em">
+	<img src="/images/anim_161_1437760444.GIF" alt="optimization">
+	<figcaption>Gradual generation of image from class &ldquo;Basset hound&rdquo; with scaling and switching between classifiers</figcaption>
+</figure>
+
+<p>Though this approach gives us nicely detailed images, note that both the scaling and the auxiliary classifiers tend to degrade the overall structure of the image, and particularly larger objects often tend to be &ldquo;torn apart&rdquo;, such as this dog gradually turning into multiple dogs.</p>
+
+<figure>
+	<img src="/images/anim_161_1437685108.GIF" alt="optimization">
+</figure>
+
+<p>Since the network actually seems to be capable of creating more coherent objects, it&rsquo;s possible that we could generate better images with clever priors and proper learning rates, though I didn&rsquo;t have any luck with it so far. Purely hypothetically, deep networks with better gradient flow might also be able to recover more detailed and structured images. I&rsquo;ve been curious to see if networks with batch normalization or Parametric ReLUs are better at generating images since they seem to have better gradient flow, so if anyone has a pretrained caffe model with PReLUs or batch normalization, let me know!</p>
+
+<p>Another detail that&rsquo;s worthy to note is that we did not optimize directly the loss layer, as the softmax denominator makes the gradient ascent put too much weight on reducing other class probabilities. Instead, we optimize the next to last layer, where we can make the gradient ascent focus exclusively on optimizing a likely image from our class.</p>
+
+<p>As a final side note it&rsquo;s very interesting to compare the images AlexNet and GoogLeNet generate. While the comparison might not be entirely representative, it certainly looks like Googlenet has learned a lot more details and structure than AlexNet.</p>
+
+<figure style="margin-left:auto;margin-right:auto;text-align:center;margin-bottom:1.3em">
+	<img src="/images/alexnet_382.jpg" alt="alexnet-monkeys" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<img src="/images/deepdraw_example_382.jpg" alt="googlenet-monkeys" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<figcaption>Generated images from class &ldquo;Squirrel monkey&rdquo; with AlexNet (left) and GoogLeNet (right).</figcaption>
+</figure>
+
+<p>Now go ahead and <a href="https://github.com/auduno/deepdraw" target="_blank" rel="external">try it yourself</a>! If you figure out other tricks or better choices of parameters for the gradient ascent (there almost certainly are), or just create some cool visualizations, let <a href="https://twitter.com/matsiyatzy" target="_blank" rel="external">me know via twitter</a>!</p>
+
+<p>A big hat tip to google and their original deepdream code, as well as <a href="https://twitter.com/kcimc" target="_blank" rel="external">Kyle McDonald</a>, which had the original idea of gradually reducing sigma of gaussian blurring to &ldquo;wash out&rdquo; the image, and kindly shared his code.</p>
+
+
+</article>
+
+
+<nav id="blognav">
+  
+    <div class="prev_post">
+      <a href="/2015/08/04/drawing-with-googlenet/" id="article-nav-newer" class="article-nav-link-wrap">
+        <img src="/css/images/prev_post2.png">
+        <p>Drawing with GoogLeNet</p>
+      </a>
+    </div>
+  
+  
+    <div class="next_post">
+      <a href="/2015/01/04/estimation-in-sequential-analysis/" id="article-nav-older" class="article-nav-link-wrap">
+        <img src="/css/images/next_post.png">
+        <p>Estimation in Sequential Analysis</p>
+      </a>
+    </div>
+  
+</nav>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+<script>
+  var disqus_shortname = 'audunotumblr';
+  
+  var disqus_url = 'http://auduno.github.io/2015/07/29/visualizing-googlenet-classes/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+  </div>
+  <div id="footer">
+	<div id="socialicons">
+	</div>
+</div>
+  <script>
+  		function displayMenu() {
+  			document.getElementById('burger').className = "hide";
+  			document.getElementById('noburger').className = "nohide";
+  			document.getElementById('nav').className = "nohide";
+  		}
+
+  		function hideMenu() {
+  			document.getElementById('burger').className = "nohide";
+  			document.getElementById('noburger').className = "hide";
+  			document.getElementById('nav').className = "hide";
+  		}
+
+  		document.getElementById('burger').onclick = displayMenu;
+  		document.getElementById('noburger').onclick = hideMenu;
+  	</script>
+</body>
+</html>

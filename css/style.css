@@ -1,0 +1,359 @@
+@font-face {
+	font-family : 'Sailec';
+	src: url('fonts/Sailec.ttf') format('truetype');
+}
+
+@font-face {
+	font-family : 'SailecLight';
+	src: url('fonts/2DAC46_7_0.ttf') format('truetype');
+}
+
+@font-face {
+	font-family : 'SailecRegularItalic';
+	src: url('fonts/2DAC46_D_0.ttf') format('truetype');
+}
+
+body {
+	background-color: #fff;
+	margin: 0px;
+}
+
+h2 {
+	font-size: 1em;
+}
+
+h5 {
+	font-size: 1em;
+}
+
+header {
+	/*height: 70px;*/
+	width: 100%;
+	position: absolute;
+	top : 0;
+	text-align: right;
+	/*padding-top: 20px;*/
+}
+
+header p {
+	display: inline;
+	margin-right: 20px;
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+
+header nav {
+	font-family : Sailec;
+	font-size : 20px;
+	padding-right: 40px;
+	padding-top: 30px;
+}
+
+#content {
+	font-family : Sailec;
+	margin : 200px auto 0px auto;
+	line-height: 110%;
+	max-width: 700px;
+	font-size: 15px;
+	padding-left:100px;
+	padding-right:100px;
+}
+
+/*#content h2, #content p {
+	margin-bottom : 0px;
+	margin-top : 0px;
+}*/
+
+.nocolor {
+	color: #000;
+}
+
+#icon {
+	float : left;
+	margin-left: 50px;
+	padding-top: 20px;
+	font-family : Sailec;
+	text-align : left;
+}
+
+h3 {
+	font-weight: normal;
+	font-size: 2.4em;
+	margin-top : 1.33em;
+	margin-bottom : 0.4em;
+	line-height:110%;
+}
+
+h4 {
+	font-weight: normal;
+	font-size: 2em;
+	margin-bottom: 0.75em;
+	margin-top: 1.5em;
+	line-height:110%;
+}
+
+figure {
+	margin-bottom : 2em;
+	margin-top: 2em;
+	/*width:100%;*/
+}
+
+figcaption {
+	font-size : 0.8em;
+	text-align : center;
+	color : #333;
+}
+
+article img, article iframe {
+	display : block;
+	margin : 30px auto;
+	max-width:100%;
+	/*margin : 0px auto;*/
+}
+
+article .headerimage {
+	max-width : 60%;
+	display : inline-block;
+	margin : 0px;
+}
+
+
+article p {
+	color: #333;
+	line-height : 140%;
+	/*margin-bottom : 10px;*/
+}
+
+article p.date {
+	font-size : 0.85em;
+	margin-top : 0.5em;
+	margin-bottom: 1em;
+}
+
+article li {
+	font-size : 0.93em;
+	line-height : 150%;
+	color : #333;
+}
+
+a {
+  text-decoration:none;
+  color: rgba(255,190,0,1);
+}
+
+header nav a {
+	color: #000;
+}
+
+article p.footnote {
+	font-size : 0.8em;
+	margin-left: 2.5em;
+}
+
+#blognav p {
+	font-size : 0.75em;
+	margin-top : 0px;
+}
+
+.prev_post {
+	float : left;
+	margin-top : 1.3em;
+	margin-bottom : 1em;
+	max-width : 50%;
+}
+
+.next_post {
+	float : right;
+	text-align : right;
+	margin-top : 1.3em;
+	margin-bottom : 1em;
+	max-width : 50%;
+}
+
+@media (max-width: 768px) {
+	#content {
+		font-size : 13px;
+		margin-top : 100px;
+	}
+}
+
+@media (max-width: 600px) {
+	header p {
+		display: block;
+		/*margin-right : 0px;*/
+		margin-top : 0.5em;
+		margin-bottom : 0.5em;
+	}
+
+	header nav {
+		padding-top : 10px;
+		padding-bottom : 10px;
+		display : none;
+		/*background-color : #ccc;*/
+	}
+
+	#burger, #noburger {
+		width : 48px;
+		height : 48px;
+		background-repeat: no-repeat;
+		background-size: 48px 48px;
+		position : absolute;
+		right : 10px;
+		top : 10px;
+		cursor : pointer;
+	}
+
+	#burger {
+		background-image: url(images/header-mobile-button-open.png);
+	}
+
+	#noburger {
+		background-image: url(images/header-mobile-button-close.png);
+	}
+
+	#burger:hover, #noburger:hover {
+		opacity : 0.7;
+	}
+
+	header nav.nohide {
+		display : block;
+	}
+
+	header nav.hide {
+		display : none;
+	}
+
+	.hide {
+		display : none;
+	}
+}
+
+@media (max-height: 400px) {
+	#content {
+		margin-top : 60px;
+	}
+}
+
+.narrowfig {
+	width : 80%;
+}
+
+@media (max-width: 550px) {
+	#content {
+		padding-left : 20px;
+		padding-right : 20px;
+	}
+
+	#icon {
+		margin-left : 20px;
+	}
+
+	figure {
+		width : 100%;
+		margin: 2em auto;
+	}
+
+	.narrowfig {
+		width : 100%;
+	}
+}
+
+
+
+/* TODO :
+	twitter, github, RSS icons on lower right
+*/
+
+/* desktop : @media (min-width: 769px) and (min-height: 481px) */
+
+/* desktop : @media (max-width: 768px), (max-height: 480px) */
+/* desktop : @media (max-width: 600px */
+/* @media (min-width: 601px) and (max-height: 480px) */
+/* tablet : @media (min-width: 481 and max-width: 768px) */
+/* mobile in portrait mode : @media (max-width: 480px) */
+/* mobile in landscape mode : @media (max-height: 480px) */
+
+#icon p {
+	margin-top : 10px;
+	/*margin-left : 20px;*/
+	display : inline-block;
+	margin-bottom : 0px;
+	font-size : 15px;
+	text-decoration : underline;
+}
+
+#socialicons {
+	/*margin-left : 20px;*/
+	margin-top : 5px;
+}
+
+@media (max-width: 600px) {
+	#icon p {
+		margin-top : 0px;
+	}
+}
+
+
+@media (max-width: 769px) {
+	#icon p {
+		margin-top : 5px;
+	}
+}
+
+/*** pretty printing code ***/
+    
+pre .str, code .str { color: #65B042; } /* string  - green */
+pre .kwd, code .kwd { color: #E28964; } /* keyword - dark pink */
+pre .com, code .com { color: #AEAEAE; font-style: italic; } /* comment - gray */
+pre .typ, code .typ { color: #89bdff; } /* type - light blue */
+pre .lit, code .lit { color: #3387CC; } /* literal - blue */
+pre .pun, code .pun { color: #fff; } /* punctuation - white */
+pre .pln, code .pln { color: #fff; } /* plaintext - white */
+pre .tag, code .tag { color: #89bdff; } /* html/xml tag    - light blue */
+pre .atn, code .atn { color: #bdb76b; } /* html/xml attribute name  - khaki */
+pre .atv, code .atv { color: #65B042; } /* html/xml attribute value - green */
+pre .dec, code .dec { color: #3387CC; } /* decimal - blue */
+
+pre.prettyprint, code.prettyprint {
+    background-color: #222;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -o-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    border-radius: 8px;
+}
+
+pre.prettyprint {
+    font-size : 14px;
+    line-height : 1.6;
+    width: 95%;
+    margin: 1em auto;
+    padding: 1em;
+}
+
+@media print {
+    pre .str, code .str { color: #060; }
+    pre .kwd, code .kwd { color: #006; font-weight: bold; }
+    pre .com, code .com { color: #600; font-style: italic; }
+    pre .typ, code .typ { color: #404; font-weight: bold; }
+    pre .lit, code .lit { color: #044; }
+    pre .pun, code .pun { color: #440; }
+    pre .pln, code .pln { color: #000; }
+    pre .tag, code .tag { color: #006; font-weight: bold; }
+    pre .atn, code .atn { color: #404; }
+    pre .atv, code .atv { color: #060; }
+}
+
+/* make sure that sup and sub don't mess with line distance */
+sub {
+    vertical-align : baseline;
+    position : relative;
+    top : 0.4em;
+}
+
+sup {
+    vertical-align : baseline;
+    position : relative;
+    top : -0.4em;
+}

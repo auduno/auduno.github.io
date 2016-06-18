@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  
+  <title>Drawing with GoogLeNet | Audun M Øygard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="In my previous post, I showed how you can use deep neural networks to generate image examples of the classes it&amp;rsquo;s been trained to classify. Since we&amp;rsquo;ve already started using deep neural ne">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Drawing with GoogLeNet">
+<meta property="og:url" content="http://auduno.github.io/2015/08/04/drawing-with-googlenet/index.html">
+<meta property="og:site_name" content="Audun M Øygard">
+<meta property="og:description" content="In my previous post, I showed how you can use deep neural networks to generate image examples of the classes it&amp;rsquo;s been trained to classify. Since we&amp;rsquo;ve already started using deep neural ne">
+<meta property="og:image" content="http://auduno.github.io/images/gorilla_french-horn_crop.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/gibbon_poncho_crop.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/gibbon_labcoat_crop.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/fox_volcano_3_crop.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/pen_and_castle6_crop.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/mix_scotch-terrier_tarantula2_crop.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/gibbon_and_bee_crop.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/sine_alps_crop_thumb.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/jellyfish_straight_path_crop_thumb.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/circle_junco_thumb.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/letter_a_apes_gibbon2.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/letter_b_bear4.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/letter_c_cobra3.jpg">
+<meta property="og:updated_time" content="2016-05-03T20:33:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Drawing with GoogLeNet">
+<meta name="twitter:description" content="In my previous post, I showed how you can use deep neural networks to generate image examples of the classes it&amp;rsquo;s been trained to classify. Since we&amp;rsquo;ve already started using deep neural ne">
+<meta name="twitter:image" content="http://auduno.github.io/images/gorilla_french-horn_crop.jpg">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+    <link rel="stylesheet" href="/css/style.css">
+    
+  
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-32670536-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css" rel="stylesheet">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script language="javascript" type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
+</head>
+
+<body>
+  <header>
+  <div id="icon">
+    <a href="/" class="nocolor"><p>Audun M. Øygard</p></a>
+    <br/>
+    <div id="socialicons">
+      <a href="http://www.twitter.com/matsiyatzy"><i class="icon-twitter"></i></a>
+      <a href="http://github.com/auduno"><i class="icon-github icon-large"></i></a>
+      <a href="https://www.linkedin.com/in/audun-mathias-%C3%B8ygard-1a572041"><i class="icon-linkedin icon-large"></i></a>
+      <a href="/atom.xml"><i class="icon-rss icon-medium" style="margin-left:2px;position:relative;top:0.1em;"></i></a>
+    </div>
+  </div>
+  <nav id="nav">
+    <p><a href="/about.html">About</a></p>
+    <p><a href="/">Blog</a></p>
+    <!--<p><a href="projects.html">Projects/Work</a></p>-->
+  </nav>
+  <div id="burger"></div>
+  <div id="noburger" class="hide"></div>
+</header>
+  <div id="content">
+    <article>
+
+
+<img src="/images/gibbons_and_brush2_crop.jpg" alt="image" class="headerimage">
+
+<h3>Drawing with GoogLeNet</h3>
+
+
+<p class="date"><time datetime="2015-08-04">04. August 2015</time></p>
+
+<p>In my <a href="/post/125362849838/visualizing-googlenet-classes">previous post</a>, I showed how you can use deep neural networks to generate image examples of the classes it&rsquo;s been trained to classify. Since we&rsquo;ve already started using deep neural networks in ways they were never intended to be used, let&rsquo;s abuse them some more.</p>
+
+<p>There&rsquo;s nothing constraining us to generate image examples of one class at a time. Let&rsquo;s see what happens if we try to generate two class visualizations close to each other, such as for instance a gorilla and a french horn</p>
+
+<figure style="margin-bottom:15px">
+	<img src="/images/gorilla_french-horn_crop.jpg" alt="Gorilla playing the french horn">
+	<figcaption>Gorilla playing an odd-looking french horn</figcaption>
+</figure>
+
+<p>Well, it <em>kind of</em> looks like a gorilla playing the french horn. Or let&rsquo;s try dressing up a gibbon via &ldquo;mixing&rdquo; the gibbon class with some of the clothing classes:</p>
+
+<figure style="margin-left:auto;margin-right:auto;margin-bottom:15px;text-align:center">
+	<img src="/images/gibbon_poncho_crop.jpg" alt="Gibbon in a poncho" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<img src="/images/gibbon_labcoat_crop.jpg" alt="Gibbon in a labcoat" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<figcaption>A gibbon in a poncho (left) and an ET-looking gibbon in a labcoat (right)</figcaption>
+</figure>
+
+<p>Or what about making some scenic nature drawings, such as some foxes underneath an erupting volcano:</p>
+
+<figure style="margin-bottom:15px">
+	<img src="/images/fox_volcano_3_crop.jpg" alt="Foxes beneath an erupting volcano">
+	<figcaption>Foxes beneath an erupting volcano</figcaption>
+</figure>
+
+<p>Or a ballpoint pen drawing a castle:</p>
+
+<figure style="margin-bottom:15px">
+	<img src="/images/pen_and_castle6_crop.jpg" alt="Pen drawing a castle">
+	<figcaption>A vague ballpoint pen drawing a castle</figcaption>
+</figure>
+
+<p>These mixes of classes <em>kind of</em> work out, though it should be noted that these are the best selections from a number of mixes I tried. It&rsquo;s also tempting to create mixes of animal classes to generate some new kind of monster breeds, but most of the time this doesn&rsquo;t work so well. Here&rsquo;s some I tried though, a mix of a scotch terrier and a tarantula, and a mix of a bee and a gibbon:</p>
+
+<figure style="margin-left:auto;margin-right:auto;margin-bottom:15px;text-align:center">
+	<img src="/images/mix_scotch-terrier_tarantula2_crop.jpg" alt="Terrier/Tarantula" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<img src="/images/gibbon_and_bee_crop.jpg" alt="Bee/Gibbon" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
+	<figcaption>A slightly spidery looking scotch terrier (left) and a slightly gibbon-looking bee (right)</figcaption>
+</figure>
+
+<p>Another fun thing we can do when generatinge images is to do the gradient ascent randomly along paths instead of on a single point. This of course takes a bit longer time, but it allows us to &ldquo;draw&rdquo; with the output, such as for instance drawing a mountain range of alps:</p>
+
+<figure style="margin-bottom:15px"><a id="alps" href="javascript:;" target="_blank" rel="external">
+		<img src="/images/sine_alps_crop_thumb.jpg" alt="Alps"></a>
+</figure>
+
+<p>or a line of jellyfish:</p>
+
+<figure style="margin-bottom:15px"><a id="jellyfish" href="javascript:;" target="_blank" rel="external">
+		<img src="/images/jellyfish_straight_path_crop_thumb.jpg" alt="Jellyfish"></a>
+</figure>
+
+<p>or a circle of junco birds:</p>
+
+<figure style="margin-bottom:15px"><a id="birds" href="javascript:;" target="_blank" rel="external">
+		<img src="/images/circle_junco_thumb.jpg" alt="Circle of birds"></a>
+</figure>
+
+<p>If we try to fill a larger region with visualizations of a class, we can also apply clipping masks, i.e. forcing the pixels to zero in some pattern during gradient ascent. So we can for instance use letters as clipping masks and try to create the alphabet with animals:</p>
+
+<figure>
+	<img src="/images/letter_a_apes_gibbon2.jpg" alt="An A of apes">
+	<figcaption>An A of apes</figcaption>
+</figure>
+<figure>
+	<img src="/images/letter_b_bear4.jpg" alt="A B of bears">
+	<figcaption>A B of bears</figcaption>
+</figure>
+<figure style="margin-bottom:15px">
+	<img src="/images/letter_c_cobra3.jpg" alt="A C of cobras">
+	<figcaption>And a C of cobras</figcaption>
+</figure>
+
+<p>Alright, that&rsquo;s enough abuse of our deep neural network for today. I&rsquo;ve just scratched the surface here, but there are several fun ways to use deep neural networks for creative visual work with a bit of experimentation (and lots of patience). I&rsquo;m going to put the ipython notebooks I used to make these examples in the <a href="https://github.com/auduno/deepdraw" target="_blank" rel="external">deepdraw repository</a> as soon as I&rsquo;ve cleaned up the code, so stay tuned <a href="https://twitter.com/matsiyatzy" target="_blank" rel="external">via twitter</a>.</p>
+
+
+
+<script type="text/javascript">
+  window.onload = function() {
+  $("a#birds").click(function() {
+    $.fancybox(
+      [
+        {
+          'href' : '/images/circle_junco.jpg',
+          'title' : 'A circle of birds'
+        }
+      ],{
+      'padding'         : 0,
+      'transitionIn'		: 'none',
+      'transitionOut'		: 'none',
+      'type' : 'image',
+      'changeFade' : 0
+      }
+    )
+  });
+  $("a#jellyfish").click(function() {
+    $.fancybox(
+      [
+        {
+          'href' : '/images/jellyfish_straight_path_crop.jpg',
+          'title' : 'A line of jellyfish'
+        }
+      ],{
+      'padding'         : 0,
+      'transitionIn'		: 'none',
+      'transitionOut'		: 'none',
+      'type' : 'image',
+      'changeFade' : 0
+      }
+    )
+  });
+  $("a#alps").click(function() {
+    $.fancybox(
+      [
+        {
+          'href' : '/images/sine_alps_crop.jpg',
+          'title' : 'An odd looking mountain range of alps'
+        }
+      ],{
+      'padding'         : 0,
+      'transitionIn'		: 'none',
+      'transitionOut'		: 'none',
+      'type' : 'image',
+      'changeFade' : 0
+      }
+    )
+  });
+}
+</script>
+
+
+</article>
+
+
+<nav id="blognav">
+  
+    <div class="prev_post">
+      <a href="/2016/05/01/peeking-inside-convnets/" id="article-nav-newer" class="article-nav-link-wrap">
+        <img src="/css/images/prev_post2.png">
+        <p>Peeking inside Convnets</p>
+      </a>
+    </div>
+  
+  
+    <div class="next_post">
+      <a href="/2015/07/29/visualizing-googlenet-classes/" id="article-nav-older" class="article-nav-link-wrap">
+        <img src="/css/images/next_post.png">
+        <p>Visualizing GoogLeNet Classes</p>
+      </a>
+    </div>
+  
+</nav>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+<script>
+  var disqus_shortname = 'audunotumblr';
+  
+  var disqus_url = 'http://auduno.github.io/2015/08/04/drawing-with-googlenet/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+  </div>
+  <div id="footer">
+	<div id="socialicons">
+	</div>
+</div>
+  <script>
+  		function displayMenu() {
+  			document.getElementById('burger').className = "hide";
+  			document.getElementById('noburger').className = "nohide";
+  			document.getElementById('nav').className = "nohide";
+  		}
+
+  		function hideMenu() {
+  			document.getElementById('burger').className = "nohide";
+  			document.getElementById('noburger').className = "hide";
+  			document.getElementById('nav').className = "hide";
+  		}
+
+  		document.getElementById('burger').onclick = displayMenu;
+  		document.getElementById('noburger').onclick = hideMenu;
+  	</script>
+</body>
+</html>

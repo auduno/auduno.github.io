@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  
+  <title>Rapid A/B-testing with Sequential Analysis | Audun M Øygard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A common issue with classical A/B-tests, especially when you want to be able to detect small differences, is that the sample size needed can be prohibitively large. In many cases it can take several w">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rapid A/B-testing with Sequential Analysis">
+<meta property="og:url" content="http://auduno.github.io/2014/12/25/rapid-a-b-testing-with-sequential-analysis/index.html">
+<meta property="og:site_name" content="Audun M Øygard">
+<meta property="og:description" content="A common issue with classical A/B-tests, especially when you want to be able to detect small differences, is that the sample size needed can be prohibitively large. In many cases it can take several w">
+<meta property="og:image" content="http://auduno.github.io/images/expected_samplesize_fig1.png">
+<meta property="og:image" content="http://auduno.github.io/images/expected_samplesize_fig2.png">
+<meta property="og:image" content="http://auduno.github.io/images/expected_samplesize_fig3.png">
+<meta property="og:image" content="http://auduno.github.io/images/expected_samplesize_fig4.png">
+<meta property="og:updated_time" content="2016-05-03T20:29:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Rapid A/B-testing with Sequential Analysis">
+<meta name="twitter:description" content="A common issue with classical A/B-tests, especially when you want to be able to detect small differences, is that the sample size needed can be prohibitively large. In many cases it can take several w">
+<meta name="twitter:image" content="http://auduno.github.io/images/expected_samplesize_fig1.png">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+    <link rel="stylesheet" href="/css/style.css">
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.css">
+      <script src="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.js"></script>
+    
+  
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-32670536-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css" rel="stylesheet">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script language="javascript" type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
+</head>
+
+<body>
+  <header>
+  <div id="icon">
+    <a href="/" class="nocolor"><p>Audun M. Øygard</p></a>
+    <br/>
+    <div id="socialicons">
+      <a href="http://www.twitter.com/matsiyatzy"><i class="icon-twitter"></i></a>
+      <a href="http://github.com/auduno"><i class="icon-github icon-large"></i></a>
+      <a href="https://www.linkedin.com/in/audun-mathias-%C3%B8ygard-1a572041"><i class="icon-linkedin icon-large"></i></a>
+      <a href="/atom.xml"><i class="icon-rss icon-medium" style="margin-left:2px;position:relative;top:0.1em;"></i></a>
+    </div>
+  </div>
+  <nav id="nav">
+    <p><a href="/about.html">About</a></p>
+    <p><a href="/">Blog</a></p>
+    <!--<p><a href="projects.html">Projects/Work</a></p>-->
+  </nav>
+  <div id="burger"></div>
+  <div id="noburger" class="hide"></div>
+</header>
+  <div id="content">
+    <article>
+
+
+<img src="/images/header4.png" alt="image" class="headerimage">
+
+<h3>Rapid A/B-testing with Sequential Analysis</h3>
+
+
+<p class="date"><time datetime="2014-12-25">25. December 2014</time></p>
+
+<p>A common issue with classical A/B-tests, especially when you want to be able to detect small differences, is that the sample size needed can be prohibitively large. In many cases it can take several weeks, months or even years to collect enough data to conclude a test. In this post I&rsquo;ll introduce a very little known test that in many cases severely reduces the number of samples needed, namely the Sequential Generalized Likelihood Ratio Test.</p>
+
+<a id="more"></a>
+<br><p>The Sequential Generalized Likelihood Ratio test (or sequential GLR test for short) is a test that is surprisingly little known outside of statistical clinical research. Unlike classical fixed sample-size tests, where significance is only checked after all samples have been collected, this test will continously check for significance at every new sample and stop the test as soon as a significant result is detected, while still guaranteeing the same type-1 and type-2 errors as the fixed-samplesize test. This means the test could be stopped as early as after a handful of samples if there is a strong effect present.</p>
+
+<p>Despite this very nice property, I couldn&rsquo;t find <em>any</em> public implementation of this test, so I&rsquo;ve created a node.js implementation of this test, <a href="https://github.com/auduno/seglir/" target="_blank" rel="external">SeGLiR</a>, which can easily be used in web application A/B testing. I&rsquo;ll give a brief example of usage below, but to give you some idea about the potential savings, I&rsquo;ll first show you a comparison of the needed samplesize for a fixed samplesize test versus the sequential GLR test.</p>
+
+<p>The test I&rsquo;ll compare is a <em>comparison of proportions</em> test, which is commonly used in A/B-testing to compare conversion rates. We compare the tests at the same levels, &alpha;-level 0.05 and &beta;-level 0.10, and say that we want to detect a difference between proportions larger than 0.01 (in sequential analysis this is usually called an &ldquo;indifference region&rdquo; of size 0.01). Note that the expected samplesize for the sequential GLR test vary depending on the true proportions p<sub>1</sub> and p<sub>2</sub>, so we compare the samplesize at different true proportions. We&rsquo;ll first look at the case where the expected samplesize for the sequential GLR test is worst, when the proportions are closest to 0.5.</p>
+
+<figure>
+	<img src="/images/expected_samplesize_fig1.png" alt="samplesize comparison">
+</figure>
+
+<p>As you can see, the expected samplesize of the sequential GLR test is much smaller for almost any value of the true difference. The test will stop especially early when there is a large difference between the proportions, so if there is a significant advantage of choosing one of the alternatives, this can be acted upon as early as possible. Let&rsquo;s take a closer look at the expected samplesize when the differences between the true proportions are small.</p>
+
+<figure>
+	<img src="/images/expected_samplesize_fig2.png" alt="samplesize comparison">
+</figure>
+
+<p>The only case where the sample size for the sequential GLR test can be expected to be larger, is when the true difference between p<sub>1</sub> and p<sub>2</sub> is just below 0.01, i.e. the smallest difference we were interested in detecting. However, this is just when the proportions are close to 0.5. What about when p<sub>1</sub> and p<sub>2</sub> are farther from 0.5?</p>
+
+<figure>
+	<img src="/images/expected_samplesize_fig3.png" alt="samplesize comparison">
+</figure>
+
+<p>Actually, as the true p<sub>1</sub> and p<sub>2</sub> get closer to either 0 or 1, the expected samplesize will <em>always</em> be smaller than the fixed samplesize test. Since this is the <em>expected</em> samplesize, to be sure that the test doesn&rsquo;t often require a much higher samplesize, let&rsquo;s also take a look at the more extreme outcomes, for instance the 5th and 95th percentiles (with p<sub>1</sub> and p<sub>2</sub> close to 0.5 as earlier):</p>
+
+<figure>
+	<img src="/images/expected_samplesize_fig4.png" alt="samplesize comparison">
+</figure>
+
+<p>For most of the true differences the samplesize is still lower than the fixed-samplesize test, except for differences below 0.015. A good next question might be if there is a <em>bound</em> to the amount of samples we may have to collect? Actually, there exists a worst-case samplesize for the test, meaning that the test will always conclude before this point. In the example above, the worst-case samplesize, though extremely rare, is at 161103 samples. Note that there is a tradeoff between this worst-case samplesize and the size of the indifference region, which means that a smaller indifference region will lead to a larger worst-case samplesize, and a larger indifference region will lead to a smaller worst-case samplesize.</p>
+
+<p>Given the very nice samplesize properties we&rsquo;ve seen above, it might not come as a surprise that the sequential GLR test has been shown<a href="#footnote1"><sup>[1]</sup></a> to be the optimal test with regards to minimizing samplesize at a given &alpha;- and &beta;-level.</p>
+
+<p class="footnote" id="footnote1">[1] <a href="https://books.google.no/books?id=zhsbBAAAQBAJ&lpg=PP1&pg=PA254#v=onepage&q&f=false" target="_blank" rel="external">Theorem 5.4.1</a> in Tartakovsky et al, Sequential Analysis, CRC Press 2014</p>
+
+<h4>Usage</h4>
+
+<p>You can install <em>SeGLiR</em>, the node.js library I&rsquo;ve implemented for doing these types of tests, via node package manager : `npm install seglir`. Here&rsquo;s an example of how to set up and run a similar sequential GLR test as the one above in node.js.</p>
+
+<pre class="prettyprint lang-js" style="margin-bottom:1.7em;overflow-x:scroll;">
+var glr = require('seglir')
+// set up an instance of a test, with indifference region of size 0.01,
+//   alpha-level 0.05 and beta-level 0.10
+var test = glr.test("bernoulli","two-sided",0.01,0.05,0.10)
+</pre>
+
+<p>When setting up any statistical hypothesis test, you need to calculate the test statistic thresholds at which the null-hypothesis or the alternative hypothesis is rejected for a given &alpha;- and &beta;-level. Unfortunately, unlike the fixed samplesize tests, there is no analytical way to calculate these thresholds for the sequential GLR test, so SeGLiR will use simulation to find them. This simulation can take some time and doesn&rsquo;t always converge, so I&rsquo;ve added some precalculated thresholds for the most common levels. It probably saves a bit of time to check these precalculated thresholds in the <a href="http://auduno.github.io/SeGLiR/documentation/reference.html" target="_blank" rel="external">reference</a> before setting up a test.</p>
+
+<p>Add data as it comes in, until the instance returns either &ldquo;true&rdquo; (the null hypothesis was accepted, i.e. there is no difference between the proportions) or &ldquo;false&rdquo; (the alternative hypothesis was accepted, i.e. there is a difference between the proportions).</p>
+
+<pre class="prettyprint lang-js" style="margin-bottom:1.7em;overflow-x:scroll;">
+test.addData({x:0,y:1})
+test.addData({x:0})
+test.addData({y:0})
+test.addData({x:1,y:0})
+// add more data until the function returns either "true" or "false"
+</pre>
+
+<p>When the test is done, you can get estimates of the true parameters by estimate():</p>
+
+<pre class="prettyprint lang-js" style="margin-bottom:1.7em;">
+test.estimate()
+</pre>
+
+<p>To get more details about functions, check out the <a href="http://auduno.github.io/SeGLiR/documentation/reference.html" target="_blank" rel="external">SeGLiR reference</a>. Try out comparing the fixed samplesize test and the sequential GLR yourself (using SeGLiR) in <a href="http://auduno.github.io/SeGLiR/demo/demo.html" target="_blank" rel="external">this demo</a>.</p>
+
+<br><p>To sum up, the sequential GLR test is an alternative to fixed samplesize tests that usually are much faster, at the cost of a large, but rare, worst-case samplesize. Another slight drawback with sequential tests is that post-analysis estimation can be a bit more tricky. I&rsquo;ll elaborate on this in my next post, as well as talk a bit about the solutions I&rsquo;ve implemented in SeGLiR. <a href="https://twitter.com/matsiyatzy" target="_blank" rel="external">Follow me on twitter</a> if you want to get updates!</p>
+
+<br><p>If you&rsquo;re interested in a very brief introduction to the mathematical details of the sequential GLR test, take a look at the <a href="http://auduno.github.io/SeGLiR/documentation/reference.html" target="_blank" rel="external">SeGLiR reference</a>. For a more rigorous mathematical introduction, see these excellent references:</p>
+<ul><li>Tartakovsky, Nikiforov &amp; Basseville : <a href="http://www.amazon.com/Sequential-Analysis-Hypothesis-Changepoint-Probability/dp/1439838208" target="_blank" rel="external">Sequential Analysis</a>, CRC Press 2014</li>
+	<li>Bartroff, Lai &amp; Shih : <a href="http://www.amazon.com/Sequential-Experimentation-Clinical-Trials-Statistics/dp/1461461138/ref=sr_1_1?s=books&ie=UTF8&qid=1416693815&sr=1-1&keywords=sequential%20experimentation%20in%20clinical%20trialsD" target="_blank" rel="external">Sequential Experimentation in Clinical Trials</a>, Springer 2012</li>
+</ul>
+
+<script>
+	$(document).ready( function(){
+	    prettyPrint();
+	});
+</script>
+
+
+</article>
+
+
+<nav id="blognav">
+  
+    <div class="prev_post">
+      <a href="/2015/01/04/estimation-in-sequential-analysis/" id="article-nav-newer" class="article-nav-link-wrap">
+        <img src="/css/images/prev_post2.png">
+        <p>Estimation in Sequential Analysis</p>
+      </a>
+    </div>
+  
+  
+    <div class="next_post">
+      <a href="/2014/08/29/some-nice-ml-libraries/" id="article-nav-older" class="article-nav-link-wrap">
+        <img src="/css/images/next_post.png">
+        <p>Some nice ML-libraries</p>
+      </a>
+    </div>
+  
+</nav>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+<script>
+  var disqus_shortname = 'audunotumblr';
+  
+  var disqus_url = 'http://auduno.github.io/2014/12/25/rapid-a-b-testing-with-sequential-analysis/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+  </div>
+  <div id="footer">
+	<div id="socialicons">
+	</div>
+</div>
+  <script>
+  		function displayMenu() {
+  			document.getElementById('burger').className = "hide";
+  			document.getElementById('noburger').className = "nohide";
+  			document.getElementById('nav').className = "nohide";
+  		}
+
+  		function hideMenu() {
+  			document.getElementById('burger').className = "nohide";
+  			document.getElementById('noburger').className = "hide";
+  			document.getElementById('nav').className = "hide";
+  		}
+
+  		document.getElementById('burger').onclick = displayMenu;
+  		document.getElementById('noburger').onclick = hideMenu;
+  	</script>
+</body>
+</html>
