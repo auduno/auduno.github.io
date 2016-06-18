@@ -927,7 +927,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
     <link href="http://auduno.github.io/2014/01/05/fitting-faces/"/>
     <id>http://auduno.github.io/2014/01/05/fitting-faces/</id>
     <published>2014-01-04T23:00:00.000Z</published>
-    <updated>2016-05-03T18:26:02.000Z</updated>
+    <updated>2016-06-18T20:10:21.000Z</updated>
     
     <content type="html">&lt;p&gt;A while ago I put out a semi-finished version of &lt;a href=&quot;https://github.com/auduno/clmtrackr&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;CLMtrackr&lt;/a&gt;, which is a javascript library for fitting a facial model to faces in images or video. Fitting a facial model is useful in cases where you need precise positions of facial features, such as for instance emotion detection, face masking and person identification. Though the tracking is pretty processor-intensive, we manage to reach real-time tracking in modern browsers, even though it&amp;rsquo;s implemented in javascript. If you&amp;rsquo;re interested in seeing some applications of CLMtrackr, check out the demos of &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/facesubstitution.html&quot;&gt;face substitution&lt;/a&gt;, &lt;a href=&quot;https://auduno.github.io/clmtrackr/face_deformation_video.html&quot;&gt;face deformation&lt;/a&gt;, or &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/clm_emotiondetection.html&quot;&gt;emotion detection&lt;/a&gt;.&lt;/p&gt;
 
@@ -936,7 +936,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
 &lt;p&gt;First off, here&amp;rsquo;s an example of CLMtrackr tracking a face real-time:&lt;/p&gt;
 
 &lt;figure&gt;
-	&lt;iframe src=&quot;http://player.vimeo.com/video/75659453&quot; width=&quot;360&quot; height=&quot;281&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen&gt;&lt;/iframe&gt;
+	&lt;iframe src=&quot;https://player.vimeo.com/video/75659453&quot; width=&quot;360&quot; height=&quot;281&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen&gt;&lt;/iframe&gt;
 	&lt;figcaption&gt;An example of fitting/tracking a face in the canonical &lt;a href=&quot;http://www-prima.inrialpes.fr/FGnet/data/01-TalkingFace/talking_face.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;talking face&lt;/a&gt; video&lt;/figcaption&gt;
 &lt;/figure&gt;
 
@@ -974,7 +974,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
 &lt;p&gt;The first components that PCA extract will usually cover basic variations from posture, such as yaw, pitch, then followed by opening and closing mouth, smile, etc.&lt;/p&gt;
 
 &lt;figure&gt;
-	&lt;iframe src=&quot;http://auduno.github.io/clmtrackr/docs/param_model/clm_pca.html&quot; width=&quot;500&quot; height=&quot;300&quot; style=&quot;border:0px;&quot;&gt;&lt;/iframe&gt;
+	&lt;iframe src=&quot;https://auduno.github.io/clmtrackr/docs/param_model/clm_pca.html&quot; width=&quot;500&quot; height=&quot;300&quot; style=&quot;border:0px;&quot;&gt;&lt;/iframe&gt;
 	&lt;figcaption&gt;The first of the extracted components&lt;/figcaption&gt;
 &lt;/figure&gt;
 
@@ -1315,9 +1315,9 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
     <link href="http://auduno.github.io/2012/06/15/head-tracking-with-webrtc/"/>
     <id>http://auduno.github.io/2012/06/15/head-tracking-with-webrtc/</id>
     <published>2012-06-14T22:00:00.000Z</published>
-    <updated>2016-05-03T19:10:31.000Z</updated>
+    <updated>2016-06-18T20:11:30.000Z</updated>
     
-    <content type="html">&lt;iframe src=&quot;http://player.vimeo.com/video/44049736&quot; width=&quot;500&quot; height=&quot;281&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen&gt;&lt;/iframe&gt;
+    <content type="html">&lt;iframe src=&quot;https://player.vimeo.com/video/44049736&quot; width=&quot;500&quot; height=&quot;281&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen&gt;&lt;/iframe&gt;
 
 
 &lt;p&gt;A lot of new exciting standards are coming to browsers these days, among them the &lt;a href=&quot;https://www.w3.org/TR/webrtc/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;WebRTC standard&lt;/a&gt;, which adds support for streaming video and audio from native devices such as a webcamera. One of the exciting things that this enables, is so called &lt;em&gt;head tracking&lt;/em&gt;. We decided to do a little demonstration of this for the &lt;a href=&quot;http://www.opera.com/computer&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Opera 12&lt;/a&gt; release, which is the first desktop browser to support video-streaming via the getUserMedia API.&lt;/p&gt;
@@ -1373,7 +1373,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
 
 &lt;p&gt;To give credit where credit is due, the inspiration for this demo was &lt;a href=&quot;https://www.youtube.com/embed/Jd3-eiid-Uw&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;this video&lt;/a&gt; that was buzzing around the web a couple of years ago. In it, Johnny Chung Lee had hacked a Wii remote to capture the motions of the user. Later on, &lt;a href=&quot;http://iihm.imag.fr/en/demo/hcpmobile/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;some french researchers&lt;/a&gt; decided to try out the same thing without the Wii remote. Instead of motion sensors they used the front-facing camera of the Ipad to detect and track the rough position of the head, with pretty convincing results. The result is available as the Ipad app &lt;a href=&quot;http://iihm.imag.fr/francone/i3D/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;i3D&lt;/a&gt; and can be seen here:&lt;/p&gt;
 
-&lt;iframe width=&quot;450&quot; height=&quot;253&quot; src=&quot;http://www.youtube.com/embed/19XZJa15hOs&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;
+&lt;iframe width=&quot;450&quot; height=&quot;253&quot; src=&quot;https://www.youtube.com/embed/19XZJa15hOs&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;
 
 &lt;p&gt;Although head-coupled perspective might not be ready for any type of generic interaction via the web camera &lt;em&gt;yet&lt;/em&gt;, it works fine with simple games like &lt;a href=&quot;http://www.shinydemos.com/facekat/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;em&gt;facekat&lt;/em&gt;&lt;/a&gt;. I&amp;rsquo;m sure there are many improvements that can make it more precise and failproof, though. The library and demos were patched together pretty fast, and there are several improvements that I didn&amp;rsquo;t get time to test out, such as:&lt;/p&gt;
 
@@ -1389,7 +1389,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
     
     <summary type="html">
     
-      &lt;iframe src=&quot;http://player.vimeo.com/video/44049736&quot; width=&quot;500&quot; height=&quot;281&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot;
+      &lt;iframe src=&quot;https://player.vimeo.com/video/44049736&quot; width=&quot;500&quot; height=&quot;281&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;
     
     </summary>
     
