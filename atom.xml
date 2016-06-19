@@ -188,7 +188,7 @@
     <link href="http://auduno.github.io/2015/08/04/drawing-with-googlenet/"/>
     <id>http://auduno.github.io/2015/08/04/drawing-with-googlenet/</id>
     <published>2015-08-03T22:00:00.000Z</published>
-    <updated>2016-05-03T20:33:56.000Z</updated>
+    <updated>2016-06-19T11:45:48.000Z</updated>
     
     <content type="html">&lt;p&gt;In my &lt;a href=&quot;/post/125362849838/visualizing-googlenet-classes&quot;&gt;previous post&lt;/a&gt;, I showed how you can use deep neural networks to generate image examples of the classes it&amp;rsquo;s been trained to classify. Since we&amp;rsquo;ve already started using deep neural networks in ways they were never intended to be used, let&amp;rsquo;s abuse them some more.&lt;/p&gt;
 
@@ -334,7 +334,7 @@
     <link href="http://auduno.github.io/2015/07/29/visualizing-googlenet-classes/"/>
     <id>http://auduno.github.io/2015/07/29/visualizing-googlenet-classes/</id>
     <published>2015-07-28T22:00:00.000Z</published>
-    <updated>2016-06-18T20:19:17.000Z</updated>
+    <updated>2016-06-19T11:46:03.000Z</updated>
     
     <content type="html">&lt;p&gt;Ever wondered what a deep neural network thinks a Dalmatian should look like? Well, wonder no more.&lt;/p&gt;
 
@@ -480,7 +480,7 @@
     <link href="http://auduno.github.io/2015/01/04/estimation-in-sequential-analysis/"/>
     <id>http://auduno.github.io/2015/01/04/estimation-in-sequential-analysis/</id>
     <published>2015-01-03T23:00:00.000Z</published>
-    <updated>2016-05-01T12:05:59.000Z</updated>
+    <updated>2016-06-19T11:46:18.000Z</updated>
     
     <content type="html">&lt;p&gt;In the &lt;a href=&quot;/2014/12/25/rapid-a-b-testing-with-sequential-analysis/&quot;&gt;previous post&lt;/a&gt; I introduced the Sequential Generalized Likelihood Ratio test, which is a sequential A/B-test that in most cases require much smaller sample sizes than the classical fixed sample-size test. In this post I’m going to explain some problems regarding estimation in sequential analysis tests in general, and how they can be solved.&lt;/p&gt;
 
@@ -560,7 +560,7 @@
     <link href="http://auduno.github.io/2014/12/25/rapid-a-b-testing-with-sequential-analysis/"/>
     <id>http://auduno.github.io/2014/12/25/rapid-a-b-testing-with-sequential-analysis/</id>
     <published>2014-12-24T23:00:00.000Z</published>
-    <updated>2016-05-03T20:29:11.000Z</updated>
+    <updated>2016-06-19T11:46:31.000Z</updated>
     
     <content type="html">&lt;p&gt;A common issue with classical A/B-tests, especially when you want to be able to detect small differences, is that the sample size needed can be prohibitively large. In many cases it can take several weeks, months or even years to collect enough data to conclude a test. In this post I&amp;rsquo;ll introduce a very little known test that in many cases severely reduces the number of samples needed, namely the Sequential Generalized Likelihood Ratio Test.&lt;/p&gt;
 
@@ -658,7 +658,7 @@ test.estimate()
     <link href="http://auduno.github.io/2014/08/29/some-nice-ml-libraries/"/>
     <id>http://auduno.github.io/2014/08/29/some-nice-ml-libraries/</id>
     <published>2014-08-28T22:00:00.000Z</published>
-    <updated>2016-05-03T16:38:41.000Z</updated>
+    <updated>2016-06-19T11:46:54.000Z</updated>
     
     <content type="html">&lt;p&gt;I recently had a go at the Kaggle &lt;a href=&quot;https://www.kaggle.com/c/acquire-valued-shoppers-challenge&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Acquire Valued Shoppers Challenge&lt;/a&gt;. This competition was a bit special in that the dataset was 22 GB, one of the biggest datasets they&amp;rsquo;ve had in a competition. While 22 GB may not quite qualify as &lt;em&gt;big data&lt;/em&gt;, it&amp;rsquo;s certainly something that your average laptop will choke on when using standard methods. Ordinarily I&amp;rsquo;d reach for &lt;a href=&quot;http://scikit-learn.org/stable/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;scikit-learn&lt;/a&gt; for these tasks, but in this case some of the methods in scikit-learn were a bit slow, and some other libraries had nice methods that scikit-learn didn&amp;rsquo;t have, so I decided to try out some other libraries. In this post I&amp;rsquo;ll give a brief look at some of the alternative machine learning libraries that I used during the competition.&lt;/p&gt;
 
@@ -836,7 +836,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
     <link href="http://auduno.github.io/2014/04/29/twisting-faces/"/>
     <id>http://auduno.github.io/2014/04/29/twisting-faces/</id>
     <published>2014-04-28T22:00:00.000Z</published>
-    <updated>2016-05-03T19:32:36.000Z</updated>
+    <updated>2016-06-19T11:47:17.000Z</updated>
     
     <content type="html">&lt;p&gt;In the &lt;a href=&quot;/post/61888277175/fitting-faces&quot;&gt;previous post&lt;/a&gt;, I explained how &lt;a href=&quot;https://github.com/auduno/clmtrackr&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;CLMtrackr&lt;/a&gt; was put together. Since then, my examples of &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/facesubstitution.html&quot;&gt;face substitution&lt;/a&gt; and &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/clm_emotiondetection.html&quot;&gt;emotion detection&lt;/a&gt; has received a fair amount of attention, so in this post I&amp;rsquo;m going to explain a bit about how these are put together as well, plus comment on some fixes that I&amp;rsquo;ve done to CLMtrackr recently.&lt;/p&gt;
 
@@ -927,7 +927,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
     <link href="http://auduno.github.io/2014/01/05/fitting-faces/"/>
     <id>http://auduno.github.io/2014/01/05/fitting-faces/</id>
     <published>2014-01-04T23:00:00.000Z</published>
-    <updated>2016-06-18T20:10:21.000Z</updated>
+    <updated>2016-06-19T11:47:30.000Z</updated>
     
     <content type="html">&lt;p&gt;A while ago I put out a semi-finished version of &lt;a href=&quot;https://github.com/auduno/clmtrackr&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;CLMtrackr&lt;/a&gt;, which is a javascript library for fitting a facial model to faces in images or video. Fitting a facial model is useful in cases where you need precise positions of facial features, such as for instance emotion detection, face masking and person identification. Though the tracking is pretty processor-intensive, we manage to reach real-time tracking in modern browsers, even though it&amp;rsquo;s implemented in javascript. If you&amp;rsquo;re interested in seeing some applications of CLMtrackr, check out the demos of &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/facesubstitution.html&quot;&gt;face substitution&lt;/a&gt;, &lt;a href=&quot;https://auduno.github.io/clmtrackr/face_deformation_video.html&quot;&gt;face deformation&lt;/a&gt;, or &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/clm_emotiondetection.html&quot;&gt;emotion detection&lt;/a&gt;.&lt;/p&gt;
 
@@ -1067,7 +1067,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
     <link href="http://auduno.github.io/2013/04/07/building-a-budgeting-service-pt2/"/>
     <id>http://auduno.github.io/2013/04/07/building-a-budgeting-service-pt2/</id>
     <published>2013-04-06T22:00:00.000Z</published>
-    <updated>2016-05-05T20:33:57.000Z</updated>
+    <updated>2016-06-19T11:47:47.000Z</updated>
     
     <content type="html">&lt;p&gt;As I wrote in &lt;a href=&quot;/post/40422171982/building-a-budgeting-service&quot;&gt;my last blog post&lt;/a&gt;, around 3 years ago I decided to try to build a budgeting service like &lt;a href=&quot;https://www.mint.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;mint.com&lt;/a&gt; for the norwegian market. After around a year, having reached the prototype stage, I decided to take a short break from further building, to think about the business details. This quickly turned into an &amp;hellip; extended break.&lt;/p&gt; 
 
@@ -1151,7 +1151,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
     <link href="http://auduno.github.io/2013/01/21/building-a-budgeting-service/"/>
     <id>http://auduno.github.io/2013/01/21/building-a-budgeting-service/</id>
     <published>2013-01-20T23:00:00.000Z</published>
-    <updated>2016-05-05T20:34:10.000Z</updated>
+    <updated>2016-06-19T11:47:58.000Z</updated>
     
     <content type="html">&lt;p&gt;So, it&amp;rsquo;s been over a year since I &amp;ldquo;took a break&amp;rdquo; from working on my stealth &lt;s&gt;startup&lt;/s&gt; project, and I guess it&amp;rsquo;s safe to say that I&amp;rsquo;m not going to pick it up again. Around 3 years ago, inspired by the success of the personal budgeting service &lt;a href=&quot;https://www.mint.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;mint.com&lt;/a&gt; in the US, and wanting something similar myself, I started investigating possibilities for making a personal budgeting service for the norwegian market. I ended up working on the project in my spare time for over a year.&lt;/p&gt;
 
@@ -1315,7 +1315,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
     <link href="http://auduno.github.io/2012/06/15/head-tracking-with-webrtc/"/>
     <id>http://auduno.github.io/2012/06/15/head-tracking-with-webrtc/</id>
     <published>2012-06-14T22:00:00.000Z</published>
-    <updated>2016-06-18T20:11:30.000Z</updated>
+    <updated>2016-06-19T11:48:11.000Z</updated>
     
     <content type="html">&lt;iframe src=&quot;https://player.vimeo.com/video/44049736&quot; width=&quot;500&quot; height=&quot;281&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen&gt;&lt;/iframe&gt;
 
