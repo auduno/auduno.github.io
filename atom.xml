@@ -927,7 +927,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
     <link href="http://auduno.github.io/2014/01/05/fitting-faces/"/>
     <id>http://auduno.github.io/2014/01/05/fitting-faces/</id>
     <published>2014-01-04T23:00:00.000Z</published>
-    <updated>2017-05-01T06:52:27.107Z</updated>
+    <updated>2017-05-01T07:47:05.379Z</updated>
     
     <content type="html">&lt;p&gt;A while ago I put out a semi-finished version of &lt;a href=&quot;https://github.com/auduno/clmtrackr&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;CLMtrackr&lt;/a&gt;, which is a javascript library for fitting a facial model to faces in images or video. Fitting a facial model is useful in cases where you need precise positions of facial features, such as for instance emotion detection, face masking and person identification. Though the tracking is pretty processor-intensive, we manage to reach real-time tracking in modern browsers, even though it&amp;rsquo;s implemented in javascript. If you&amp;rsquo;re interested in seeing some applications of CLMtrackr, check out the demos of &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/facesubstitution.html&quot;&gt;face substitution&lt;/a&gt;, &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/facedeform.html&quot;&gt;face deformation&lt;/a&gt;, or &lt;a href=&quot;https://auduno.github.io/clmtrackr/examples/clm_emotiondetection.html&quot;&gt;emotion detection&lt;/a&gt;.&lt;/p&gt;
 
@@ -974,7 +974,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
 &lt;p&gt;The first components that PCA extract will usually cover basic variations from posture, such as yaw, pitch, then followed by opening and closing mouth, smile, etc.&lt;/p&gt;
 
 &lt;figure&gt;
-	&lt;iframe src=&quot;https://auduno.github.io/clmtrackr/docs/param_model/clm_pca.html&quot; width=&quot;500&quot; height=&quot;300&quot; style=&quot;border:0px;&quot;&gt;&lt;/iframe&gt;
+	&lt;iframe src=&quot;https://www.auduno.com/clmtrackr/docs/param_model/clm_pca.html&quot; width=&quot;500&quot; height=&quot;300&quot; style=&quot;border:0px;&quot;&gt;&lt;/iframe&gt;
 	&lt;figcaption&gt;The first of the extracted components&lt;/figcaption&gt;
 &lt;/figure&gt;
 
@@ -1034,7 +1034,7 @@ pred_prob = 1./(1.+np.exp(-pred_prob))
 &lt;p&gt;The main problem we have is that while most graphic cards support floating point calculations and we can easily &lt;em&gt;import&lt;/em&gt; floating points to the GPU, there is no way to &lt;em&gt;export&lt;/em&gt; floating point numbers back to javascript in WebGL. We are only able to &lt;em&gt;read&lt;/em&gt; the pixels (which only support 8-bit ints) rendered by the GPU to the canvas. To get around this, we have to use a trick : we &amp;ldquo;pack&amp;rdquo; our 32-bit floats into four 8-bit ints, &amp;ldquo;export&amp;rdquo; them by drawing them to canvas, then read the pixels and &amp;ldquo;unpack&amp;rdquo; them back into 32-bit floats again on the javascript side. In our case we split the floats across each of the four channels (R,G,B,A), which means that each rendered pixel holds one float. Though this seems like a lot of hassle for some performance tweaks, it&amp;rsquo;s worth it, since the WebGL implementation is twice as fast as the javascript implementation.&lt;/p&gt;
 
 &lt;figure&gt;
-	&lt;img src=&quot;https://auduno.github.io/clmtrackr/docs/media/packing.png&quot; alt=&quot;packing and unpacking floats in the GPU&quot;&gt;
+	&lt;img src=&quot;/images/packing.png&quot; alt=&quot;packing and unpacking floats in the GPU&quot;&gt;
 	&lt;figcaption&gt;Packing and unpacking the floats from the GPU&lt;/figcaption&gt;
 &lt;/figure&gt;
 

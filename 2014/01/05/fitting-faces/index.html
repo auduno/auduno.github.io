@@ -17,8 +17,8 @@
 <meta property="og:image" content="http://auduno.github.io/images/training_patches.png">
 <meta property="og:image" content="http://auduno.github.io/images/response_fig2b.jpg">
 <meta property="og:image" content="http://auduno.github.io/images/anim1.gif">
-<meta property="og:image" content="https://auduno.github.io/clmtrackr/docs/media/packing.png">
-<meta property="og:updated_time" content="2017-05-01T06:52:27.107Z">
+<meta property="og:image" content="http://auduno.github.io/images/packing.png">
+<meta property="og:updated_time" content="2017-05-01T07:47:05.379Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Fitting faces">
 <meta name="twitter:description" content="A while ago I put out a semi-finished version of CLMtrackr, which is a javascript library for fitting a facial model to faces in images or video. Fitting a facial model is useful in cases where you ne">
@@ -130,7 +130,7 @@ ga('send', 'pageview');
 <p>The first components that PCA extract will usually cover basic variations from posture, such as yaw, pitch, then followed by opening and closing mouth, smile, etc.</p>
 
 <figure>
-	<iframe src="https://auduno.github.io/clmtrackr/docs/param_model/clm_pca.html" width="500" height="300" style="border:0px;"></iframe>
+	<iframe src="https://www.auduno.com/clmtrackr/docs/param_model/clm_pca.html" width="500" height="300" style="border:0px;"></iframe>
 	<figcaption>The first of the extracted components</figcaption>
 </figure>
 
@@ -190,7 +190,7 @@ ga('send', 'pageview');
 <p>The main problem we have is that while most graphic cards support floating point calculations and we can easily <em>import</em> floating points to the GPU, there is no way to <em>export</em> floating point numbers back to javascript in WebGL. We are only able to <em>read</em> the pixels (which only support 8-bit ints) rendered by the GPU to the canvas. To get around this, we have to use a trick : we &ldquo;pack&rdquo; our 32-bit floats into four 8-bit ints, &ldquo;export&rdquo; them by drawing them to canvas, then read the pixels and &ldquo;unpack&rdquo; them back into 32-bit floats again on the javascript side. In our case we split the floats across each of the four channels (R,G,B,A), which means that each rendered pixel holds one float. Though this seems like a lot of hassle for some performance tweaks, it&rsquo;s worth it, since the WebGL implementation is twice as fast as the javascript implementation.</p>
 
 <figure>
-	<img src="https://auduno.github.io/clmtrackr/docs/media/packing.png" alt="packing and unpacking floats in the GPU">
+	<img src="/images/packing.png" alt="packing and unpacking floats in the GPU">
 	<figcaption>Packing and unpacking the floats from the GPU</figcaption>
 </figure>
 
