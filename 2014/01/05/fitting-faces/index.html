@@ -18,7 +18,7 @@
 <meta property="og:image" content="http://auduno.github.io/images/response_fig2b.jpg">
 <meta property="og:image" content="http://auduno.github.io/images/anim1.gif">
 <meta property="og:image" content="https://auduno.github.io/clmtrackr/docs/media/packing.png">
-<meta property="og:updated_time" content="2017-05-01T06:42:22.367Z">
+<meta property="og:updated_time" content="2017-05-01T06:52:27.107Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Fitting faces">
 <meta name="twitter:description" content="A while ago I put out a semi-finished version of CLMtrackr, which is a javascript library for fitting a facial model to faces in images or video. Fitting a facial model is useful in cases where you ne">
@@ -130,11 +130,11 @@ ga('send', 'pageview');
 <p>The first components that PCA extract will usually cover basic variations from posture, such as yaw, pitch, then followed by opening and closing mouth, smile, etc.</p>
 
 <figure>
-	<iframe src="https://www.auduno.com/clmtrackr/docs/param_model/clm_pca.html" width="500" height="300" style="border:0px;"></iframe>
+	<iframe src="https://auduno.github.io/clmtrackr/docs/param_model/clm_pca.html" width="500" height="300" style="border:0px;"></iframe>
 	<figcaption>The first of the extracted components</figcaption>
 </figure>
 
-<p>Any facial pose can then be modelled as the mean points plus weighted combinations of these components, and the weights can be thought of as &ldquo;parameters&rdquo; for the facial model. Check out the complete model <a href="https://www.auduno.com/clmtrackr/examples/modelviewer_pca.html" target="_blank" rel="external">here</a></p>
+<p>Any facial pose can then be modelled as the mean points plus weighted combinations of these components, and the weights can be thought of as &ldquo;parameters&rdquo; for the facial model. Check out the complete model <a href="https://auduno.github.io/clmtrackr/examples/modelviewer_pca.html">here</a></p>
 
 <p>From the PCA, we also store the eigenvalues of each component, which tells us the standard deviation of the weights of each component according to the facial poses in our annotated data <a href="#footnote1"><sup>[1]</sup></a>, which is very useful when we want to regularize the weights in the optimization step.</p>
 
