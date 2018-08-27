@@ -126,7 +126,7 @@ ga('send', 'pageview');
 
 <p>Convolutional neural networks are used extensively for a number of image related tasks these days. Despite being very successful, they're mostly seen as "black box" models, since it's hard to understand what happens inside the network. There are however methods to "peek inside" the convnets, and thus understand a bit more about how they work.</p>
 
-<p>In a <a href="/2015/07/29/visualizing-googlenet-classes/">previous blogpost</a> I showed how you could use gradient ascent, with some special tricks, to make a convolutional network visualize the classes it's learnt to classify. In this post I'll show that the same technique can also be used to "peek inside the network" by visualizing what the individual units in a layer detect. To give you an idea of the results, here's some highlights of visualizations of individual units from convolutional layer 5 in the <a href="https://gist.github.com/ksimonyan/fd8800eeb36e276cd6f9#file-readme-md" target="_blank" rel="external">VGG-S</a> network:</p>
+<p>In a <a href="/2015/07/29/visualizing-googlenet-classes/">previous blogpost</a> I showed how you could use gradient ascent, with some special tricks, to make a convolutional network visualize the classes it's learnt to classify. In this post I'll show that the same technique can also be used to "peek inside the network" by visualizing what the individual units in a layer detect. To give you an idea of the results, here's some highlights of visualizations of individual units from convolutional layer 5 in the <a href="https://gist.github.com/ksimonyan/fd8800eeb36e276cd6f9#file-readme-md" target="_blank" rel="noopener">VGG-S</a> network:</p>
 
 <figure style="margin-left:auto;margin-right:auto;text-align:center">
 	<img src="/images/vgg_filter_10_crop.jpg" alt="Visualization of filter 10 in VGG-S" style="width:200px;display:inline-block;padding-left:15px;padding-right:15px">
@@ -140,7 +140,7 @@ ga('send', 'pageview');
 
 <p>From top left we can pretty clearly see the head of a cocker spaniel-type dog, the head of some kind of bird, the ears of a canine, and a seaside coastline. Not all unit vizualisations are as clearly defined as these, but most nevertheless give us some interesting insights into what the individual units detect.</p>
 
-<p>Earlier methods for figuring out what the units detect (e.g. in <a href="https://arxiv.org/abs/1311.2901" target="_blank" rel="external">Zeiler & Fergus</a>) have been to find images which maximally activate the individual units. Here's an example of the images (sampled from numerous crops of 100 000 images in the imagenet validation dataset) which give maximal activations for a specific unit in layer 5 of VGG-S:</p>
+<p>Earlier methods for figuring out what the units detect (e.g. in <a href="https://arxiv.org/abs/1311.2901" target="_blank" rel="noopener">Zeiler & Fergus</a>) have been to find images which maximally activate the individual units. Here's an example of the images (sampled from numerous crops of 100 000 images in the imagenet validation dataset) which give maximal activations for a specific unit in layer 5 of VGG-S:</p>
 
 <figure style="margin-bottom:1.3em">
 	<img src="/images/max_activation_05.jpg" alt="Images maximally activating filter 5 in VGG-S">
@@ -268,18 +268,25 @@ ga('send', 'pageview');
 
 <p>Another trick I also used, was to modify the network to use leaky ReLUs instead of regular ReLUs, since otherwise the gradient will usually be zero when we start from a blank image, thus hindering initial gradient ascent. Since this modification doesn't seem to have significant effect on the predictions of the network, we can assume it doesn't have a major impact on the feature visualizations.</p>
 
-<p>I've <a href="https://github.com/auduno/deepdraw/tree/master/filter_visualizations" target="_blank" rel="external">released the code</a> I used to make these visualizations, so take a look if you want to know more details.</p>
+<p>I've <a href="https://github.com/auduno/deepdraw/tree/master/filter_visualizations" target="_blank" rel="noopener">released the code</a> I used to make these visualizations, so take a look if you want to know more details.</p>
 
 <h4>Similar work</h4>
 
-<p>There has been similar work on visualizing convolutional networks by e.g. Zeiler and Fergus and lately by Yosinski, Nugyen et al. In a <a href="http://arxiv.org/abs/1602.03616" target="_blank" rel="external">recent work</a> by Nguyen, they manage to visualize features very well, based on a technique they called "mean-image initialization". Since I started writing this blog post, they've also published a <a href="https://arxiv.org/abs/1605.09304" target="_blank" rel="external">new paper</a> using Generative Adversarial Networks as priors for the visualizations, which lead to far far better visualizations than the ones I've showed above. If you are interested, do take a look at their paper or <a href="https://github.com/Evolving-AI-Lab/synthesizing" target="_blank" rel="external">the code</a> they've released!</p>
+<p>There has been similar work on visualizing convolutional networks by e.g. Zeiler and Fergus and lately by Yosinski, Nugyen et al. In a <a href="http://arxiv.org/abs/1602.03616" target="_blank" rel="noopener">recent work</a> by Nguyen, they manage to visualize features very well, based on a technique they called "mean-image initialization". Since I started writing this blog post, they've also published a <a href="https://arxiv.org/abs/1605.09304" target="_blank" rel="noopener">new paper</a> using Generative Adversarial Networks as priors for the visualizations, which lead to far far better visualizations than the ones I've showed above. If you are interested, do take a look at their paper or <a href="https://github.com/Evolving-AI-Lab/synthesizing" target="_blank" rel="noopener">the code</a> they've released!</p>
 
-<p>If you enjoyed this post, you should  <a href="https://twitter.com/matsiyatzy" target="_blank" rel="external">follow me on twitter</a>!</p>
+<p>If you enjoyed this post, you should  <a href="https://twitter.com/matsiyatzy" target="_blank" rel="noopener">follow me on twitter</a>!</p>
 
 </article>
 
 
 <nav id="blognav">
+  
+    <div class="prev_post">
+      <a href="/2018/10/27/visualizing-an-art-collection/" id="article-nav-newer" class="article-nav-link-wrap">
+        <img src="/css/images/prev_post2.png">
+        <p>Visualizing an art collection</p>
+      </a>
+    </div>
   
   
     <div class="next_post">

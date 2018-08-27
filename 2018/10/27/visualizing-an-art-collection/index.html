@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  
+  <title>Visualizing an art collection | Audun M Øygard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content=".paintings { 	text-align:center; }  .painting { 	display:inline-block; 	padding-left:5px; 	padding-right:5px; }  .dcgan { 	width:200px; 	display:inline-block; 	padding-left:15px; 	padding-right:15px;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Visualizing an art collection">
+<meta property="og:url" content="http://auduno.github.io/2018/10/27/visualizing-an-art-collection/index.html">
+<meta property="og:site_name" content="Audun M Øygard">
+<meta property="og:description" content=".paintings { 	text-align:center; }  .painting { 	display:inline-block; 	padding-left:5px; 	padding-right:5px; }  .dcgan { 	width:200px; 	display:inline-block; 	padding-left:15px; 	padding-right:15px;">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://auduno.github.io/images/test_tsne_white_2_200_2000.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/tsne_part2_sea.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/tsne_part1_faces_2000.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/DM_ptsne_keyword_9_whiteBG_200_2000.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1850_1_NG.M.00212_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1850_2_NG.M.00414_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1850_3_NG.M.00211_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1850_4_NG.M.00636-011_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1880_1_NG.M.00340_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1880_2_NG.M.00643_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1880_3_NG.M.01568_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1880_4_NG.M.00335_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1910_1_NG.M.01226b_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1910_2_NG.M.04097_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1910_3_NG.M.04380_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1910_4_NG.M.01016_1.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1930_1_NG.M.01716_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1930_2_NMK.2011.0186_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1930_3_NG.M.01990_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1930_4_NG.M.02076_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1950_1_MS-00214-1988_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1950_2_MS-03782-1995_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1950_3_MS-04283-1999_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/1950_4_MS-01184-1988_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/outl_1880_1_NG.M.01291_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/outl_1880_2_NG.M.02745_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/outl_1880_3_NG.M.02081_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/outl_1880_4_NG.M.04242_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/outl_1910_1_NG.M.01259_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/outl_1910_2_NG.M.03283_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/outl_1910_4_NG.M.01212_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/outl_1910_5_NG.M.02975_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/outl_1930_1_NG.M.02879_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/outl_1930_2_NG.M.03872_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/outl_1930_3_NG.M.01928_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/outl_1930_4_NG.M.02739_0.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/faces_ptsne_6_2000.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/dcgan_01.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/dcgan_02.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/dcgan_03.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/dcgan_04.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/dcgan_05.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/dcgan_06.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/dcgan_07.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/dcgan_08.jpg">
+<meta property="og:image" content="http://auduno.github.io/images/dcgan_09.jpg">
+<meta property="og:updated_time" content="2018-08-27T18:27:46.566Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Visualizing an art collection">
+<meta name="twitter:description" content=".paintings { 	text-align:center; }  .painting { 	display:inline-block; 	padding-left:5px; 	padding-right:5px; }  .dcgan { 	width:200px; 	display:inline-block; 	padding-left:15px; 	padding-right:15px;">
+<meta name="twitter:image" content="http://auduno.github.io/images/test_tsne_white_2_200_2000.jpg">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+    <link rel="stylesheet" href="/css/style.css">
+    
+  
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-32670536-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css" rel="stylesheet">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script language="javascript" type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
+</head>
+
+<body>
+  <header>
+  <div id="icon">
+    <a href="/" class="nocolor"><p>Audun M. Øygard</p></a>
+    <br/>
+    <div id="socialicons">
+      <a href="http://www.twitter.com/matsiyatzy"><i class="icon-twitter"></i></a>
+      <a href="http://github.com/auduno"><i class="icon-github icon-large"></i></a>
+      <a href="https://www.linkedin.com/in/audun-mathias-%C3%B8ygard-1a572041"><i class="icon-linkedin icon-large"></i></a>
+      <a href="/atom.xml"><i class="icon-rss icon-medium" style="margin-left:2px;position:relative;top:0.1em;"></i></a>
+    </div>
+  </div>
+  <nav id="nav">
+    <p><a href="/about.html">About</a></p>
+    <p><a href="/">Blog</a></p>
+    <!--<p><a href="projects.html">Projects/Work</a></p>-->
+  </nav>
+  <div id="burger"></div>
+  <div id="noburger" class="hide"></div>
+</header>
+  <div id="content">
+    <article>
+
+
+<img src="/images/dcgan_10.jpg" alt="image" class="headerimage">
+
+<h3>Visualizing an art collection</h3>
+
+
+<p class="date"><time datetime="2018-10-27">27. October 2018</time></p>
+
+<style>
+.paintings {
+	text-align:center;
+}
+
+.painting {
+	display:inline-block;
+	padding-left:5px;
+	padding-right:5px;
+}
+
+.dcgan {
+	width:200px;
+	display:inline-block;
+	padding-left:15px;
+	padding-right:15px;
+}
+
+.tsne {
+	margin-left:-15%;
+	width:130%;
+}
+
+@media (min-width: 551px) {
+	.paintings {
+		margin-left:-20%;
+		margin-right:-20%;
+	}
+
+	.painting {
+		width:175px;
+	}
+}
+
+@media (max-width: 550px) {
+	.painting {
+		width:150px;
+	}
+}
+</style>
+
+<p>In this blog post I'll describe some work I did a while ago in a consulting project together with <a href="http://bengler.no" target="_blank" rel="noopener">Bengler</a>. The work was a consultancy project for the national museum that was started in 2015 and the final result, <a href="http://vy.nasjonalmuseet.no" target="_blank" rel="noopener">VY</a>, was made public in May last year. There were however some more experiments we tried during this project that I thought might be interesting to share.</p>
+
+<p>I was contacted by <a href="http://bengler.no" target="_blank" rel="noopener">Bengler</a> in 2014 regarding a potential project for <a href="http://www.nasjonalmuseet.no" target="_blank" rel="noopener">Nasjonalmuseet</a>. Nasjonalmuseet is Norways national gallery containing more than 30000 works of art, the most famous of them probably being Edvard Munchs' <i>The Scream</i>. The original proposal was to do something involving face recognition, since I'd released the <a href="http://" target="_blank" rel="noopener">face substitution</a> demo not so long ago, but after some thought we decided to have a look at whether it would be possible to apply Deep Learning to the fine arts collection.</p>
+
+<h4>Visualization</h4>
+
+<p>One of our first ideas was to try to visualize the collection in some way. Though the museum had webpages showing off parts of their collection, it was hard to get a complete overview of the entire collection as well as the many subjects found in the collection. <a href="https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding" target="_blank" rel="noopener">t-SNE</a> visualizations of deep learning features had worked well for another project of mine, so we decided to give this a try. At this point we had no idea whether this really would work for artworks as well, but as it turns out it did work really well.</p>
+
+<p>In order to ensure that the embeddings became meaningful, we decided to train a deep learning classifier to classify artworks into art styles and motifs respectively. The models did not get super-high accuracy at that task, but that was not the main goal either. We simply wanted the features from the last layer of the trained classifier, which we used as input to a t-SNE model. As can be seen by the resulting t-SNE embedding below, this worked pretty well.</p>
+
+<figure class="tsne">
+	<a href="/images/test_tsne_white_2_200_5000.jpg" target="_blank"><img src="/images/test_tsne_white_2_200_2000.jpg" alt="Entire t-SNE"></a>
+	<figcaption>Entire t-SNE</figcaption>
+</figure>
+
+<p>We got smooth transitions from nationalromantic paintings focusing on seas, through fjords, to forests.</p>
+
+<figure class="tsne">
+	<img src="/images/tsne_part2_sea.jpg" alt="Closeup of the landscape part of the t-SNE">
+	<figcaption>Closeup of the landscape part of the t-SNE</figcaption>
+</figure>
+
+<p>And from portraits one can clearly see clustering of women, bearded men, and full person portraits.</p>
+
+<figure class="tsne">
+	<img src="/images/tsne_part1_faces_2000.jpg" alt="Closeup of the portrait part of the t-SNE">
+	<figcaption>Closeup of the portrait part of the t-SNE</figcaption>
+</figure>
+
+<p>Visualizations were most interesting for paintings. Though they work just as well for drawings, it's harder to get a proper overview of the collection of the drawings, due to the reduced contrast of pencil drawings at small resolutions.</p>
+
+<p>For the final public work we decided to try out <a href="https://github.com/kylemcdonald/Parametric-t-SNE" target="_blank" rel="noopener">parametric t-SNE</a>, since we would have to make it possible for the t-SNE map to grow without having to retrain it for every addition to the collection. To our surprise, this seemed to give slightly better and more coherent t-SNE maps than the regular t-SNE method.</p>
+
+<figure class="tsne">
+	<a href="/images/DM_ptsne_keyword_9_whiteBG_200_5000.jpg" target="_blank"><img src="/images/DM_ptsne_keyword_9_whiteBG_200_2000.jpg" alt="Entire t-SNE"></a>
+	<figcaption>Parametric t-SNE</figcaption>
+</figure>
+
+<p>The features from our trained classifier can be used for more things than just visualization. We can also figure out what the typical works from a period looks like, by looking at works close to the mean embedding within a specific period. These works clearly show how typical norwegian painting gradually went from mainly nationalromantic landscape themes in mid 1800s, through to social realism at the turn of the century, and eventually abstraction in the fifties.</p>
+
+<figure class="paintings">
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.00212" target="_blank" rel="noopener"><img src="/images/1850_1_NG.M.00212_0.jpg" alt="Typical works around 1850" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.00414" target="_blank" rel="noopener"><img src="/images/1850_2_NG.M.00414_0.jpg" alt="Typical works around 1850" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.00211" target="_blank" rel="noopener"><img src="/images/1850_3_NG.M.00211_0.jpg" alt="Typical works around 1850" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.00636-011" target="_blank" rel="noopener"><img src="/images/1850_4_NG.M.00636-011_0.jpg" alt="Typical works around 1850" class="painting"></a>
+	<figcaption>Typical works around 1850</figcaption>
+</figure>
+<figure class="paintings">
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.00340" target="_blank" rel="noopener"><img src="/images/1880_1_NG.M.00340_0.jpg" alt="Typical works around 1880" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.00643" target="_blank" rel="noopener"><img src="/images/1880_2_NG.M.00643_0.jpg" alt="Typical works around 1880" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.01568" target="_blank" rel="noopener"><img src="/images/1880_3_NG.M.01568_0.jpg" alt="Typical works around 1880" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.00335" target="_blank" rel="noopener"><img src="/images/1880_4_NG.M.00335_0.jpg" alt="Typical works around 1880" class="painting"></a>
+	<figcaption>Typical works around 1880</figcaption>
+</figure>
+<figure class="paintings">
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.01226b" target="_blank" rel="noopener"><img src="/images/1910_1_NG.M.01226b_0.jpg" alt="Typical works around 1910" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.04097" target="_blank" rel="noopener"><img src="/images/1910_2_NG.M.04097_0.jpg" alt="Typical works around 1910" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.04380" target="_blank" rel="noopener"><img src="/images/1910_3_NG.M.04380_0.jpg" alt="Typical works around 1910" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.01016" target="_blank" rel="noopener"><img src="/images/1910_4_NG.M.01016_1.jpg" alt="Typical works around 1910" class="painting"></a>
+	<figcaption>Typical works around 1910</figcaption>
+</figure>
+<figure class="paintings">
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.01716" target="_blank" rel="noopener"><img src="/images/1930_1_NG.M.01716_0.jpg" alt="Typical works around 1930" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NMK.2011.0186" target="_blank" rel="noopener"><img src="/images/1930_2_NMK.2011.0186_0.jpg" alt="Typical works around 1930" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.01990" target="_blank" rel="noopener"><img src="/images/1930_3_NG.M.01990_0.jpg" alt="Typical works around 1930" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.02076" target="_blank" rel="noopener"><img src="/images/1930_4_NG.M.02076_0.jpg" alt="Typical works around 1930" class="painting"></a>
+	<figcaption>Typical works around 1930</figcaption>
+</figure>
+<figure class="paintings">
+	<a href="http://samling.nasjonalmuseet.no/en/object/MS-00214-1988" target="_blank" rel="noopener"><img src="/images/1950_1_MS-00214-1988_0.jpg" alt="Typical works around 1950" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/MS-03782-1995" target="_blank" rel="noopener"><img src="/images/1950_2_MS-03782-1995_0.jpg" alt="Typical works around 1950" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/MS-04283-1999" target="_blank" rel="noopener"><img src="/images/1950_3_MS-04283-1999_0.jpg" alt="Typical works around 1950" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/MS-01184-1988" target="_blank" rel="noopener"><img src="/images/1950_4_MS-01184-1988_0.jpg" alt="Typical works around 1950" class="painting"></a>
+	<figcaption>Typical works around 1950</figcaption>
+</figure>
+
+<p>Similarly, we can also investigate if there are any stylistic outliers, by looking at works that are far from the mean embedding within each decade.</p>
+
+<figure class="paintings">
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.01291" target="_blank" rel="noopener"><img src="/images/outl_1880_1_NG.M.01291_0.jpg" alt="Outlier works around 1880" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.02745" target="_blank" rel="noopener"><img src="/images/outl_1880_2_NG.M.02745_0.jpg" alt="Outlier works around 1880" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.02081" target="_blank" rel="noopener"><img src="/images/outl_1880_3_NG.M.02081_0.jpg" alt="Outlier works around 1880" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/no/object/NG.M.04242" target="_blank" rel="noopener"><img src="/images/outl_1880_4_NG.M.04242_0.jpg" alt="Outlier works around 1880" class="painting"></a>
+	<figcaption>Outlier works around 1880</figcaption>
+</figure>
+<figure class="paintings">
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.01259" target="_blank" rel="noopener"><img src="/images/outl_1910_1_NG.M.01259_0.jpg" alt="Outlier works around 1910" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.03283" target="_blank" rel="noopener"><img src="/images/outl_1910_2_NG.M.03283_0.jpg" alt="Outlier works around 1910" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.01212" target="_blank" rel="noopener"><img src="/images/outl_1910_4_NG.M.01212_0.jpg" alt="Outlier works around 1910" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.02975" target="_blank" rel="noopener"><img src="/images/outl_1910_5_NG.M.02975_0.jpg" alt="Outlier works around 1910" class="painting"></a>
+	<figcaption>Outlier works around 1910</figcaption>
+</figure>
+<figure class="paintings">
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.02879" target="_blank" rel="noopener"><img src="/images/outl_1930_1_NG.M.02879_0.jpg" alt="Outlier works around 1930" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.03872" target="_blank" rel="noopener"><img src="/images/outl_1930_2_NG.M.03872_0.jpg" alt="Outlier works around 1930" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.01928" target="_blank" rel="noopener"><img src="/images/outl_1930_3_NG.M.01928_0.jpg" alt="Outlier works around 1930" class="painting"></a>
+	<a href="http://samling.nasjonalmuseet.no/en/object/NG.M.02739" target="_blank" rel="noopener"><img src="/images/outl_1930_4_NG.M.02739_0.jpg" alt="Outlier works around 1930" class="painting"></a>
+	<figcaption>Outlier works around 1930</figcaption>
+</figure>
+
+<p>An interesting detail we noted is that outliers often signified trends that became commonplace a few decades later, such as the gradual shift to abstract painting.</p>
+
+<h4>Faces in the collection</h4>
+
+<p>Since the original proposal involved doing something with faces in the collection, we also decided to have a look at applying similar visualization methods there. After detecting most faces in the collection and cropping them out, we tried out using a pretrained face-similarity embedding which we fed into a t-SNE model, but though the resulting embedding seemed to separate between male, bearded faces, and more feminine faces, the t-SNE visualizations didn't make quite as much sense as with the painting embeddings above. We suspected this might have to do with the difference between faces in paintings and photographies, so we even collected a dataset of painted fan-art of celebrities which we finetuned the face-similarity model on, but unfortunately it did not seem to have a significant effect on the quality of the visualization.</p>
+
+<figure class="tsne">
+	<a href="/images/faces_ptsne_6.jpg" target="_blank"><img src="/images/faces_ptsne_6_2000.jpg" alt="t-SNE of faces in the collection"></a>
+	<figcaption>t-SNE of faces in the collection</figcaption>
+</figure>
+
+<p>A follow-up idea we had was to make some kind of web app to allow visitors to find the faces in the collection most similar to their own, but due to time and budget constraints, we decided to scrap this idea. Fortunately, Google created <a href="https://artsandculture.google.com/camera/selfie" target="_blank" rel="noopener">just that</a> a couple of months later, on a much larger collection of artworks.</p>
+
+<h4>Generating paintings</h4>
+
+<p>Of course, in 2016, sitting with a dataset of prime nationalromantic art, the temptation to train a Generative Adversarial Network on it was too strong. So naturally, we did just that. To train a DCGAN generating nationalromantic works, we first trained a GAN on a diverse set of styles of paintings from wikimedia, and then finetuned the model to a small augmented dataset of nationalromantic paintings. This is some of the results we got:</p>
+
+<figure style="margin-left:auto;margin-right:auto;text-align:center">
+	<img src="/images/dcgan_01.jpg" alt="DCGAN-generated painting" class="dcgan">
+	<img src="/images/dcgan_02.jpg" alt="DCGAN-generated painting" class="dcgan">
+	<img src="/images/dcgan_03.jpg" alt="DCGAN-generated painting" class="dcgan">
+	<img src="/images/dcgan_04.jpg" alt="DCGAN-generated painting" class="dcgan">
+	<img src="/images/dcgan_05.jpg" alt="DCGAN-generated painting" class="dcgan">
+	<img src="/images/dcgan_06.jpg" alt="DCGAN-generated painting" class="dcgan">
+	<img src="/images/dcgan_07.jpg" alt="DCGAN-generated painting" class="dcgan">
+	<img src="/images/dcgan_08.jpg" alt="DCGAN-generated painting" class="dcgan">
+	<img src="/images/dcgan_09.jpg" alt="DCGAN-generated painting" class="dcgan">
+	<figcaption>Nationalromantic paintings generated with DCGAN</figcaption>
+</figure>
+
+<p>While they might not pass for authentic works by Tidemand &amp; Gude, they do look like coherent, though vague nationalromantic paintings</p>
+
+<p>We had no problem training a model (using <a href="https://github.com/carpedm20/DCGAN-tensorflow" target="_blank" rel="noopener">DCGAN-tensorflow</a>) to produce 256x256 paintings, though we quite often ran into the dreaded mode-collapse problem, which means all output converged to an abstract blob, so we'd have to start from scratch. We of course also tried to produce even larger 512x512 paintings, but this was more than our poor GPU RAM could handle. Efforts to scale up 256x256 images with superresolution also didn't work out well, since the superresolution mainly just sharpened artifacts in the image and added more noise.</p>
+
+<p>Since we finished this project, there has been numerous improvements made to GAN models (one being Nvidia Researchs <a href="http://research.nvidia.com/publication/2017-10_Progressive-Growing-of" target="_blank" rel="noopener">progressive growing GAN</a>), which leads us to believe there is a huge potential to experiment more with GANs and art.</p>
+
+<h4>Conclusion</h4>
+
+<p>In finishing, I'd like to give a huge thanks to Bengler and the staff at the national museum, for their belief in the project and the free reins they gave us. Both during and after we worked on this project, we've seen similar projects, such as <a href="https://experiments.withgoogle.com/arts-culture" target="_blank" rel="noopener">Googles Arts &amp; Cultures Experiments</a>, <a href="https://news.artnet.com/art-world/rutgers-artificial-intelligence-art-1019066" target="_blank" rel="noopener">this</a>, <a href="https://medium.com/@ThreadGenius/art-genius-1260726bfebd" target="_blank" rel="noopener">this</a> and <a href="https://towardsdatascience.com/gangogh-creating-art-with-gans-8d087d8f74a1" target="_blank" rel="noopener">this</a>. We believe there is lots of potential for fruitful collaboration between the fields of art and modern machine learning.</p>
+
+<p>If you're interested in more info about what we did, also take a look at Benglers <a href="http://bengler.no/principalcomponents" target="_blank" rel="noopener">writeup of the project</a>, as well as <a href="https://iconclassblog.com/2017/06/12/iconclass-and-ai/" target="_blank" rel="noopener">this blogpost</a> on our experiments with training a model to classify paintings into iconclass classes.</p>
+
+<p>If you enjoyed this post, you should  <a href="https://twitter.com/matsiyatzy" target="_blank" rel="noopener">follow me on twitter</a>!</p>
+
+</article>
+
+
+<nav id="blognav">
+  
+  
+    <div class="next_post">
+      <a href="/2016/06/18/peeking-inside-convnets/" id="article-nav-older" class="article-nav-link-wrap">
+        <img src="/css/images/next_post.png">
+        <p>Peeking inside Convnets</p>
+      </a>
+    </div>
+  
+</nav>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+<script>
+  var disqus_shortname = 'audunotumblr';
+  
+  var disqus_url = 'http://auduno.github.io/2018/10/27/visualizing-an-art-collection/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+  </div>
+  <div id="footer">
+	<div id="socialicons">
+	</div>
+</div>
+  <script>
+  		function displayMenu() {
+  			document.getElementById('burger').className = "hide";
+  			document.getElementById('noburger').className = "nohide";
+  			document.getElementById('nav').className = "nohide";
+  		}
+
+  		function hideMenu() {
+  			document.getElementById('burger').className = "nohide";
+  			document.getElementById('noburger').className = "hide";
+  			document.getElementById('nav').className = "hide";
+  		}
+
+  		document.getElementById('burger').onclick = displayMenu;
+  		document.getElementById('noburger').onclick = hideMenu;
+  	</script>
+</body>
+</html>

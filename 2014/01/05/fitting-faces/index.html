@@ -86,7 +86,7 @@ ga('send', 'pageview');
 
 <p class="date"><time datetime="2014-01-05">05. January 2014</time></p>
 
-<p>A while ago I put out a semi-finished version of <a href="https://github.com/auduno/clmtrackr" target="_blank" rel="external">CLMtrackr</a>, which is a javascript library for fitting a facial model to faces in images or video. Fitting a facial model is useful in cases where you need precise positions of facial features, such as for instance emotion detection, face masking and person identification. Though the tracking is pretty processor-intensive, we manage to reach real-time tracking in modern browsers, even though it&rsquo;s implemented in javascript. If you&rsquo;re interested in seeing some applications of CLMtrackr, check out the demos of <a href="https://auduno.github.io/clmtrackr/examples/facesubstitution.html">face substitution</a>, <a href="https://auduno.github.io/clmtrackr/examples/facedeform.html">face deformation</a>, or <a href="https://auduno.github.io/clmtrackr/examples/clm_emotiondetection.html">emotion detection</a>.</p>
+<p>A while ago I put out a semi-finished version of <a href="https://github.com/auduno/clmtrackr" target="_blank" rel="noopener">CLMtrackr</a>, which is a javascript library for fitting a facial model to faces in images or video. Fitting a facial model is useful in cases where you need precise positions of facial features, such as for instance emotion detection, face masking and person identification. Though the tracking is pretty processor-intensive, we manage to reach real-time tracking in modern browsers, even though it&rsquo;s implemented in javascript. If you&rsquo;re interested in seeing some applications of CLMtrackr, check out the demos of <a href="https://auduno.github.io/clmtrackr/examples/facesubstitution.html">face substitution</a>, <a href="https://auduno.github.io/clmtrackr/examples/facedeform.html">face deformation</a>, or <a href="https://auduno.github.io/clmtrackr/examples/clm_emotiondetection.html">emotion detection</a>.</p>
 
 <p>In this post, I&rsquo;ll explain a few details about how CLMtrackr is put together.</p> 
 
@@ -94,12 +94,12 @@ ga('send', 'pageview');
 
 <figure>
 	<iframe src="https://player.vimeo.com/video/75659453" width="360" height="281" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen></iframe>
-	<figcaption>An example of fitting/tracking a face in the canonical <a href="http://www-prima.inrialpes.fr/FGnet/data/01-TalkingFace/talking_face.html" target="_blank" rel="external">talking face</a> video</figcaption>
+	<figcaption>An example of fitting/tracking a face in the canonical <a href="http://www-prima.inrialpes.fr/FGnet/data/01-TalkingFace/talking_face.html" target="_blank" rel="noopener">talking face</a> video</figcaption>
 </figure>
 
 <h4>How does CLMtrackr work:</h4>
 
-<p>CLMtrackr is based on the algorithms described in <a href="http://www.ri.cmu.edu/pub_files/2009/9/CameraReady-6.pdf" target="_blank" rel="external">this paper</a> by Jason Saragih &amp; Simon Lucey, more precisely &ldquo;Face Alignment through Subspace Constrained Mean-Shifts&rdquo;. The explanation in the paper is pretty dense, so I&rsquo;ll try to do a simpler explanation here.</p>
+<p>CLMtrackr is based on the algorithms described in <a href="http://www.ri.cmu.edu/pub_files/2009/9/CameraReady-6.pdf" target="_blank" rel="noopener">this paper</a> by Jason Saragih &amp; Simon Lucey, more precisely &ldquo;Face Alignment through Subspace Constrained Mean-Shifts&rdquo;. The explanation in the paper is pretty dense, so I&rsquo;ll try to do a simpler explanation here.</p>
 
 <p>Our aim is to fit a facial model to a face in an image or video from an approximate initialization. In our case the facial model consists of 70 points, see below.</p>
 
@@ -119,7 +119,7 @@ ga('send', 'pageview');
 
 <h4>Model</h4>
 
-<p>A face is relatively easy to model, since it doesn&rsquo;t really vary that much from person to person apart from posture and expression. Such a model <em>could</em> be manually built, but it is far easier to learn from annotated data, in our case faces where the feature points have been marked (annotated). Since annotating faces takes a surprisingly long time, we used some existing annotation from <a href="http://www.milbo.org/muct/" target="_blank" rel="external">the MUCT database</a> (with slight modifications), plus some faces we manually annotated ourselves.</p>
+<p>A face is relatively easy to model, since it doesn&rsquo;t really vary that much from person to person apart from posture and expression. Such a model <em>could</em> be manually built, but it is far easier to learn from annotated data, in our case faces where the feature points have been marked (annotated). Since annotating faces takes a surprisingly long time, we used some existing annotation from <a href="http://www.milbo.org/muct/" target="_blank" rel="noopener">the MUCT database</a> (with slight modifications), plus some faces we manually annotated ourselves.</p>
 
 <figure>
 	<img src="/images/annotated2_small.jpg" alt="annotated face">
@@ -207,7 +207,7 @@ ga('send', 'pageview');
 
 <p>Oh, and there&rsquo;s also things such as structured SVM learning, but that will have to wait until another time.</p>
 
-<br><p>Have you used CLMtrackr for anything cool? Let me know! If you liked this article, you should <a href="https://twitter.com/matsiyatzy" target="_blank" rel="external">follow me on twitter</a>.</p>
+<br><p>Have you used CLMtrackr for anything cool? Let me know! If you liked this article, you should <a href="https://twitter.com/matsiyatzy" target="_blank" rel="noopener">follow me on twitter</a>.</p>
 
 
 </article>

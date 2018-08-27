@@ -89,7 +89,7 @@ ga('send', 'pageview');
 <a id="more"></a>
 <br><p>The Sequential Generalized Likelihood Ratio test (or sequential GLR test for short) is a test that is surprisingly little known outside of statistical clinical research. Unlike classical fixed sample-size tests, where significance is only checked after all samples have been collected, this test will continously check for significance at every new sample and stop the test as soon as a significant result is detected, while still guaranteeing the same type-1 and type-2 errors as the fixed-samplesize test. This means the test could be stopped as early as after a handful of samples if there is a strong effect present.</p>
 
-<p>Despite this very nice property, I couldn&rsquo;t find <em>any</em> public implementation of this test, so I&rsquo;ve created a node.js implementation of this test, <a href="https://github.com/auduno/seglir/" target="_blank" rel="external">SeGLiR</a>, which can easily be used in web application A/B testing. I&rsquo;ll give a brief example of usage below, but to give you some idea about the potential savings, I&rsquo;ll first show you a comparison of the needed samplesize for a fixed samplesize test versus the sequential GLR test.</p>
+<p>Despite this very nice property, I couldn&rsquo;t find <em>any</em> public implementation of this test, so I&rsquo;ve created a node.js implementation of this test, <a href="https://github.com/auduno/seglir/" target="_blank" rel="noopener">SeGLiR</a>, which can easily be used in web application A/B testing. I&rsquo;ll give a brief example of usage below, but to give you some idea about the potential savings, I&rsquo;ll first show you a comparison of the needed samplesize for a fixed samplesize test versus the sequential GLR test.</p>
 
 <p>The test I&rsquo;ll compare is a <em>comparison of proportions</em> test, which is commonly used in A/B-testing to compare conversion rates. We compare the tests at the same levels, &alpha;-level 0.05 and &beta;-level 0.10, and say that we want to detect a difference between proportions larger than 0.01 (in sequential analysis this is usually called an &ldquo;indifference region&rdquo; of size 0.01). Note that the expected samplesize for the sequential GLR test vary depending on the true proportions p<sub>1</sub> and p<sub>2</sub>, so we compare the samplesize at different true proportions. We&rsquo;ll first look at the case where the expected samplesize for the sequential GLR test is worst, when the proportions are closest to 0.5.</p>
 
@@ -119,7 +119,7 @@ ga('send', 'pageview');
 
 <p>Given the very nice samplesize properties we&rsquo;ve seen above, it might not come as a surprise that the sequential GLR test has been shown<a href="#footnote1"><sup>[1]</sup></a> to be the optimal test with regards to minimizing samplesize at a given &alpha;- and &beta;-level.</p>
 
-<p class="footnote" id="footnote1">[1] <a href="https://books.google.no/books?id=zhsbBAAAQBAJ&lpg=PP1&pg=PA254#v=onepage&q&f=false" target="_blank" rel="external">Theorem 5.4.1</a> in Tartakovsky et al, Sequential Analysis, CRC Press 2014</p>
+<p class="footnote" id="footnote1">[1] <a href="https://books.google.no/books?id=zhsbBAAAQBAJ&lpg=PP1&pg=PA254#v=onepage&q&f=false" target="_blank" rel="noopener">Theorem 5.4.1</a> in Tartakovsky et al, Sequential Analysis, CRC Press 2014</p>
 
 <h4>Usage</h4>
 
@@ -152,11 +152,11 @@ test.estimate()
 
 <p>To get more details about functions, check out the <a href="http://auduno.github.io/SeGLiR/documentation/reference.html">SeGLiR reference</a>. Try out comparing the fixed samplesize test and the sequential GLR yourself (using SeGLiR) in <a href="http://auduno.github.io/SeGLiR/demo/demo.html">this demo</a>.</p>
 
-<br><p>To sum up, the sequential GLR test is an alternative to fixed samplesize tests that usually are much faster, at the cost of a large, but rare, worst-case samplesize. Another slight drawback with sequential tests is that post-analysis estimation can be a bit more tricky. I&rsquo;ll elaborate on this in my next post, as well as talk a bit about the solutions I&rsquo;ve implemented in SeGLiR. <a href="https://twitter.com/matsiyatzy" target="_blank" rel="external">Follow me on twitter</a> if you want to get updates!</p>
+<br><p>To sum up, the sequential GLR test is an alternative to fixed samplesize tests that usually are much faster, at the cost of a large, but rare, worst-case samplesize. Another slight drawback with sequential tests is that post-analysis estimation can be a bit more tricky. I&rsquo;ll elaborate on this in my next post, as well as talk a bit about the solutions I&rsquo;ve implemented in SeGLiR. <a href="https://twitter.com/matsiyatzy" target="_blank" rel="noopener">Follow me on twitter</a> if you want to get updates!</p>
 
 <br><p>If you&rsquo;re interested in a very brief introduction to the mathematical details of the sequential GLR test, take a look at the <a href="http://auduno.github.io/SeGLiR/documentation/reference.html">SeGLiR reference</a>. For a more rigorous mathematical introduction, see these excellent references:</p>
-<ul><li>Tartakovsky, Nikiforov &amp; Basseville : <a href="http://www.amazon.com/Sequential-Analysis-Hypothesis-Changepoint-Probability/dp/1439838208" target="_blank" rel="external">Sequential Analysis</a>, CRC Press 2014</li>
-	<li>Bartroff, Lai &amp; Shih : <a href="http://www.amazon.com/Sequential-Experimentation-Clinical-Trials-Statistics/dp/1461461138/ref=sr_1_1?s=books&ie=UTF8&qid=1416693815&sr=1-1&keywords=sequential%20experimentation%20in%20clinical%20trialsD" target="_blank" rel="external">Sequential Experimentation in Clinical Trials</a>, Springer 2012</li>
+<ul><li>Tartakovsky, Nikiforov &amp; Basseville : <a href="http://www.amazon.com/Sequential-Analysis-Hypothesis-Changepoint-Probability/dp/1439838208" target="_blank" rel="noopener">Sequential Analysis</a>, CRC Press 2014</li>
+	<li>Bartroff, Lai &amp; Shih : <a href="http://www.amazon.com/Sequential-Experimentation-Clinical-Trials-Statistics/dp/1461461138/ref=sr_1_1?s=books&ie=UTF8&qid=1416693815&sr=1-1&keywords=sequential%20experimentation%20in%20clinical%20trialsD" target="_blank" rel="noopener">Sequential Experimentation in Clinical Trials</a>, Springer 2012</li>
 </ul>
 
 <script>

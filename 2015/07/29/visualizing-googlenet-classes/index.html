@@ -99,9 +99,9 @@ ga('send', 'pageview');
 
 <p>Ever wondered what a deep neural network thinks a Dalmatian should look like? Well, wonder no more.</p>
 
-<p>Recently Google <a href="http://googleresearch.blogspot.no/2015/06/inceptionism-going-deeper-into-neural.html" target="_blank" rel="external">published a post</a> describing how they managed to use deep neural networks to generate class visualizations and modify images through the so called &ldquo;inceptionism&rdquo; method. They later published the code to modify images via the inceptionism method yourself, however, they didn&rsquo;t publish code to generate the class visualizations they show in the same post.</p>
+<p>Recently Google <a href="http://googleresearch.blogspot.no/2015/06/inceptionism-going-deeper-into-neural.html" target="_blank" rel="noopener">published a post</a> describing how they managed to use deep neural networks to generate class visualizations and modify images through the so called &ldquo;inceptionism&rdquo; method. They later published the code to modify images via the inceptionism method yourself, however, they didn&rsquo;t publish code to generate the class visualizations they show in the same post.</p>
 
-<p>While I never figured out <em>exactly</em> how Google generated their class visualizations, after butchering the <a href="https://github.com/google/deepdream" target="_blank" rel="external">deepdream code</a> and <a href="https://github.com/kylemcdonald/deepdream/blob/master/dream.ipynb" target="_blank" rel="external">this</a> ipython notebook from Kyle McDonald, I managed to coach GoogLeNet into drawing these:</p>
+<p>While I never figured out <em>exactly</em> how Google generated their class visualizations, after butchering the <a href="https://github.com/google/deepdream" target="_blank" rel="noopener">deepdream code</a> and <a href="https://github.com/kylemcdonald/deepdream/blob/master/dream.ipynb" target="_blank" rel="noopener">this</a> ipython notebook from Kyle McDonald, I managed to coach GoogLeNet into drawing these:</p>
 
 <figure style="margin-left:auto;margin-right:auto;text-align:center">
 	<img src="/images/deepdraw_example_33.jpg" alt="Loggerhead turtle" style="width:300px;display:inline-block;padding-left:15px;padding-right:15px">
@@ -136,7 +136,7 @@ ga('send', 'pageview');
 	<figcaption>Generation of image example for class &ldquo;Shetland sheepdog&rdquo;</figcaption>
 </figure>
 
-<p>In this post I&rsquo;ll describe a bit more details on how I generated these images from GoogLeNet, but for those eager to try this out yourself, jump over to <a href="https://github.com/auduno/deepdraw" target="_blank" rel="external">github</a> where I&rsquo;ve published ipython notebooks to do this yourself. For more examples of generated images, see some highlights <a href="https://goo.gl/photos/8qcvjnYBQVSGG2eN6" target="_blank" rel="external">here</a>, or visualization of all 1000 imagenet classes <a href="https://goo.gl/photos/FfsZZektqpZkdDnKA" target="_blank" rel="external">here</a>.</p>
+<p>In this post I&rsquo;ll describe a bit more details on how I generated these images from GoogLeNet, but for those eager to try this out yourself, jump over to <a href="https://github.com/auduno/deepdraw" target="_blank" rel="noopener">github</a> where I&rsquo;ve published ipython notebooks to do this yourself. For more examples of generated images, see some highlights <a href="https://goo.gl/photos/8qcvjnYBQVSGG2eN6" target="_blank" rel="noopener">here</a>, or visualization of all 1000 imagenet classes <a href="https://goo.gl/photos/FfsZZektqpZkdDnKA" target="_blank" rel="noopener">here</a>.</p>
 
 <br><p>Aside from the fact that our network seems to be drawing with rainbow crayons, it&rsquo;s remarkable to see how detailed the images are. They&rsquo;re far from perfect representations of the objects, but they give us valuable insight into what information the network thinks is essential for an object, and what isn&rsquo;t. For instance, the tabby cats seem to lack faces while the dalmatians are mostly dots. Presumably this doesn&rsquo;t mean that the network hasn&rsquo;t learned the rest of the details of these objects, but simply that the rest of the details are not very discriminate characteristics of that class, so they&rsquo;re ignored when generating the image.</p>
 
@@ -173,9 +173,9 @@ ga('send', 'pageview');
 	<figcaption>Gradient ascent on class &ldquo;Basset hound&rdquo; with gradually decreasing blurring</figcaption>
 </figure>
 
-<p>The reason for this problem is a bit uncertain, but might have to do with the depth of the network. In the <a href="http://arxiv.org/abs/1409.4842" target="_blank" rel="external">original paper</a> describing the GoogLeNet architecture, the authors mention that since the network is very deep, with 22 layers, they had to add two auxiliary classifiers at earlier points in the network to efficiently propagate gradients from the loss all the way back to the first layers. These classifiers, which were only used during training, ensured proper gradient flow and made sure that early layers were getting trained as well.</p>
+<p>The reason for this problem is a bit uncertain, but might have to do with the depth of the network. In the <a href="http://arxiv.org/abs/1409.4842" target="_blank" rel="noopener">original paper</a> describing the GoogLeNet architecture, the authors mention that since the network is very deep, with 22 layers, they had to add two auxiliary classifiers at earlier points in the network to efficiently propagate gradients from the loss all the way back to the first layers. These classifiers, which were only used during training, ensured proper gradient flow and made sure that early layers were getting trained as well.</p>
 
-<p>In our case, the pixels of the image are even further ahead in the network than first layer, so it might not seem so surprising that we have some problems with gradients and recovering a feasible image. Exactly why this affects high-frequency information more than low-frequency information is a bit hard to understand, but it might have to do with gradients for high-frequency information being more sensitive and unstable, due to larger weights for high-frequency information, as mentioned by Yosinski in the appendix to <a href="http://arxiv.org/abs/1506.06579" target="_blank" rel="external">this paper</a>.</p>
+<p>In our case, the pixels of the image are even further ahead in the network than first layer, so it might not seem so surprising that we have some problems with gradients and recovering a feasible image. Exactly why this affects high-frequency information more than low-frequency information is a bit hard to understand, but it might have to do with gradients for high-frequency information being more sensitive and unstable, due to larger weights for high-frequency information, as mentioned by Yosinski in the appendix to <a href="http://arxiv.org/abs/1506.06579" target="_blank" rel="noopener">this paper</a>.</p>
 
 <p>While the auxiliary classifiers in GoogleNet are only used during training, there&rsquo;s nothing stopping us from using them for generating images. Doing gradient ascent on the first auxiliary classifier, we get this:</p>
 
@@ -220,9 +220,9 @@ ga('send', 'pageview');
 	<figcaption>Generated images from class &ldquo;Squirrel monkey&rdquo; with AlexNet (left) and GoogLeNet (right).</figcaption>
 </figure>
 
-<p>Now go ahead and <a href="https://github.com/auduno/deepdraw" target="_blank" rel="external">try it yourself</a>! If you figure out other tricks or better choices of parameters for the gradient ascent (there almost certainly are), or just create some cool visualizations, let <a href="https://twitter.com/matsiyatzy" target="_blank" rel="external">me know via twitter</a>!</p>
+<p>Now go ahead and <a href="https://github.com/auduno/deepdraw" target="_blank" rel="noopener">try it yourself</a>! If you figure out other tricks or better choices of parameters for the gradient ascent (there almost certainly are), or just create some cool visualizations, let <a href="https://twitter.com/matsiyatzy" target="_blank" rel="noopener">me know via twitter</a>!</p>
 
-<p>A big hat tip to google and their original deepdream code, as well as <a href="https://twitter.com/kcimc" target="_blank" rel="external">Kyle McDonald</a>, which had the original idea of gradually reducing sigma of gaussian blurring to &ldquo;wash out&rdquo; the image, and kindly shared his code.</p>
+<p>A big hat tip to google and their original deepdream code, as well as <a href="https://twitter.com/kcimc" target="_blank" rel="noopener">Kyle McDonald</a>, which had the original idea of gradually reducing sigma of gaussian blurring to &ldquo;wash out&rdquo; the image, and kindly shared his code.</p>
 
 
 </article>
